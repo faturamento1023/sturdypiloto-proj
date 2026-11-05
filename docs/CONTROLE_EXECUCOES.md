@@ -10,6 +10,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 | 2026-11-05 | DEV-002 — Validar screenshots existentes | **Concluída (paridade visual de módulos)** | `docs/DEV-002_MATRIZ_VISUAL.md`: 61 JPG conferidos visualmente, 10 nomes médicos divergentes, 5 tópicos sem captura individual e lacunas documentadas | DEV-003 — Confirmar disponibilidade dos JPG médicos |
 | 2026-11-05 | DEV-003 — Confirmar disponibilidade dos JPG médicos | **Concluída (ausência refutada)** | 23 imagens médicas identificadas e conferidas no ZIP do manual, mais um JPG complementar distinto; sem necessidade de solicitação | DEV-004 — Mapear lacunas e fluxos |
 
+| 2026-11-05 | DEV-004 — Mapear lacunas e fluxos | **Concluída (especificação funcional)** | `docs/DEV-004_MAPA_FUNCIONAL.md`: 39 telas admin + 26 tópicos médicos, 3 fluxos Mermaid, 12 lacunas, 16 casos QA; `docs/DEV-004_TELAS.json`: inventário de 65 telas conferido | DEV-005 — Definir critérios de paridade por perfil e obter aprovação |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -22,8 +24,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **01 — Inventário e paridade**.
-- Tarefas concluídas: **DEV-001, DEV-002 e DEV-003**.
-- Próxima tarefa: **DEV-004 — Mapear lacunas e fluxos**.
+- Tarefas concluídas: **DEV-001, DEV-002, DEV-003 e DEV-004** (documentação e inventário; sem implementação funcional).
+- Próxima tarefa: **DEV-005 — Definir critérios de paridade** (requer aprovação do responsável).
 - Etapas 02–14: ainda não iniciadas.
 - Aplicação web: ainda não iniciada; não há link de homologação.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
