@@ -56,12 +56,16 @@
 - **Testado:** ação executada de modo controlado, sem dados reais.
 - **Homologado:** comportamento e permissões aprovados pelo responsável.
 
-## Resultado da revisão visual — DEV-002\n\nA revisão identificou **61 JPG distintos**, sendo 37 administrativos, 23 médicos e 1 complementar de laudos pendentes. **Dez nomes de arquivos médicos são enganosos** quanto à tela exibida; o mapeamento correto está em [docs/DEV-002_MATRIZ_VISUAL.md](DEV-002_MATRIZ_VISUAL.md). Permanecem lacunas visuais para ADM-23, ADM-38, MED-07, MED-23 e MED-26. Não foram executados testes de salvamento, impressão, assinatura, integrações ou regras clínicas.\n\n## Checklist da tarefa DEV-002
+## Resultado da revisão visual — DEV-002
 
-- [ ] Conferir visualmente os 37 JPG administrativos e corrigir divergências de nome/tela.
-- [ ] Conferir visualmente os 23 JPG do ZIP médico e capturas adicionais.
-- [ ] Validar imagens das telas ADM-23 e ADM-38; registrar falta se não houver.
-- [ ] Documentar as abas internas de Configuração ainda não inspecionadas.
-- [ ] Não copiar dados, imagens identificáveis ou arquivos do fornecedor para repositório público.
+A revisão identificou **61 JPG distintos**, sendo 37 administrativos, 23 médicos e 1 complementar de laudos pendentes. **Dez nomes de arquivos médicos são enganosos** quanto à tela exibida; o mapeamento correto está em [docs/DEV-002_MATRIZ_VISUAL.md](DEV-002_MATRIZ_VISUAL.md). Permanecem lacunas visuais para ADM-23, ADM-38, MED-07, MED-23 e MED-26. Não foram executados testes de salvamento, impressão, assinatura, integrações ou regras clínicas.
+
+## Checklist da tarefa DEV-002
+
+- [x] Conferir visualmente os 37 JPG administrativos e corrigir divergências de nome/tela.
+- [x] Conferir visualmente os 23 JPG do ZIP médico e capturas adicionais.
+- [x] Validar imagens das telas ADM-23 e ADM-38; registrar falta se não houver.
+- [x] Documentar as abas internas de Configuração ainda não inspecionadas.
+- [x] Não copiar dados, imagens identificáveis ou arquivos do fornecedor para repositório público.
 
 **Regra:** as funcionalidades do Projeto Piloto deverão ser implementadas de forma original, sem reproduzir código e ativos proprietários. Este documento lista fatos de documentação, não testes funcionais do WebUltra.
