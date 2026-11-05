@@ -17,7 +17,7 @@
 
 ## Cobertura administrativa
 
-**39 telas documentadas e 37 JPEGs avulsos presentes na subpasta `prints`.**
+**39 telas documentadas e 37 JPEGs visivelmente conferidos no ZIP administrativo.**
 
 | Grupo | Itens descritos | Função |
 |---|---|---|
@@ -38,7 +38,7 @@
 
 ## Cobertura médica
 
-**26 tópicos documentados, 23 imagens JPG recuperadas do ZIP e 1 captura complementar de laudos pendentes.** Os tópicos incluem:
+**26 tópicos documentados, 23 imagens JPG recuperadas e conferidas visualmente no ZIP médico e 1 captura complementar de laudos pendentes.** Os tópicos incluem:
 
 - Atendimentos, Dados e Histórico do prontuário, Exames Evolução;
 - Dados obstétricos: Dados, Biometria, 1º Trimestre e Doppler;
@@ -46,7 +46,7 @@
 - Gráficos clínicos, Consulta Texto, Consulta Planilhada e Receituário;
 - Upload, Impressão, Calculadoras, Laudos Pendentes, Agenda, Pacientes, Médicos e Configuração.
 
-**Não confundir presença de imagem com funcionalidade validada.** A aba Doppler obstétrico, a abertura do editor de laudos, emissão/assinatura, recursos de IA e várias configurações continuam sem teste. Alguns nomes de arquivo no manual médico aparentam deslocamento de tema e precisam de conferência visual individual.
+**Não confundir presença de imagem com funcionalidade validada.** A aba Doppler obstétrico, a abertura do editor de laudos, emissão/assinatura, recursos de IA e várias configurações continuam sem teste. Foi verificada a divergência entre o nome herdado e o conteúdo visual de **10 imagens médicas**; a tabela de correção está em [DEV-002 — Matriz visual](DEV-002_MATRIZ_VISUAL.md).
 
 ## Etiquetas obrigatórias de evidência
 
@@ -56,7 +56,7 @@
 - **Testado:** ação executada de modo controlado, sem dados reais.
 - **Homologado:** comportamento e permissões aprovados pelo responsável.
 
-## Checklist da tarefa DEV-002
+## Resultado da revisão visual — DEV-002\n\nA revisão identificou **61 JPG distintos**, sendo 37 administrativos, 23 médicos e 1 complementar de laudos pendentes. **Dez nomes de arquivos médicos são enganosos** quanto à tela exibida; o mapeamento correto está em [docs/DEV-002_MATRIZ_VISUAL.md](DEV-002_MATRIZ_VISUAL.md). Permanecem lacunas visuais para ADM-23, ADM-38, MED-07, MED-23 e MED-26. Não foram executados testes de salvamento, impressão, assinatura, integrações ou regras clínicas.\n\n## Checklist da tarefa DEV-002
 
 - [ ] Conferir visualmente os 37 JPG administrativos e corrigir divergências de nome/tela.
 - [ ] Conferir visualmente os 23 JPG do ZIP médico e capturas adicionais.
