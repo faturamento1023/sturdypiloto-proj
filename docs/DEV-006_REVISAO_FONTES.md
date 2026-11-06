@@ -54,6 +54,6 @@ Os manuais descrevem **consulta visual sem salvar, editar, assinar ou emitir**. 
 - [x] Decisões propostas, riscos e discrepâncias do cronograma documentados.
 - [ ] Conferência conjunta com pessoas autorizadas dos perfis administrativo e médico.
 - [ ] Confirmação das regras operacionais ainda inferidas.
-- [ ] Aceite final do mapa para DEV-007 e merge do PR, após CI verde.
+- [x] Aceite final do mapa para DEV-007 registrado no [checklist](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão).
 
-**Próxima ação:** revisar as sete jornadas com o responsável e o profissional médico, com foco nos itens da matriz acima. Sem essa revisão não declarar DEV-006 concluída, nem criar o protótipo Figma como etapa concluída.
+**Encaminhamento:** usar as sete jornadas aceitas como entrada para a DEV-007. As revisões operacionais e clínicas especializadas seguem pendentes antes da implantação das regras correspondentes.

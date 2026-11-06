@@ -1,8 +1,8 @@
-# DEV-006 — Checklist de validação por perfil (v0.2)
+# DEV-006 — Checklist de validação por perfil (v0.3)
 
-Data: 05/11/2026. **Aceite do responsável pelo projeto registrado em 05/11/2026 para o checklist e prosseguimento da revisão documental; não representa resposta individual às 12 questões nem homologação clínica/funcional.** Base: DEV-005 v1.0, DEV-006 jornadas v0.2, revisão documental e cronograma. Não contém pacientes, imagens proprietárias ou credenciais.
+Data: 05/11/2026. **Aceite do responsável pelo projeto registrado em 05/11/2026 para o checklist e prosseguimento da revisão documental; não representa resposta individual às 12 questões nem homologação clínica/funcional.** Base: DEV-005 v1.0, DEV-006 jornadas v0.3, revisão documental e cronograma. Não contém pacientes, imagens proprietárias ou credenciais.
 
-A tabela registra o resultado da revisão técnica por perspectiva. Para encerrar a etapa, o representante de cada perfil confirma ou corrige as decisões de fluxo aplicáveis, com data e sem dados de pacientes. Regras abertas de operação ou homologação podem ficar registradas como dependências se os perfis concordarem com o fluxo proposto e com o bloqueio correspondente.
+A tabela registra a revisão técnica por perspectiva e os pontos que ainda precisam de definição pelos respectivos perfis. O aceite final do responsável cobre o mapa das jornadas. As regras operacionais sem resposta individual ficam como dependências antes da implementação ou homologação pertinente.
 
 | ID | Perfil | Jornada | Resultado da revisão técnica | Ponto para revisão conjunta |
 |---|---|---|---|---|
@@ -36,12 +36,14 @@ Essas quatro decisões são **requisitos aprovados para o Projeto Piloto**, não
 
 | ACEITE-02 | Quatro decisões de produto confirmadas explicitamente pelo responsável: agendamento separado do atendimento; rascunho de evolução; revisão de laudos antes de assinatura/liberação; controles separados de valores cobrados, recebidos e pendentes | Responsável pelo projeto | 05/11/2026 | Confirmação textual em conversa | V04 (parcial), V05 (parcial), V06 (parcial), V09 (parcial) |
 
+| ACEITE-03 | Aceite final do mapa das 7 jornadas após apresentação da revisão técnica e da pendência de aceite para encerramento | Responsável pelo projeto | 05/11/2026 | Confirmação textual em conversa: «Está aceito» | UX-01 a UX-07. Questões operacionais V01–V12 sem resposta individual permanecem abertas. |
+
 ## Critério de saída DEV-006
 
 - [x] Comparar menus, hierarquia, campos e estados dos perfis administrativo e médico com os manuais. As lacunas estão registradas acima e na revisão de fontes.
 - [x] Rastrear as quatro decisões de produto no JSON, nos wireflows e na matriz de contratos, mantendo separadas as observações do WebUltra e as propostas para o Piloto.
 - [x] Executar localmente o validador de UX e os testes do domínio sintético.
-- [ ] Confirmar a revisão conjunta com um representante de cada perfil e registrar discordâncias ou pontos encaminhados para etapa posterior.
-- [ ] Conferir o GitHub Actions no commit do PR atualizado e registrar o aceite final do mapa antes de mesclar, fechar a issue #4 e iniciar DEV-007.
+- [x] Registrar o aceite final do mapa pelo responsável. A confirmação foi dada em resposta ao pedido de aceite conjunto. Não há registros separados por representante nem respostas individuais às 12 questões.
+- [x] Conferir os dois workflows do commit técnico `b3bef24` e registrar os resultados no PR #5. O registro final de aceite deve passar pelos checks do PR antes do merge.
 
-A revisão conjunta está pendente. As jornadas referenciam ADM-23, ADM-38 e MED-07 sem captura validada. MED-23 e MED-26 também faltam no inventário geral. O cronograma em Excel ainda exibe os status originais; o controle de execução e o PR registram o progresso técnico.
+O aceite é documental. Assinatura e liberação de laudos, fórmulas clínicas, permissões e integrações reais exigem validação própria. As jornadas referenciam ADM-23, ADM-38 e MED-07 sem captura validada. MED-23 e MED-26 também faltam no inventário geral. O cronograma em Excel exibe os status originais. O controle de execução e o PR registram o progresso.

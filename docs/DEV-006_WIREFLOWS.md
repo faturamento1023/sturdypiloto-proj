@@ -398,9 +398,9 @@ flowchart TD
 | UX-QA-06 | Cada jornada descreve exceções de vazio, permissão, cancelamento ou conflito conforme aplicável | Checklist por jornada |
 | UX-QA-07 | Desktop 1440/1366 e mobile 375/390 têm wireframe de referência sem cópia de marca | Revisão documental |
 | UX-QA-08 | Perfis e fluxos médicos/fiscais não alegam testes nem assinatura/nota reais | Revisão de risco |
-| UX-QA-09 | Comparar menus, hierarquia, campos e estados com perfis administrativo e médico antes de fechar a tarefa | **Revisão conjunta ainda pendente** |
+| UX-QA-09 | Comparar menus, hierarquia, campos e estados com perfis administrativo e médico antes de fechar a tarefa | [Aceite final do mapa pelo responsável](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão) |
 
-**Status da DEV-006:** documentação e revisão técnica concluídas na branch. A revisão conjunta dos perfis é o critério de saída antes de iniciar a DEV-007.
+**Status da DEV-006:** mapa documental aceito pelo responsável. A DEV-007 pode desenhar os fluxos com dados fictícios. As definições clínicas e operacionais em aberto permanecem registradas no checklist.
 
 ## 9. Entrega para a próxima etapa
 

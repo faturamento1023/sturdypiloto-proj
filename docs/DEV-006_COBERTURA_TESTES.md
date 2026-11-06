@@ -28,4 +28,4 @@ Data: 05/11/2026. Branch `dev-006-jornadas-ux`. Escopo isolado, sem paciente, se
 - Exercício local do JavaScript da recepção em DOM simulado. A versão anterior fechava o formulário ao detectar conflito. Na versão corrigida, foram verificados abertura e fechamento do formulário, preservação dos campos, reserva separada, abertura explícita, cancelamento, reutilização de horário cancelado, pesquisa e filtros. Layout e renderização ainda requerem verificação em navegador.
 - QA operacional dos perfis, persistência, autorização HTTP, assinatura, auditoria, relatórios e integração financeira permanecem como escopos de teste posteriores. A conferência do GitHub Actions deve usar o commit atualizado do PR.
 
-A DEV-006 aguarda a revisão conjunta dos perfis administrativo e médico. A [matriz de validação](DEV-006_CHECKLIST_VALIDACAO.md) separa as decisões técnicas de protótipo das questões operacionais abertas.
+O [aceite do mapa da DEV-006](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão) encerra a etapa documental. A matriz de validação separa as decisões técnicas de protótipo das questões operacionais abertas.

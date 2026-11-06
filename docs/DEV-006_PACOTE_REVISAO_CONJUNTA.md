@@ -1,8 +1,8 @@
 # DEV-006 — Pacote de revisão conjunta (administrativo e médico)
 
-**Data:** 05/11/2026. **Estado:** material preparado para revisão; não é aprovação nem ata de reunião realizada. **Escopo:** jornadas UX-01 a UX-07, 53 passos, baseadas nos manuais administrativo e médico. Referências: [checklist V01–V12](DEV-006_CHECKLIST_VALIDACAO.md), [contratos CF-01–CF-04](DEV-006_CONTRATOS_FUNCIONAIS_QA.md), [revisão de fontes](DEV-006_REVISAO_FONTES.md).
+**Data:** 05/11/2026. **Estado:** mapa aceito pelo responsável. Pauta mantida como referência para as questões operacionais abertas. **Escopo:** jornadas UX-01 a UX-07, 53 passos, baseadas nos manuais administrativo e médico. Referências: [checklist V01–V12](DEV-006_CHECKLIST_VALIDACAO.md), [contratos CF-01–CF-04](DEV-006_CONTRATOS_FUNCIONAIS_QA.md), [revisão de fontes](DEV-006_REVISAO_FONTES.md).
 
-## Decisões a registrar antes do aceite do mapa
+## Decisões operacionais para as próximas etapas
 
 | ID | Perfil que deve validar | Proposta conservadora para o Piloto | Pendência concreta e decisão requerida |
 |---|---|---|---|
@@ -21,11 +21,11 @@
 
 ## Protocolo de aceite
 
-Para cada linha V01–V12, registrar: **papel**, **decisão** (aprovado / aprovado com ressalva / rejeitado / adiado com bloqueio explícito), **ajuste necessário**, **data** e **identificação do responsável**. Não inserir pacientes, laudos, imagens proprietárias, CPF ou credenciais. Itens adiados só permitem concluir DEV-006 se o fluxo permanecer seguro e o bloqueio da funcionalidade estiver explícito no escopo posterior.
+Para cada linha V01–V12, registrar: **papel**, **decisão** (aprovado / aprovado com ressalva / rejeitado / adiado com bloqueio explícito), **ajuste necessário**, **data** e **identificação do responsável**. Não inserir pacientes, laudos, imagens proprietárias, CPF ou credenciais. Para cada item adiado, registrar o bloqueio da funcionalidade e a etapa em que a decisão será retomada.
 
-**Não foi obtido aceite nesta execução.** Os quatro requisitos de produto já confirmados pelo responsável são conceituais e não substituem as 12 decisões operacionais. A revisão clínica exige responsável competente; este documento não constitui homologação clínica.
+O aceite final do mapa consta no [registro de decisão](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão). As 12 questões sem respostas individuais seguem para as etapas de implementação ou homologação aplicáveis.
 
-## Verificações e bloqueios atuais
+## Verificações no momento da preparação da pauta
 
 - Revisão documental dos manuais e rastreabilidade por passo: **concluídas anteriormente**, sem execução de ações no WebUltra.
 - GitHub PR #5: **nenhuma revisão formal ou comentário de revisão registrado** na consulta desta execução; não inferir aprovação do silêncio.
@@ -35,8 +35,8 @@ Para cada linha V01–V12, registrar: **papel**, **decisão** (aprovado / aprova
 
 ## Saída da DEV-006
 
-1. Revisões administrativa e médica registradas, com ressalvas e bloqueios rastreáveis.
-2. Validador de jornadas e testes pertinentes verdes no commit final do PR.
-3. Decisão explícita de aceite final do mapa; só então mesclar PR #5, encerrar Issue #4 e iniciar DEV-007.
+1. Comparação documental dos dois perfis e pontos em aberto registrados.
+2. Aceite final do mapa confirmado pelo responsável.
+3. Checks do PR devem passar antes de mesclar e fechar a issue.
 
-**Próxima ação:** coletar e registrar as decisões V01–V12 com os responsáveis autorizados; verificar CI do commit atualizado e corrigir falhas. Não iniciar Figma enquanto a DEV-006 permanecer pendente.
+**Encaminhamento após o aceite:** usar a pauta no protótipo Figma e sinalizar as regras em aberto. Registrar decisões operacionais com os responsáveis dos perfis antes de habilitar os comportamentos correspondentes.

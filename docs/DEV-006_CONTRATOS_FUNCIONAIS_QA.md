@@ -36,4 +36,4 @@ Data: 05/11/2026. Base: quatro decisões do responsável registradas em DEV-006_
 ## Status
 - Requisitos CF-01 a CF-04: **aprovados conceitualmente pelo responsável**, detalhamento técnico acima **proposto e pendente de revisão**.
 - QA-01 a QA-19: **cenários especificados**. A execução de ponta a ponta depende da implementação e do ambiente de testes.
-- DEV-006 permanece em revisão; PR #5 não deve ser mesclado nem DEV-007 declarada iniciada até os critérios de aceite aplicáveis.
+- O [aceite da DEV-006](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão) cobre o mapa de jornadas. Os detalhes técnicos dos contratos e a execução dos cenários de ponta a ponta seguem para as etapas pertinentes.

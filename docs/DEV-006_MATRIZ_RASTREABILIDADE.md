@@ -23,6 +23,6 @@ Data: 05/11/2026. Revisão documental interna, sem acesso a produção. As decis
 3. Preparar cenários automatizados com dados fictícios quando houver código de aplicação; exigir execução verde e auditoria antes de homologação.
 4. Preservar PR #5 em revisão até que os critérios documentais e técnicos aplicáveis estejam satisfeitos. Não declarar DEV-006 concluída nem DEV-007 iniciada por mera autorização genérica para prosseguir.
 
-## Próxima ação executável
+## Encaminhamento após o aceite
 
-Revisar os fluxos com os perfis administrativo e médico usando o [checklist V01–V12](DEV-006_CHECKLIST_VALIDACAO.md). Registrar decisões, discordâncias e dependências. Conferir CI do commit atualizado do PR antes do aceite documental.
+Usar o mapa aceito na DEV-007 e levar as questões do [checklist V01–V12](DEV-006_CHECKLIST_VALIDACAO.md) para as etapas em que cada regra será especificada e validada. Registrar decisões dos perfis, discordâncias e dependências.

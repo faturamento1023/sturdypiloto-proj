@@ -73,6 +73,16 @@ assert.equal(sourceMapped, steps, 'Todos os passos precisam de proveniencia');
 assert.equal(ux.review_summary.steps_reviewed, steps, 'Resumo de revisao divergente');
 assert.equal(ux.review_summary.steps_functionally_tested, 0, 'Nao alegar testes do WebUltra');
 assert.equal(ux.review_summary.steps_clinically_approved, 0, 'Nao alegar homologacao clinica');
-assert.ok(ux.status?.includes('andamento'), 'DEV-006 nao deve ser fechada sem revisao dos perfis');
+assert.ok(['em_andamento_proposta_para_revisao', 'mapa_aceito'].includes(ux.status), 'Estado invalido do mapa de jornadas');
+if (ux.status === 'mapa_aceito') {
+  const acceptance = ux.map_acceptance;
+  const acceptanceSource = 'docs/DEV-006_CHECKLIST_VALIDACAO.md';
+  assert.ok(acceptance?.date && acceptance.record, 'Mapa aceito exige data e registro do aceite');
+  assert.equal(acceptance.role, 'responsavel_pelo_projeto', 'Aceite exige o papel do responsavel pelo projeto');
+  assert.equal(acceptance.source, acceptanceSource, 'Fonte de aceite invalida');
+  assert.equal(acceptance.scope, 'mapa_documental_das_jornadas', 'Aceite deve se limitar ao mapa documental');
+  assert.ok(readFileSync(acceptanceSource, 'utf8').includes(`| ${acceptance.record} |`),
+    'Registro de aceite nao localizado na fonte');
+}
 
 console.log(`OK: ${inventory.screens.length} telas, ${journeyIds.size} jornadas, ${steps} etapas com fonte e estado de teste, ${proposals} propostas e ${domains.size} dominios cobertos.`);

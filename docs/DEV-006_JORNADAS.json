@@ -4,7 +4,14 @@
   "version": "0.3",
   "date": "2026-11-05",
   "stage": "UX e arquitetura",
-  "status": "em_andamento_proposta_para_revisao",
+  "status": "mapa_aceito",
+  "map_acceptance": {
+    "date": "2026-11-05",
+    "role": "responsavel_pelo_projeto",
+    "record": "ACEITE-03",
+    "source": "docs/DEV-006_CHECKLIST_VALIDACAO.md",
+    "scope": "mapa_documental_das_jornadas"
+  },
   "source_documents": {
     "approved_scope": "docs/DEV-005_CRITERIOS_PARIDADE.md",
     "screen_specs": "docs/DEV-005_CRITERIOS_POR_TELA.json",
