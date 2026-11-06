@@ -31,7 +31,7 @@ O comando de preparação copia os estilos e arquivos estáticos para o build au
 
 ## Checks e entrega
 
-O workflow [Piloto CI e homologacao](../.github/workflows/piloto-ci.yml) roda em pull requests e em `main`. Instala dependências a partir do lockfile, executa o modelo PostgreSQL descartável, compila a aplicação e verifica a página e a rota de saúde em desktop e celular com Playwright. Os workflows anteriores continuam cobrindo contratos OpenAPI, jornadas e domínio.
+O workflow [Piloto CI e homologacao](../.github/workflows/piloto-ci.yml) roda em pull requests e em `main`. Instala dependências a partir do lockfile, executa o modelo PostgreSQL descartável, compila a aplicação e verifica a página e a rota de saúde em desktop e celular com Playwright. No GitHub Actions, os testes usam o Chrome fornecido pela imagem do runner. Os workflows anteriores continuam cobrindo contratos OpenAPI, jornadas e domínio.
 
 Em `main`, o pacote `piloto-homologacao-<commit>` contém o build autônomo e seu checksum SHA-256, com retenção de sete dias. O job de homologação baixa o próprio artefato, valida o checksum e executa a versão extraída. A homologação roda em loopback e usa dados fictícios. O controle de revisão desta etapa usa pull request e checks. A configuração de regras obrigatórias de branch pertence à administração do repositório.
 

@@ -6,7 +6,11 @@ export default defineConfig({
   testDir: './tests',
   reporter: 'line',
   forbidOnly: Boolean(process.env.CI),
-  use: { baseURL, browserName: 'chromium' },
+  use: {
+    baseURL,
+    browserName: 'chromium',
+    channel: process.env.PILOTO_E2E_CHROME === '1' ? 'chrome' : undefined,
+  },
   projects: [
     { name: 'desktop', use: { viewport: { width: 1440, height: 900 } } },
     { name: 'celular', use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
