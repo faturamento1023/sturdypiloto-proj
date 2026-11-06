@@ -1,0 +1,17 @@
+name: DEV-016 Cadastro médicos (unitário)
+on:
+  pull_request:
+    paths:
+      - 'src/cadastros/**'
+      - '.github/workflows/dev016-cadastro.yml'
+  workflow_dispatch:
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Testes de cadastro sintético
+        run: node --test src/cadastros/validar-cadastro-medico.test.mjs
