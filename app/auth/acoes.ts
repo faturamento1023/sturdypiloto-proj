@@ -25,7 +25,7 @@ export async function entrar(form: FormData) {
 
   const { error, data } = await cliente.auth.signInWithPassword({ email, password: senha });
   if (error || !data.session) redirect('/entrar?estado=invalido');
-  redirect('/conta');
+  redirect('/verificar-acesso');
 }
 
 export async function pedirRecuperacao(form: FormData) {

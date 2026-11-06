@@ -9,6 +9,7 @@ const codigoTeste = '081426';
 const usuarios = new Map();
 const acessos = new Map();
 const renovacoes = new Map();
+const reusos = new Map();
 const codigos = new Set();
 const desafios = new Map();
 
@@ -94,22 +95,33 @@ async function atender(req, res) {
         return json(res, 400, { code: 'mfa_verification_failed', msg: 'Invalid authenticator code' });
       }
       fator.status = 'verified';
-      return json(res, 200, sessao(acesso.conta, { aal: 'aal2' }));
+      return json(res, 200, sessao(acesso.conta, {
+        aal: 'aal2',
+        expirada: acesso.conta.user.email.startsWith('renovar-'),
+      }));
     }
   }
 
   switch (rota) {
     case 'POST /auth/v1/token': {
       if (url.searchParams.get('grant_type') === 'refresh_token') {
+        const reutilizada = reusos.get(dados.refresh_token);
+        if (reutilizada && reutilizada.ate > Date.now() && renovacoes.has(reutilizada.sessao.refresh_token)) {
+          return json(res, 200, reutilizada.sessao);
+        }
+
         const titular = renovacoes.get(dados.refresh_token);
         if (!titular) return json(res, 400, { code: 'refresh_token_not_found', msg: 'Invalid refresh token' });
         renovacoes.delete(dados.refresh_token);
-        return json(res, 200, sessao(titular.conta, { aal: titular.aal }));
+        const nova = sessao(titular.conta, { aal: titular.aal });
+        // Requisições concorrentes podem trocar o mesmo token durante a janela de 10 segundos do provedor.
+        reusos.set(dados.refresh_token, { sessao: nova, ate: Date.now() + 10000 });
+        return json(res, 200, nova);
       }
       if (!conta || conta.senha !== dados.password) {
         return json(res, 400, { code: 'invalid_credentials', msg: 'Invalid login credentials' });
       }
-      return json(res, 200, sessao(conta, { expirada: dados.email.startsWith('renovar-') }));
+      return json(res, 200, sessao(conta));
     }
     case 'POST /auth/v1/recover':
       if (!conta) return json(res, 404, { code: 'user_not_found', msg: 'User not found' });

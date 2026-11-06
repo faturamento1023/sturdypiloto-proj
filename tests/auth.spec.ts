@@ -4,7 +4,7 @@ const senhaInicial = 'Piloto-ficticio-123';
 const senhaNova = 'Piloto-senha-alterada-456';
 
 async function preencherLogin(page: Page, email: string, senha = senhaInicial) {
-  await page.getByLabel('E-mail').fill(email);
+  await page.getByLabel('E-mail', { exact: true }).fill(email);
   await page.getByLabel('Senha', { exact: true }).fill(senha);
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
 }
@@ -65,18 +65,19 @@ test('renova a sessão vencida e persiste os cookies renovados', async ({ page }
 test('redefine a senha sem abrir sessão e rejeita reutilização do código', async ({ page, context }, info) => {
   const email = `recuperar-${info.project.name}@example.com`;
   await page.goto('/recuperar-acesso');
-  await page.getByLabel('E-mail').fill('inexistente@example.com');
+  await page.getByLabel('E-mail', { exact: true }).fill('inexistente@example.com');
   await page.getByRole('button', { name: 'Solicitar código' }).click();
   await expect(page).toHaveURL(/\/redefinir-senha$/);
   await expect(page.getByText(/Se o endereço estiver cadastrado/)).toBeVisible();
 
   await page.getByRole('link', { name: 'Solicitar outro código' }).click();
-  await page.getByLabel('E-mail').fill(email);
+  await expect(page).toHaveURL(/\/recuperar-acesso$/);
+  await page.getByLabel('E-mail', { exact: true }).fill(email);
   await page.getByRole('button', { name: 'Solicitar código' }).click();
   await expect(page).toHaveURL(/\/redefinir-senha$/);
 
   async function enviarSenha(codigo: string, confirmacao = senhaNova, mfa = '123456') {
-    await page.getByLabel('E-mail').fill(email);
+    await page.getByLabel('E-mail', { exact: true }).fill(email);
     await page.getByLabel('Código do e-mail').fill(codigo);
     await page.getByLabel('Nova senha', { exact: true }).fill(senhaNova);
     await page.getByLabel('Confirmar nova senha').fill(confirmacao);
@@ -91,8 +92,10 @@ test('redefine a senha sem abrir sessão e rejeita reutilização do código', a
   await enviarSenha('081426', senhaNova, '');
   await expect(page.getByRole('status')).toHaveText(/confirme também o código/);
   await page.getByRole('link', { name: 'Solicitar outro código' }).click();
-  await page.getByLabel('E-mail').fill(email);
+  await expect(page).toHaveURL(/\/recuperar-acesso$/);
+  await page.getByLabel('E-mail', { exact: true }).fill(email);
   await page.getByRole('button', { name: 'Solicitar código' }).click();
+  await expect(page).toHaveURL(/\/redefinir-senha$/);
 
   await enviarSenha('081426');
   await expect(page.getByRole('status')).toHaveText('Senha alterada. Entre com a nova senha.');
