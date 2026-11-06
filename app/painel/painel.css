@@ -266,3 +266,18 @@
   .painel-busca { order: 3; width: 100%; }
   .painel-grade { grid-template-columns: minmax(0, 1fr); gap: var(--dm-spacing-sm); }
 }
+
+.painel-form-medico { max-width: 540px; margin-top: var(--dm-spacing-lg); }
+.painel-campos-medico { display: grid; grid-template-columns: minmax(0, 2fr) minmax(94px, 1fr); gap: var(--dm-spacing-md); }
+.painel-form-medico .painel-ativo-medico { display: flex; align-items: center; gap: var(--dm-spacing-sm); }
+.painel-ativo-medico input { width: 20px; min-height: var(--dm-size-touch); }
+.painel-filtro-medico { display: flex; gap: var(--dm-spacing-sm); margin-top: var(--dm-spacing-xl); }
+.painel-filtro-medico input[type="search"] {
+  flex: 1; min-width: 0; max-width: 360px; border: 1px solid var(--dm-color-border-control);
+  border-radius: var(--dm-radius-md); padding: 0 var(--dm-spacing-md); font: inherit;
+}
+.painel-lista-medicos { list-style: none; padding: 0; margin: 0; }
+.painel-lista-medicos .painel-aviso { margin-top: var(--dm-spacing-sm); }
+.painel-aviso summary { cursor: pointer; min-height: var(--dm-size-touch); align-content: center; }
+.painel-lista-medicos summary span { display: block; color: var(--dm-color-text-secondary); margin-top: var(--dm-spacing-xs); }
+.painel-paginas-medicos { display: flex; gap: var(--dm-spacing-lg); margin-top: var(--dm-spacing-lg); }

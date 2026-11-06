@@ -4,6 +4,7 @@ import { buscarModulos, modulosPorPerfil, rotuloPerfil } from '../../src/navegac
 import { TelaAcesso } from '../auth/interface';
 import { sessaoNoServidor, verificarIdentidade } from '../auth/sessao';
 import { consultarUnidades, type UnidadePainel } from './unidades';
+import { CadastroMedicos } from './medicos/cadastro';
 import './painel.css';
 
 export const dynamic = 'force-dynamic';
@@ -15,6 +16,7 @@ const icones: Record<string, string> = {
   atendimentos: 'M9 5H5v16h14V5h-4M9 3h6v4H9zM9 14h6m-3-3v6',
   prontuario: 'M6 3h8l4 4v14H6zM14 3v5h4M9 12h6m-6 4h6',
   catalogo: 'M3 4h7v7H3zm11 0h7v7h-7zM3 15h7v6H3zm11 0h7v6h-7z',
+  medicos: 'M3 7h18v13H3zM9 7V4h6v3m-3 3v7m-3-3.5h6',
   financeiro: 'M4 7h16v12H4zM4 11h16m-12 4h3M7 4h10',
   conta: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
   busca: 'M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm-2 4 5 5',
@@ -60,7 +62,10 @@ function UnidadeAtual({ unidade, unidades }: { unidade: UnidadePainel; unidades:
   );
 }
 
-type Parametros = Promise<{ unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[] }>;
+type Parametros = Promise<{
+  unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
+  filtroMedico?: string; pagina?: string; estado?: string;
+}>;
 
 export default async function PaginaPainel({ searchParams }: { searchParams: Parametros }) {
   const cliente = await sessaoNoServidor();
@@ -153,7 +158,12 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
           </header>
-          {atual && !busca ? (
+          {atual?.id === 'medicos' && !busca ? (
+            <CadastroMedicos cliente={cliente} unidade={unidade.id}
+              filtro={typeof parametros.filtroMedico === 'string' ? parametros.filtroMedico.trim().slice(0, 80) : ''}
+              pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0}
+              estado={typeof parametros.estado === 'string' ? parametros.estado : ''} />
+          ) : atual && !busca ? (
             <section className="painel-aviso" aria-labelledby="modulo-status">
               <span className="painel-etiqueta">Em preparação</span>
               <h2 id="modulo-status">Área reservada para {atual.nome.toLocaleLowerCase('pt-BR')}</h2>

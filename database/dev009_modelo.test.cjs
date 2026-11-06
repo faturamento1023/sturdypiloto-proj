@@ -290,6 +290,48 @@ test('Modelo, RLS e auditoria em PostgreSQL descartável', async t => {
     await deny('truncate piloto_privado.auditoria', [], '55000');
   });
 
+  await t.test('cadastro médico restringe unidade e MFA, preserva histórico e audita revisões', async () => {
+    const novo = (opcoes = {}) => [
+      opcoes.unidade ?? a, opcoes.id ?? null, opcoes.revisao ?? null, 'Médico fictício',
+      Object.hasOwn(opcoes, 'crm') ? opcoes.crm : '001234', Object.hasOwn(opcoes, 'uf') ? opcoes.uf : 'GO',
+      'Clínica médica', '', opcoes.ativo ?? true, uuid(401),
+    ];
+    const sql = 'select public.piloto_salvar_medico($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) as id';
+    const listar = (unidade, termo = '') => q('select * from public.piloto_listar_medicos($1,$2,0,$3)', [unidade, termo, uuid(402)]);
+    await as(recep, async () => {
+      await deny(sql, novo(), '42501');
+      assert.deepEqual((await listar(a)).rows, []);
+    });
+    await as(admin, () => deny(sql, novo(), '42501'), { aal: 'aal1' });
+    await as(admin, () => deny(sql, novo({ unidade: b }), '42501'));
+    await as(admin, () => deny(sql, novo({ crm: '0000' }), '23514'));
+    await as(admin, () => deny(sql, novo({ crm: null, uf: null }), '22023'));
+
+    let id;
+    await as(admin, async () => {
+      id = (await q(sql, novo())).rows[0].id;
+      assert.equal((await listar(a, '1234')).rows[0].crm, '001234');
+      await deny(sql, novo({ crm: '1234' }), '23505');
+      await q(sql, novo({ id, revisao: 0, ativo: false }));
+      await deny(sql, novo({ id, revisao: 0 }), '40001');
+      await deny(sql, novo({ id: proB, revisao: 0 }), '40001');
+      await deny(sql, novo({ id, revisao: 1, crm: null, uf: null }), '40001');
+      const medico = (await listar(a, 'clínica médica')).rows[0];
+      assert.equal(medico.ativo, false);
+      assert.equal(medico.revisao, 1);
+      assert.deepEqual((await listar(b)).rows, []);
+      assert.deepEqual((await listar(a, '%')).rows, []);
+      await q(sql, novo({ id: otherPro, revisao: 0, crm: null, uf: null, ativo: false }));
+    });
+    const eventos = await q('select operacao, ator_id, correlacao_id from piloto_privado.auditoria where registro_id=$1 order by id', [id]);
+    assert.deepEqual(eventos.rows, [
+      { operacao: 'INSERT', ator_id: admin, correlacao_id: uuid(401) },
+      { operacao: 'UPDATE', ator_id: admin, correlacao_id: uuid(401) },
+    ]);
+    assert.equal((await q('select usuario_id from piloto.profissionais where id=$1', [otherPro])).rows[0].usuario_id, otherDoctor);
+    assert.equal((await q('select count(*)::int total from piloto.atendimentos where profissional_id=$1', [otherPro])).rows[0].total, 1);
+  });
+
   await t.test('RLS em todas as tabelas e auditoria sem conteúdo clínico', async () => {
     const { rows } = await q(`select count(*)::int total, bool_and(c.relrowsecurity) protegidas
       from pg_class c join pg_namespace n on n.oid=c.relnamespace

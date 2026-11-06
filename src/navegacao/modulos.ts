@@ -22,6 +22,7 @@ const modulos: readonly Modulo[] = [
   { id: 'atendimentos', nome: 'Atendimentos', descricao: 'Abertura, acompanhamento e itens do atendimento.', recurso: 'atendimento', termos: 'consulta recepção' },
   { id: 'prontuario', nome: 'Prontuário e laudos', descricao: 'Evolução clínica e documentos do atendimento.', recurso: 'clinico', termos: 'médico exame evolução' },
   { id: 'catalogo', nome: 'Catálogo', descricao: 'Procedimentos disponíveis na unidade.', recurso: 'catalogo', termos: 'procedimento exame' },
+  { id: 'medicos', nome: 'Cadastro de médicos', descricao: 'CRM, especialidades e situação dos profissionais.', recurso: 'cadastroMedico', termos: 'cadastro médico crm especialidade' },
   { id: 'financeiro', nome: 'Financeiro', descricao: 'Saldos e movimentações dos atendimentos.', recurso: 'financeiro', termos: 'caixa pagamento faturamento' },
 ];
 

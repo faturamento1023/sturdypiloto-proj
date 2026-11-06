@@ -26,7 +26,7 @@ function novoFator(status) {
 }
 
 for (const projeto of ['desktop', 'celular']) {
-  for (const cenario of ['login', 'renovar', 'recuperar', 'painel']) {
+  for (const cenario of ['login', 'renovar', 'recuperar', 'painel', 'cadastro']) {
     const email = `${cenario}-${projeto}@example.com`;
     usuarios.set(email, {
       senha: senhaInicial,
@@ -45,11 +45,14 @@ await db.query('insert into piloto.unidades (id, nome) values ($1, $2), ($3, $4)
 for (const projeto of ['desktop', 'celular']) {
   const recepcao = usuarios.get('login-' + projeto + '@example.com').user.id;
   const painel = usuarios.get('painel-' + projeto + '@example.com').user.id;
-  await db.query('insert into auth.users (id) values ($1), ($2)', [recepcao, painel]);
+  const cadastro = usuarios.get('cadastro-' + projeto + '@example.com').user.id;
+  await db.query('insert into auth.users (id) values ($1), ($2), ($3)', [recepcao, painel, cadastro]);
   await db.query(
     "insert into piloto_privado.vinculos (unidade_id, usuario_id, perfil) values ($1,$2,'recepcao'),($1,$3,'recepcao'),($4,$3,'financeiro')",
     [unidadeA, recepcao, painel, unidadeB],
   );
+  await db.query('insert into piloto_privado.vinculos (unidade_id, usuario_id, perfil) values ($1,$2,$3)',
+    [projeto === 'desktop' ? unidadeA : unidadeB, cadastro, projeto === 'desktop' ? 'administrador' : 'gestao']);
 }
 
 const base64url = valor => Buffer.from(JSON.stringify(valor)).toString('base64url');
@@ -175,6 +178,28 @@ async function atender(req, res) {
         resultado: rows.length ? 'permitido' : 'negado',
       }]);
       return json(res, 200, rows);
+    }
+    case 'POST /rest/v1/rpc/piloto_listar_medicos':
+    case 'POST /rest/v1/rpc/piloto_salvar_medico': {
+      if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
+      const listagem = url.pathname.endsWith('/piloto_listar_medicos');
+      try {
+        const { rows } = await db.transaction(async tx => {
+          await tx.exec('set local role authenticated');
+          await tx.query("select set_config('request.jwt.claims', $1, true)", [
+            JSON.stringify({ sub: acesso.conta.user.id, aal: acesso.aal, is_anonymous: false }),
+          ]);
+          return listagem
+            ? tx.query('select * from public.piloto_listar_medicos($1,$2,$3,$4)',
+              [dados.unidade, dados.busca, dados.pagina, dados.correlacao])
+            : tx.query('select public.piloto_salvar_medico($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) as id',
+              [dados.unidade, dados.profissional, dados.revisao_esperada, dados.nome_medico, dados.numero_crm,
+                dados.uf_crm, dados.area, dados.titulo_medico, dados.ativo_medico, dados.correlacao]);
+        });
+        return json(res, 200, listagem ? rows : rows[0].id);
+      } catch (erro) {
+        return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
+      }
     }
     case 'GET /auth/v1/user':
       return acessoAtivo ? json(res, 200, acesso.conta.user) : json(res, 401, { code: 'bad_jwt', msg: 'Invalid access token' });
