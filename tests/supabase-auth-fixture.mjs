@@ -43,6 +43,14 @@ for (const projeto of ['desktop', 'celular']) {
 await db.query('insert into piloto.unidades (id, nome) values ($1, $2), ($3, $4)',
   [unidadeA, 'Unidade fictícia A', unidadeB, 'Unidade fictícia B']);
 await db.query("insert into piloto.procedimentos (unidade_id,codigo,descricao) values ($1,'FICT-TABELA','Procedimento da tabela'),($2,'FICT-TABELA','Procedimento da tabela')", [unidadeA, unidadeB]);
+for (const unidade of [unidadeA, unidadeB]) {
+  const [profissional, paciente, procedimento, atendimento] = Array.from({ length: 4 }, () => randomUUID());
+  await db.query("insert into piloto.profissionais (unidade_id,id,nome) values ($1,$2,'Profissional de histórico')", [unidade, profissional]);
+  await db.query("insert into piloto.pacientes (unidade_id,id,nome) values ($1,$2,'Paciente de histórico')", [unidade, paciente]);
+  await db.query("insert into piloto.procedimentos (unidade_id,id,codigo,descricao) values ($1,$2,'HIST-020','Procedimento de histórico')", [unidade, procedimento]);
+  await db.query("insert into piloto.atendimentos (unidade_id,id,paciente_id,profissional_id) values ($1,$2,$3,$4)", [unidade, atendimento, paciente, profissional]);
+  await db.query("insert into piloto.itens_atendimento (unidade_id,atendimento_id,procedimento_id,quantidade,valor_unitario_centavos) values ($1,$2,$3,2,12500)", [unidade, atendimento, procedimento]);
+}
 for (const projeto of ['desktop', 'celular']) {
   const recepcao = usuarios.get('login-' + projeto + '@example.com').user.id;
   const painel = usuarios.get('painel-' + projeto + '@example.com').user.id;
@@ -208,6 +216,7 @@ async function atender(req, res) {
         return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
       }
     }
+    case 'POST /rest/v1/rpc/piloto_listar_historico_itens':
     case 'POST /rest/v1/rpc/piloto_listar_convenios_precos':
     case 'POST /rest/v1/rpc/piloto_salvar_convenio':
     case 'POST /rest/v1/rpc/piloto_cadastrar_preco':
@@ -222,6 +231,7 @@ async function atender(req, res) {
       if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
       const nome = url.pathname.split('/').at(-1);
       const parametros = {
+        piloto_listar_historico_itens: [dados.unidade, dados.busca, dados.pagina, dados.correlacao],
         piloto_listar_convenios_precos: [dados.unidade, dados.busca, dados.referencia, dados.pagina, dados.correlacao],
         piloto_salvar_convenio: [dados.unidade, dados.convenio, dados.revisao_esperada, dados.nome_convenio,
           dados.ativo_convenio, dados.correlacao],

@@ -42,6 +42,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-019 — Cadastro de convênios e preços | **Concluída em ambiente descartável** | [Convênios, tabelas por procedimento, vigências e coparticipação](DEV-019_CONVENIOS_PRECOS.md). | DEV-020 — Testar impacto cadastral. |
 
+| 2026-11-06 | DEV-020 — Testar impacto cadastral | **Concluída em ambiente descartável** | [Histórico de itens, inativação e testes de integração](DEV-020_IMPACTO_CADASTROS.md). | DEV-021 — Desenhar grade de agenda. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -54,8 +56,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **04 — Cadastros mestres** (cadastros mestres iniciados pelo cadastro de médicos).
-- Tarefas concluídas: **DEV-001 a DEV-019**.
-- Próxima tarefa: **DEV-020 — Testar impacto cadastral**.
+- Tarefas concluídas: **DEV-001 a DEV-020**.
+- Próxima tarefa: **DEV-021 — Desenhar grade de agenda**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -180,11 +182,8 @@ Registro histórico anterior ao aceite final.
 - O banco impede sobreposição de preços ativos, mantém os preços anteriores e registra auditoria. Coparticipação é registrada como valor fixo por preço nesta etapa.
 - Os testes usam dados fictícios. A próxima etapa é a DEV-020, impacto dos cadastros nas demais telas e nos registros históricos.
 
-## Sessão de 06/11/2026 — início DEV-020 (impacto de cadastros)
+## Sessão de 06/11/2026 — impacto cadastral DEV-020
 
-- Antes de escrever, consultados controle da `main` (DEV-019 registrada como concluída), buscas de Issues/PRs abertos (nenhum retornado), critérios DEV-005, cronograma XLSX e pasta Web Ultra no Drive. O cronograma ainda apresenta status de planejamento e não foi alterado.
-- Criada branch `dev-020-impacto-cadastros` a partir da `main`; [PR #21](https://github.com/faturamento1023/sturdypiloto-proj/pull/21) aberto em rascunho.
-- Criada visão SQL `piloto.impacto_cadastros_itens` com `security_invoker`, preservando valores de itens de atendimento e apresentando separadamente o estado atual do procedimento (commit `5d10876`).
-- Adicionado teste sintético de preservação após inativação de procedimento (commit `e254720`), documentação de impacto (commit `b9493b5`) e workflow PGlite (commit `1cf3ad8`).
-- **Teste PGlite e CI ainda não executados/confirmados nesta sessão**: clone direto indisponível por falha de resolução DNS do GitHub no ambiente local. A visão e a autorização por RLS ainda precisam de validação real.
-- DEV-020 em andamento. Próximos passos: confirmar CI, testar RLS por perfil/unidade, verificar impacto nos demais cadastros e construir API/UI de histórico. Sem alteração no WebUltra ou produção; sem dados reais.
+- O PR #21 aproveitou a projeção inicial da automação e conectou o histórico de itens ao painel de atendimentos, com acesso auditado.
+- A regressão cobre bloqueio de novas referências a cadastros inativos, preservação do histórico e do saldo, isolamento e MFA. A inativação também é exercitada no navegador.
+- Os testes usam dados fictícios. A próxima etapa é a DEV-021, grade de agenda.
