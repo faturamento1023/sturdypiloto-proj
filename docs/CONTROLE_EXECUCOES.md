@@ -119,3 +119,12 @@ Registro histórico anterior ao aceite final.
 - Entrega: proposta de permissões por unidade e perfil, guardas de servidor, segregação clínica e 16 cenários de QA. **Não há handlers nem testes de autorização executados nesta sessão.**
 - Bloqueios: integração com a sessão DEV-012, revisão das decisões V01/V05/V07/V09, implementação de guardas, RLS e testes em PostgreSQL descartável. DEV-013 permanece **em andamento**; não mesclar ou publicar produção.
 - Próxima ação: implementar guardas e testes negativos, reconciliar PR #13 antes de mesclar PR #14.
+
+
+## Sessão de 06/11/2026 — DEV-013, política isolada
+
+- Estado consultado antes da escrita: `main` registra DEV-001–DEV-012 concluídas; PR #13 (autenticação) e PR #14 (autorização) existentes; cronograma XLSX e pasta Web Ultra consultados somente em leitura. Nenhuma alteração na origem.
+- Na branch `dev-013-autorizacao-matriz`, criados `src/autorizacao/politica.ts`, `src/autorizacao/politica.test.ts` e `.github/workflows/dev013-autorizacao.yml`; ampliado `docs/DEV-013_MATRIZ_AUTORIZACAO.md`.
+- Commits: `fc350996`, `9c1e0565`, `464b947e`, `13bb9ca6`. PR: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
+- Testes unitários escritos, **execução do novo workflow ainda não confirmada**. Não há endpoint integrado, acesso real ao banco ou homologação clínica. Não mesclar PR #14 antes de reconciliar a base do PR #13.
+- Próxima ação: verificar CI e corrigir falhas; implementar consulta fresca de vínculos no servidor, escopo de objeto, projeções por papel e auditoria transacional; executar testes de integração AUTHZ-01–16. DEV-013 **em andamento**.
