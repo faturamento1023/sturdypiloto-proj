@@ -195,6 +195,24 @@ test('DEV-009 — modelo e RLS em PostgreSQL descartável', async t => {
     }
   });
 
+  await t.test('shell lista as próprias unidades e perfis ativos com MFA', async () => {
+    const listar = () => q('select * from public.piloto_minhas_unidades()');
+    await q("insert into piloto_privado.vinculos (unidade_id, usuario_id, perfil, ativo) values ($1,$2,'financeiro',true),($1,$2,'administrador',false),($3,$2,'gestao',true)", [a, recep, b]);
+    await as(recep, async () => {
+      assert.deepEqual((await listar()).rows, [
+        { id: a, nome: 'Unidade A', perfis: ['financeiro', 'recepcao'] },
+        { id: b, nome: 'Unidade B', perfis: ['gestao'] },
+      ]);
+    });
+    await as(recep, async () => assert.deepEqual((await listar()).rows, []), { aal: 'aal1' });
+    await as(recep, async () => assert.deepEqual((await listar()).rows, []), { anonymous: true });
+    await as(revoked, async () => assert.deepEqual((await listar()).rows, []));
+    await as(undefined, () => deny('select * from public.piloto_minhas_unidades()', [], '42501'), { role: 'anon' });
+    await q('update piloto.unidades set ativa=false where id=$1', [b]);
+    await as(recep, async () => assert.deepEqual((await listar()).rows.map(unidade => unidade.id), [a]));
+    await q('update piloto.unidades set ativa=true where id=$1', [b]);
+  });
+
   await t.test('RLS em todas as tabelas e auditoria sem conteúdo clínico', async () => {
     const { rows } = await q(`select count(*)::int total, bool_and(c.relrowsecurity) protegidas
       from pg_class c join pg_namespace n on n.oid=c.relnamespace

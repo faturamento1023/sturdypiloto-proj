@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { sair } from '../auth/acoes';
 import { avisoAcesso, TelaAcesso, type PaginaAcesso } from '../auth/interface';
@@ -19,9 +20,12 @@ export default async function PaginaConta({ searchParams }: PaginaAcesso) {
   return (
     <TelaAcesso titulo="Minha conta" descricao="Sua sessão está ativa no Projeto Piloto." aviso={aviso}>
       <p className="acesso-identidade">{sessao.usuario.email}</p>
-      <form action={sair}>
-        <button className="botao" type="submit">Sair</button>
-      </form>
+      <div className="acoes-inicio">
+        <Link href="/painel" className="botao" prefetch={false}>Abrir painel</Link>
+        <form action={sair}>
+          <button className="acesso-link acesso-link-botao" type="submit">Sair</button>
+        </form>
+      </div>
     </TelaAcesso>
   );
 }

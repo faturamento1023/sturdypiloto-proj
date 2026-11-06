@@ -30,6 +30,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-013 — Implementar autorização | **Concluída em ambiente descartável** | [Matriz, RLS, consulta HTTP de acesso e projeção médica](DEV-013_MATRIZ_AUTORIZACAO.md). | DEV-014 — Desenhar o shell do sistema. |
 
+| 2026-11-06 | DEV-014 — Desenhar o shell do sistema | **Concluída em ambiente descartável** | [Painel responsivo e navegação por unidade e perfil](DEV-014_SHELL_SISTEMA.md). | DEV-015 — Implementar auditoria central. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -41,9 +43,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **03 — Infraestrutura e permissões** (base DEV-011, autenticação DEV-012 e autorização DEV-013).
-- Tarefas concluídas: **DEV-001 a DEV-013**.
-- Próxima tarefa: **DEV-014 — Desenhar o shell do sistema**.
+- Fase do cronograma: **03 — Infraestrutura e permissões** (infraestrutura, autenticação, autorização e shell navegável).
+- Tarefas concluídas: **DEV-001 a DEV-014**.
+- Próxima tarefa: **DEV-015 — Implementar auditoria central**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -120,3 +122,10 @@ Registro histórico anterior ao aceite final.
 - Testes cobrem negação por padrão, revogação durante a sessão, isolamento entre unidades, tentativas de acesso clínico indevido e integração da consulta HTTP com o banco descartável.
 - A aplicação dos SQLs em Supabase hospedado e o envio real de e-mails continuam pendentes de homologação operacional. Operações clínicas e financeiras do OpenAPI serão implementadas nos módulos correspondentes.
 - Próxima ação: DEV-014.
+
+## Sessão de 06/11/2026 — shell DEV-014
+
+- Adicionado painel responsivo em `/painel`, com seletor de unidade, menu por perfil, cabeçalho, caminho de navegação e busca de módulos.
+- A consulta de unidades usa a sessão com MFA e as políticas do PostgreSQL. A troca de unidade recalcula permissões, e a navegação direta aplica as mesmas verificações.
+- Homologação usa contas fictícias, provedor de identidade simulado e PostgreSQL descartável. A busca cobre módulos e os destinos indicam as áreas ainda em preparação.
+- Próxima ação: DEV-015.
