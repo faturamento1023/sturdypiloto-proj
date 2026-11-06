@@ -32,8 +32,9 @@ jobs:
       - run: npm run test:database
       - run: npm run build
       - run: npm run prepare:homologacao
-      - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+        env:
+          PILOTO_E2E_CHROME: '1'
       - name: Empacotar versão sintética
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
