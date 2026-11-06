@@ -30,3 +30,14 @@ test('Perfil operacional adicional não autoriza conteúdo clínico',()=>{
   const resultado=avaliarAutorizacao({...base,vinculos:[v('medico'),v('recepcao')],recurso:'clinico',objeto:{unidadeId:'a',profissionalUsuarioId:'u2'}});
   assert.equal(resultado.status,404);
 });
+
+test('Respostas malformadas do adaptador de vínculos falham fechadas',()=>{
+  for(const vinculos of [null, undefined, {}, 'recepcao', 1]){
+    const resultado=avaliarAutorizacao({...base,vinculos:vinculos as typeof base.vinculos});
+    assert.equal(resultado.autorizado,false);
+    assert.equal(resultado.status,403);
+  }
+  const resultado=avaliarAutorizacao({...base,vinculos:[null,undefined,{},v('recepcao','b')] as typeof base.vinculos});
+  assert.equal(resultado.status,403);
+  assert.equal(avaliarAutorizacao({...base,vinculos:[null,v('recepcao')] as typeof base.vinculos}).status,200);
+});
