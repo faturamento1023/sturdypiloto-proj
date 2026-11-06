@@ -222,3 +222,11 @@ Registro histórico anterior ao aceite final.
 - Alinhado `scripts/dev019_migracao.test.cjs` ao delimitador nomeado, commit `930ccc9`.
 - **Não afirmar execução SQL ou testes:** ambiente local sem `psql`/`postgres` e acesso de download direto ao repositório indisponível nesta sessão; GitHub CI ainda não verificado. A correção está versionada, não homologada.
 - Próxima ação: executar testes e migração em PostgreSQL/PGlite descartável; depois adaptar serviço DEV-019 ao banco com transações e auditoria real. DEV-019 segue aberta.
+
+## Sessão de 06/11/2026 — vínculo entre linha bloqueada e atualização DEV-019
+
+- Conferidos controle da branch, PR #20 aberto e Issues abertas (nenhuma) antes da alteração.
+- Corrigido serviço de revisão para enviar `priceId` derivado da linha retornada por `lockPrice` à operação `updatePrice`, evitando que o adaptador escolha linha apenas por critérios de busca. Commit `24944bf`.
+- Adicionado teste que confere `priceId`, unidade e revisão transmitidos ao adaptador, commit `8033a6c`.
+- Consulta de workflow vinculada ao commit `8033a6c` retornou lista vazia. **Teste novo não executado/CI não confirmado nesta sessão.**
+- Ainda não há adaptador PostgreSQL implementado nem execução da migração. Próxima ação: construir adaptador transacional com bloqueio de linha e atualização condicional, depois validar rollback de auditoria em PostgreSQL/PGlite descartável. DEV-019 permanece aberta.
