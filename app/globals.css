@@ -162,3 +162,5 @@ button.botao { border: 0; cursor: pointer; justify-content: center; }
 .acesso-qr { width: min(180px, 100%); height: auto; }
 .acesso-saida { margin-top: var(--dm-spacing-xl); }
 button.botao:disabled { opacity: 0.65; cursor: wait; }
+
+.acesso-link-botao { background: transparent; border: 0; cursor: pointer; font: inherit; padding: 0; }

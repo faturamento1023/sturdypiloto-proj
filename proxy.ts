@@ -29,4 +29,4 @@ export async function proxy(request: NextRequest) {
   return resposta;
 }
 
-export const config = { matcher: ['/conta/:path*', '/verificar-acesso'] };
+export const config = { matcher: ['/conta/:path*', '/verificar-acesso', '/painel'] };

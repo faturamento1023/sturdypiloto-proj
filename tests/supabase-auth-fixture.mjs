@@ -25,7 +25,7 @@ function novoFator(status) {
 }
 
 for (const projeto of ['desktop', 'celular']) {
-  for (const cenario of ['login', 'renovar', 'recuperar']) {
+  for (const cenario of ['login', 'renovar', 'recuperar', 'painel']) {
     const email = `${cenario}-${projeto}@example.com`;
     usuarios.set(email, {
       senha: senhaInicial,
@@ -42,10 +42,13 @@ for (const projeto of ['desktop', 'celular']) {
 await db.query('insert into piloto.unidades (id, nome) values ($1, $2), ($3, $4)',
   [unidadeA, 'Unidade fictícia A', unidadeB, 'Unidade fictícia B']);
 for (const projeto of ['desktop', 'celular']) {
-  const { user } = usuarios.get('login-' + projeto + '@example.com');
-  await db.query('insert into auth.users (id) values ($1)', [user.id]);
-  await db.query('insert into piloto_privado.vinculos (unidade_id, usuario_id, perfil) values ($1, $2, $3)',
-    [unidadeA, user.id, 'recepcao']);
+  const recepcao = usuarios.get('login-' + projeto + '@example.com').user.id;
+  const painel = usuarios.get('painel-' + projeto + '@example.com').user.id;
+  await db.query('insert into auth.users (id) values ($1), ($2)', [recepcao, painel]);
+  await db.query(
+    "insert into piloto_privado.vinculos (unidade_id, usuario_id, perfil) values ($1,$2,'recepcao'),($1,$3,'recepcao'),($4,$3,'financeiro')",
+    [unidadeA, recepcao, painel, unidadeB],
+  );
 }
 
 const base64url = valor => Buffer.from(JSON.stringify(valor)).toString('base64url');
@@ -148,14 +151,17 @@ async function atender(req, res) {
         return json(res, 200, sessao(conta));
       }
       return json(res, 403, { code: 'otp_expired', msg: 'Invalid or expired code' });
-    case 'POST /rest/v1/rpc/piloto_meus_perfis': {
+    case 'POST /rest/v1/rpc/piloto_meus_perfis':
+    case 'POST /rest/v1/rpc/piloto_minhas_unidades': {
       if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
       const { rows } = await db.transaction(async tx => {
         await tx.exec('set local role authenticated');
         await tx.query("select set_config('request.jwt.claims', $1, true)", [
           JSON.stringify({ sub: acesso.conta.user.id, aal: acesso.aal, is_anonymous: false }),
         ]);
-        return tx.query('select * from public.piloto_meus_perfis($1)', [dados.unidade]);
+        return url.pathname.endsWith('/piloto_meus_perfis')
+          ? tx.query('select * from public.piloto_meus_perfis($1)', [dados.unidade])
+          : tx.query('select * from public.piloto_minhas_unidades()');
       });
       return json(res, 200, rows);
     }

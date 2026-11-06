@@ -77,6 +77,8 @@ test('renova a sessão vencida e persiste os cookies renovados', async ({ page }
   await expect(page.getByRole('heading', { name: 'Minha conta' })).toBeVisible();
   await page.reload();
   await expect(page.getByText(email, { exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Abrir painel' }).click();
+  await expect(page.getByRole('heading', { name: 'Sem unidade vinculada' })).toBeVisible();
 });
 
 test('redefine a senha sem abrir sessão e rejeita reutilização do código', async ({ page, context }, info) => {
