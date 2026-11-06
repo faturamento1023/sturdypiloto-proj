@@ -2,7 +2,7 @@
  * A fonte é injetada; NÃO confiar em identidade, unidade ou vínculos do cliente.
  * Uma chamada nova a cada requisição impede cache de vínculos revogados.
  */
-import {avaliarAutorizacao, type Acao, type Identidade, type Objeto, type Pedido, type Recurso, type Resultado, type Vinculo} from './politica';
+import {avaliarAutorizacao, type Acao, type Identidade, type Objeto, type Pedido, type Recurso, type Resultado, type Vinculo} from './politica.ts';
 
 export interface FonteAutorizacao {
   sessaoAtual(): Promise<Identidade | null>;
