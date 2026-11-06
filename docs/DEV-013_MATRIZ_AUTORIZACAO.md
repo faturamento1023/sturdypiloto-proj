@@ -83,3 +83,11 @@
 - Acrescentados testes sintéticos de chaves `__proto__`, `constructor`, `toString`, ações desconhecidas, identidade divergente e dupla função com conteúdo clínico de terceiro.
 - **Testes:** novos cenários escritos, mas sem execução local confirmada nesta sessão; a consulta de workflows do SHA anterior retornou lista vazia. Não confundir com CI aprovado.
 - **Bloqueios mantidos:** integração ao banco, consulta fresca de vínculos, auditoria transacional, testes integrados AUTHZ-01–16, homologação das regras V01/V05/V07/V09 e reconciliação da dependência PR #13. Nenhuma rota real habilitada.
+
+## Revisão defensiva de 06/11/2026 — dados malformados do adaptador
+
+- Corrigido avaliador para negar acesso se a lista de vínculos recebida do adaptador não for um array, sem lançar exceção por `filter` inexistente.
+- Entradas nulas, objetos incompletos e vínculos de outra unidade são descartados. Somente vínculos ativos e da identidade corrente podem conceder permissão.
+- Adicionados testes unitários sintéticos para listas nulas, tipos inesperados e entradas inválidas misturadas com vínculos válidos.
+- **Verificação desta sessão:** código e testes publicados, execução local e CI **não confirmadas**. Não há integração com sessão Supabase, PostgreSQL, handlers ou auditoria nesta alteração.
+- **Próxima ação:** executar testes no runner, revisar tipagem e conectar consulta fresca de vínculos no servidor sem habilitar rotas clínicas.
