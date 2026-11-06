@@ -1,6 +1,6 @@
 # DEV-006 — Jornadas completas de UX, navegação e wireflows
 
-**Projeto Piloto • 05/11/2026 • versão de trabalho 0.1 • Tarefa #4 — EM ANDAMENTO**
+**Projeto Piloto • 05/11/2026 • versão de trabalho 0.2 • Tarefa #4 — EM ANDAMENTO**
 
 > **Escopo aprovado:** critérios DEV-005 v1.0. Este mapa descreve uma **implementação original**; as jornadas propostas são requisitos de design, não provas de como o WebUltra grava ou integra informações. Não há site funcional nem validação assistencial nesta etapa.
 
@@ -15,6 +15,8 @@ Descrever, para a fase **UX e arquitetura**, cada jornada com ator, ponto de ent
 - [Manual administrativo no Drive](https://drive.google.com/file/d/1BxsC35dauQ7ByHGgG7NtBaBj6GDxIgJG/view) e [manual médico](https://drive.google.com/file/d/1Kco9DwEOoLhtS5I9vzuonn_GSGcAgrO6/view)
 
 **Legenda:** **O = observado** (controle ou tela visível); **D = documentado** (fluxo narrado no manual, ainda não repetido); **P = proposto** (requisito original do Projeto Piloto, ainda não validado como comportamento do WebUltra). Nenhum fluxo foi marcado como funcionalmente testado.
+
+**Revisão de fontes:** [confronto documental dos manuais administrativo e médico, lacunas e decisões pendentes](DEV-006_REVISAO_FONTES.md). Os 53 passos possuem indicação explícita de **ação não testada**, mesmo quando o controle foi observado na tela.
 
 ## 2. Navegação e papéis propostos
 
