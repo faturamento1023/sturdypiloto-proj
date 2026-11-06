@@ -179,3 +179,12 @@ Registro histórico anterior ao aceite final.
 - O validador rejeita datas e centavos inválidos; consulta não aplica fallback silencioso entre convênios/unidades e bloqueia preço ausente/ambíguo. Ajustada a expressão regular de data no commit `01047b9`.
 - **Testes escritos, mas não executados nem confirmados no CI nesta sessão**. Não houve execução PostgreSQL/HTTP/navegador. Nenhuma funcionalidade clínica ou financeira foi homologada.
 - **DEV-019 permanece em andamento**. Próxima ação: rodar testes, implementar migração incremental e endpoints com MFA/autorização e auditoria transacional, UI responsiva, integração PostgreSQL descartável e revisão das regras V02/V05 com o financeiro. Não publicar produção.
+
+## Sessão de 06/11/2026 — reforço de validação DEV-019
+
+- Conferidos `main` (DEV-001 a DEV-018 concluídas), branch `dev-019-convenios-precos`, PR #20 aberto e busca de Issues. Mantida a sequência da DEV-019.
+- Corrigida `scripts/dev019_precos.cjs`: chave de preço incompleta passa a ser rejeitada e linha nula não interrompe a busca. Adicionados quatro testes em `scripts/dev019_precos.test.cjs`.
+- Criado `.github/workflows/dev019-prices.yml` para executar `node --test scripts/dev019_precos.test.cjs` em PR ou acionamento manual.
+- Commits: `bbabea2` (validação), `e7f176d` (testes), `a8dcd2e` (CI).
+- Consulta dos workflows vinculados a `a8dcd2e` retornou lista vazia. **Testes escritos, mas execução ainda não confirmada**. Não houve testes PostgreSQL, HTTP ou navegador.
+- Bloqueios: migração incremental, endpoints com autorização/auditoria transacional, interface e validação financeira V02/V05 ainda pendentes. Próxima tarefa: verificar CI e integrar persistência em banco descartável, mantendo DEV-019 aberta.
