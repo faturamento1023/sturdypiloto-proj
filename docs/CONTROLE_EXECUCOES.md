@@ -14,7 +14,7 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-005 — Definir critérios de paridade | **Concluída (escopo aprovado pelo responsável em 05/11/2026)** | `docs/DEV-005_CRITERIOS_PARIDADE.md` e `docs/DEV-005_CRITERIOS_POR_TELA.json` com 65 critérios (MVP 24, V1 37, futura 4), validação estrutural e status sem testes | DEV-006 — Mapear jornadas completas |
 
-| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento — PR #5 em revisão** | 7 jornadas/53 passos; docs `DEV-006_JORNADAS.json` e `DEV-006_WIREFLOWS.md` em branch, validador e Actions; PR #5 aberto em rascunho | CI de UX passou; resta revisão administrativa/médica e validação final antes de mesclar |
+| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento — PR #5 em revisão** | 7 jornadas/53 passos; JSON v0.2 com proveniência por passo, revisão cruzada `DEV-006_REVISAO_FONTES.md`, wireflows e CI em PR #5 (rascunho) | CI anterior passou; validar CI da revisão v0.2 e obter revisão conjunta administrativa/médica antes de mesclar |
 
 ## Regras para próximas execuções
 
@@ -27,7 +27,7 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **01 — Inventário e paridade**.
+- Fase do cronograma: **02 — UX e arquitetura** (DEV-006 em revisão, DEV-005 aprovada).
 - Tarefas concluídas: **DEV-001, DEV-002, DEV-003, DEV-004 e DEV-005** (a DEV-005 recebeu aprovação expressa do escopo v1.0; sem implementação funcional).
 - Tarefa atual: **DEV-006 — Mapear jornadas completas** (iniciada após aprovação da DEV-005).
 - Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
