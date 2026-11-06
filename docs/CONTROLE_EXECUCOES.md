@@ -218,3 +218,13 @@ Registro histórico anterior ao aceite final.
 
 - Entregue cadastro de salas e regras semanais com vigência, encerramento e proteção contra sobreposição por profissional ou sala. A grade mostra a disponibilidade calculada e o nome da sala.
 - Os testes cobrem autorização, isolamento, vigência, colisões e integração da configuração com a grade. Banco e navegador usam dados fictícios. A próxima etapa é DEV-023.
+
+## Sessão de 06/11/2026 — início DEV-023 (exceções e feriados)
+
+- Antes de escrever: conferidos `main` (DEV-001 a DEV-022 registradas como concluídas), Issues/PRs abertos (nenhum), DEV-005 v1.0, planilha original XLSM no Drive e inventário da pasta Web Ultra. Na planilha, DEV-023 = "Criar exceções e feriados", sequência 05/03, estado original "Planejado"; a planilha não foi alterada.
+- Branch `dev-023-excecoes-feriados` criada da `main`; [PR #24](https://github.com/faturamento1023/sturdypiloto-proj/pull/24) em rascunho.
+- Implementado resolvedor puro de janelas, bloqueios e substituições, com isolamento por unidade/profissional, datas civis válidas e precedência proposta de feriado bloqueante. Código `scripts/dev023_excecoes.cjs` (commit `9a5d035`).
+- Criados 12 cenários unitários fictícios em `scripts/dev023_excecoes.test.cjs` (commit `5b9198a`), documento de evidência/proposta em `docs/DEV-023_EXCECOES_FERIADOS.md` (commit `8938ef2`) e workflow Node 24 (commit `42b3f28`).
+- **Testes ainda não confirmados:** tentativa local de baixar arquivos do GitHub falhou por DNS `raw.githubusercontent.com`; consulta dos workflows do commit `42b3f28` retornou lista vazia. Não afirmar execução ou conclusão.
+- **Bloqueios:** persistência SQL, RLS/MFA/auditoria, integração à grade DEV-021/022, testes HTTP/PostgreSQL/navegador e aprovação operacional da precedência. Feriado prevalecer sobre substituição é proposta, não comportamento comprovado do WebUltra.
+- Próxima ação: executar CI, implementar migração e endpoints transacionais com testes descartáveis e revisar regras inferidas. DEV-023 continua aberta. Sem alteração de pacientes, WebUltra ou produção.
