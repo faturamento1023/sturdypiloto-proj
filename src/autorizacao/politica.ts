@@ -4,7 +4,7 @@
  */
 export const PERFIS = ['recepcao','medico','financeiro','gestao','administrador'] as const;
 export type Perfil = typeof PERFIS[number];
-export type Recurso = 'agenda'|'paciente'|'atendimento'|'item'|'itemClinico'|'catalogo'|'preco'|'clinico'|'financeiro'|'recebimento'|'vinculo'|'auditoria'|'cadastroMedico';
+export type Recurso = 'agenda'|'paciente'|'atendimento'|'item'|'itemClinico'|'catalogo'|'preco'|'clinico'|'financeiro'|'recebimento'|'vinculo'|'auditoria'|'cadastroMedico'|'cadastroUsuario';
 export type Acao = 'ler'|'criar'|'alterar'|'receber'|'estornar';
 export type Vinculo = { usuarioId: string; unidadeId: string; perfil: Perfil; ativo: boolean };
 export type Identidade = { usuarioId: string; aal: 'aal1'|'aal2' };
@@ -23,6 +23,7 @@ const regra: Readonly<Record<Recurso, Partial<Record<Acao, readonly Perfil[]>>>>
   clinico: {ler:['medico'],criar:['medico'],alterar:['medico']},
   financeiro: {ler:['financeiro','gestao','administrador']},
   cadastroMedico: {ler:['gestao','administrador'],criar:['gestao','administrador'],alterar:['gestao','administrador']},
+  cadastroUsuario: {ler:['administrador'],criar:['administrador'],alterar:['administrador']},
   recebimento: {}, vinculo: {}, auditoria: {},
 };
 const MEDICO_ESCOPO: readonly Recurso[] = ['agenda','paciente','atendimento','itemClinico','clinico'];

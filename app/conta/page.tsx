@@ -22,6 +22,7 @@ export default async function PaginaConta({ searchParams }: PaginaAcesso) {
       <p className="acesso-identidade">{sessao.usuario.email}</p>
       <div className="acoes-inicio">
         <Link href="/painel" className="botao" prefetch={false}>Abrir painel</Link>
+        <Link href="/convite" className="acesso-link" prefetch={false}>Validar convite</Link>
         <form action={sair}>
           <button className="acesso-link acesso-link-botao" type="submit">Sair</button>
         </form>

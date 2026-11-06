@@ -281,3 +281,7 @@
 .painel-aviso summary { cursor: pointer; min-height: var(--dm-size-touch); align-content: center; }
 .painel-lista-medicos summary span { display: block; color: var(--dm-color-text-secondary); margin-top: var(--dm-spacing-xs); }
 .painel-paginas-medicos { display: flex; gap: var(--dm-spacing-lg); margin-top: var(--dm-spacing-lg); }
+
+.painel-acesso-usuario { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dm-spacing-md); overflow-wrap: anywhere; }
+.painel-lista-perfis { list-style: none; padding: 0; margin: var(--dm-spacing-md) 0; }
+.painel-lista-perfis li + li { margin-top: var(--dm-spacing-sm); }

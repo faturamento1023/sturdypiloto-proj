@@ -26,7 +26,7 @@ function novoFator(status) {
 }
 
 for (const projeto of ['desktop', 'celular']) {
-  for (const cenario of ['login', 'renovar', 'recuperar', 'painel', 'cadastro']) {
+  for (const cenario of ['login', 'renovar', 'recuperar', 'painel', 'cadastro', 'usuarios', 'convidado']) {
     const email = `${cenario}-${projeto}@example.com`;
     usuarios.set(email, {
       senha: senhaInicial,
@@ -53,6 +53,12 @@ for (const projeto of ['desktop', 'celular']) {
   );
   await db.query('insert into piloto_privado.vinculos (unidade_id, usuario_id, perfil) values ($1,$2,$3)',
     [projeto === 'desktop' ? unidadeA : unidadeB, cadastro, projeto === 'desktop' ? 'administrador' : 'gestao']);
+  const administrador = usuarios.get('usuarios-' + projeto + '@example.com').user;
+  const convidado = usuarios.get('convidado-' + projeto + '@example.com').user;
+  await db.query('insert into auth.users (id,email,email_confirmed_at) values ($1,$2,now()),($3,$4,now())',
+    [administrador.id, administrador.email, convidado.id, convidado.email]);
+  await db.query("insert into piloto_privado.vinculos (unidade_id,usuario_id,perfil) values ($1,$2,'administrador')",
+    [projeto === 'desktop' ? unidadeA : unidadeB, administrador.id]);
 }
 
 const base64url = valor => Buffer.from(JSON.stringify(valor)).toString('base64url');
@@ -197,6 +203,32 @@ async function atender(req, res) {
                 dados.uf_crm, dados.area, dados.titulo_medico, dados.ativo_medico, dados.correlacao]);
         });
         return json(res, 200, listagem ? rows : rows[0].id);
+      } catch (erro) {
+        return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
+      }
+    }
+    case 'POST /rest/v1/rpc/piloto_listar_usuarios':
+    case 'POST /rest/v1/rpc/piloto_emitir_convite':
+    case 'POST /rest/v1/rpc/piloto_aceitar_convite':
+    case 'POST /rest/v1/rpc/piloto_gerir_usuarios': {
+      if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
+      const nome = url.pathname.split('/').at(-1);
+      const parametros = {
+        piloto_listar_usuarios: [dados.unidade, dados.correlacao],
+        piloto_emitir_convite: [dados.unidade, dados.email_convidado, dados.perfil_convidado, dados.profissional, dados.correlacao],
+        piloto_aceitar_convite: [dados.codigo, dados.correlacao],
+        piloto_gerir_usuarios: [dados.unidade, dados.operacao, dados.alvo, dados.habilitar, dados.correlacao],
+      }[nome];
+      try {
+        const { rows } = await db.transaction(async tx => {
+          await tx.exec('set local role authenticated');
+          await tx.query("select set_config('request.jwt.claims', $1, true)", [
+            JSON.stringify({ sub: acesso.conta.user.id, aal: acesso.aal, is_anonymous: false }),
+          ]);
+          const argumentos = parametros.map((_, indice) => '$' + (indice + 1)).join(',');
+          return tx.query('select public.' + nome + '(' + argumentos + ') as resultado', parametros);
+        });
+        return json(res, 200, rows[0].resultado);
       } catch (erro) {
         return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
       }

@@ -11,14 +11,14 @@ async function criarBancoTeste() {
       create role authenticated nologin;
       create role service_role nologin bypassrls;
       create schema auth;
-      create table auth.users (id uuid primary key);
+      create table auth.users (id uuid primary key, email text, email_confirmed_at timestamptz);
       create function auth.jwt() returns jsonb language sql stable as
         $$ select coalesce(nullif(current_setting('request.jwt.claims', true), '')::jsonb, '{}'::jsonb) $$;
       create function auth.uid() returns uuid language sql stable as
         $$ select nullif(auth.jwt() ->> 'sub', '')::uuid $$;
       grant usage on schema auth to authenticated;
     `);
-    for (const arquivo of ['dev009_modelo.sql', 'dev013_autorizacao.sql', 'dev014_shell.sql', 'dev015_auditoria.sql', 'dev016_medicos.sql']) {
+    for (const arquivo of ['dev009_modelo.sql', 'dev013_autorizacao.sql', 'dev014_shell.sql', 'dev015_auditoria.sql', 'dev016_medicos.sql', 'dev017_usuarios.sql']) {
       await db.exec(readFileSync(join(__dirname, arquivo), 'utf8'));
     }
     return db;
