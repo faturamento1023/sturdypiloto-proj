@@ -110,3 +110,12 @@ Registro histórico anterior ao aceite final.
 - A conta exige MFA TOTP. Para evitar acesso só com senha antes da DEV-013, o piloto aplica essa exigência a todos os usuários. A recuperação preserva o segundo fator nas contas que já o têm.
 - Testes automatizados usam um provedor simulado em loopback e contas fictícias. A entrega de e-mail e a configuração de um projeto Supabase isolado ficam pendentes de homologação operacional.
 - Próxima ação: DEV-013.
+
+## Sessão de 06/11/2026 — início DEV-013 (matriz de autorização)
+
+- Conferidos controle em `main` e na branch `dev-012-autenticacao`, PR aberto #13, ausência de Issues abertas, requisitos DEV-005, contrato DEV-010 e modelo DEV-009. Cronograma XLSX e pasta Web Ultra confirmados no Drive por metadados, sem alteração das fontes.
+- A branch `dev-012-autenticacao` registra DEV-012 concluída em ambiente simulado, mas PR #13 ainda aberto; para evitar conflito, DEV-013 parte dessa branch e **não** altera DEV-012.
+- Criados [matriz DEV-013](DEV-013_MATRIZ_AUTORIZACAO.md) e [PR #14](https://github.com/faturamento1023/sturdypiloto-proj/pull/14), rascunho com base na branch DEV-012. Commit inicial `8cf1ca0`.
+- Entrega: proposta de permissões por unidade e perfil, guardas de servidor, segregação clínica e 16 cenários de QA. **Não há handlers nem testes de autorização executados nesta sessão.**
+- Bloqueios: integração com a sessão DEV-012, revisão das decisões V01/V05/V07/V09, implementação de guardas, RLS e testes em PostgreSQL descartável. DEV-013 permanece **em andamento**; não mesclar ou publicar produção.
+- Próxima ação: implementar guardas e testes negativos, reconciliar PR #13 antes de mesclar PR #14.
