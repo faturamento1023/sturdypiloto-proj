@@ -40,6 +40,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-018 — Cadastro de procedimentos e grupos | **Concluída em ambiente descartável** | [Catálogo, categorias, preparo, TUSS e indicação de consentimento](DEV-018_PROCEDIMENTOS_GRUPOS.md). | DEV-019 — Cadastro de convênios e preços. |
 
+| 2026-11-06 | DEV-019 — Cadastro de convênios e preços | **Concluída em ambiente descartável** | [Convênios, tabelas por procedimento, vigências e coparticipação](DEV-019_CONVENIOS_PRECOS.md). | DEV-020 — Testar impacto cadastral. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -52,8 +54,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **04 — Cadastros mestres** (cadastros mestres iniciados pelo cadastro de médicos).
-- Tarefas concluídas: **DEV-001 a DEV-018**.
-- Próxima tarefa: **DEV-019 — Cadastro de convênios e preços**.
+- Tarefas concluídas: **DEV-001 a DEV-019**.
+- Próxima tarefa: **DEV-020 — Testar impacto cadastral**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -171,3 +173,9 @@ Registro histórico anterior ao aceite final.
 - Implementados catálogo da unidade, pesquisa, cadastro e inativação de procedimentos e grupos, com TUSS, tipo, preparo e exigência de consentimento.
 - Escrita restrita a gestão e administração com MFA. Testes cobrem revisão, auditoria, preservação do legado e bloqueio de grupo em uso.
 - A validação usa dados fictícios. A próxima etapa é a DEV-019, convênios e preços.
+
+## Sessão de 06/11/2026 — convênios e preços DEV-019
+
+- O PR #20 consolidou o trabalho inicial da automação e integrou cadastro, consulta por data, revisão e inativação.
+- O banco impede sobreposição de preços ativos, mantém os preços anteriores e registra auditoria. Coparticipação é registrada como valor fixo por preço nesta etapa.
+- Os testes usam dados fictícios. A próxima etapa é a DEV-020, impacto dos cadastros nas demais telas e nos registros históricos.

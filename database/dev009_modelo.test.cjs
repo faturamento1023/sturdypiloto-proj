@@ -470,6 +470,68 @@ test('Modelo, RLS e auditoria em PostgreSQL descartável', async t => {
     assert.equal(JSON.stringify(trilha).includes('Preparo sintético'), false);
   });
 
+  await t.test('convênios e preços isolam unidade, respeitam vigência e preservam valores históricos', async () => {
+    const correlacao = uuid(701);
+    const conv = 'select public.piloto_salvar_convenio($1,$2,$3,$4,$5,$6) as id';
+    const criar = 'select public.piloto_cadastrar_preco($1,$2,$3,$4,$5,$6,$7,$8) as id';
+    const revisar = 'select public.piloto_revisar_preco($1,$2,$3,$4,$5,$6) as id';
+    const convArgs = (id = null, rev = null, ativo = true, nome = 'Convênio sintético') => [a, id, rev, nome, ativo, correlacao];
+    const precoArgs = (convenio, inicio, fim, valor = 15000, copart = 2000) =>
+      [a, convenio, procedure, inicio, fim, valor, copart, correlacao];
+    const listar = (data, unidade = a, busca = 'Convênio sintético') => q(
+      'select public.piloto_listar_convenios_precos($1,$2,$3,0,$4) as dados', [unidade, busca, data, uuid(702)],
+    );
+
+    await as(doctor, async () => assert.equal((await listar(null)).rows[0].dados, null));
+    await as(recep, async () => await deny(conv, convArgs(), '42501'));
+    await as(admin, () => deny(conv, convArgs(), '42501'), { aal: 'aal1' });
+    await as(admin, () => deny(conv, [b, null, null, 'Outra unidade', true, correlacao], '42501'));
+    let convenio, primeiro, segundo;
+    await as(admin, async () => {
+      convenio = (await q(conv, convArgs())).rows[0].id;
+      await deny(conv, convArgs(null, null, true, '  convênio sintético '), '23505');
+      await deny(criar, precoArgs(convenio, '2030-01-01', '2030-01-10', 200, 201), '22023');
+      await deny(criar, precoArgs(convenio, '2030-01-10', '2030-01-10'), '22023');
+      primeiro = (await q(criar, precoArgs(convenio, '2030-01-01', '2030-01-10'))).rows[0].id;
+      segundo = (await q(criar, precoArgs(convenio, '2030-01-10', '2030-01-20', 18000, 3000))).rows[0].id;
+      await deny(criar, precoArgs(convenio, '2030-01-09', '2030-01-11'), '23P01');
+      await deny(revisar, [a, primeiro, 1, '2030-01-11', true, correlacao], '23P01');
+      assert.equal((await listar('2030-01-01')).rows[0].dados.precos[0].id, primeiro);
+      const fronteira = (await listar('2030-01-10')).rows[0].dados.precos;
+      assert.deepEqual(fronteira.map(p => [p.id, p.valor_centavos, p.coparticipacao_centavos]), [[segundo, 18000, 3000]]);
+      assert.deepEqual((await listar('2030-01-20')).rows[0].dados.precos, []);
+      assert.deepEqual((await listar('2030-01-10', a, 'Convênio inexistente')).rows[0].dados.precos, []);
+      assert.equal((await listar(null, b)).rows[0].dados, null);
+    });
+    await as(recep, async () => {
+      await deny(criar, precoArgs(convenio, '2030-02-01', null), '42501');
+      assert.equal((await listar('2030-01-10')).rows[0].dados.gestor, false);
+    });
+    await as(admin, async () => {
+      await q(revisar, [a, segundo, 1, '2030-01-20', false, correlacao]);
+      await deny(revisar, [a, segundo, 1, '2030-01-20', false, correlacao], '40001');
+      const substituto = (await q(criar, precoArgs(convenio, '2030-01-10', '2030-01-20', 19000))).rows[0].id;
+      assert.equal((await listar('2030-01-10')).rows[0].dados.precos[0].id, substituto);
+      await deny(revisar, [a, segundo, 2, '2030-01-20', true, correlacao], '23P01');
+      await q(conv, convArgs(convenio, 1, false));
+      await deny(criar, precoArgs(convenio, '2030-02-01', null), '22023');
+      assert.deepEqual((await listar('2030-01-10')).rows[0].dados.precos, []);
+      const historico = (await listar(null)).rows[0].dados.precos;
+      assert.equal(historico.length, 3);
+      assert.equal(historico.find(p => p.id === segundo).valor_centavos, 18000);
+      assert.equal(historico.some(p => p.disponivel), false);
+    });
+    await as(recep, async () => assert.deepEqual((await listar(null)).rows[0].dados.precos, []));
+    assert.equal((await q('select valor_unitario_centavos from piloto.itens_atendimento where id=$1', [item])).rows[0].valor_unitario_centavos, 10000);
+    const trilha = (await q('select * from piloto_privado.auditoria where correlacao_id=$1 order by id', [correlacao])).rows;
+    assert.deepEqual(trilha.map(e => [e.entidade, e.operacao, e.ator_id]), [
+      ['convenios', 'INSERT', admin], ['precos_procedimento', 'INSERT', admin],
+      ['precos_procedimento', 'INSERT', admin], ['precos_procedimento', 'UPDATE', admin],
+      ['precos_procedimento', 'INSERT', admin], ['convenios', 'UPDATE', admin],
+    ]);
+    assert.equal(JSON.stringify(trilha).includes('valor_centavos'), false);
+  });
+
   await t.test('RLS em todas as tabelas e auditoria sem conteúdo clínico', async () => {
     const { rows } = await q(`select count(*)::int total, bool_and(c.relrowsecurity) protegidas
       from pg_class c join pg_namespace n on n.oid=c.relnamespace

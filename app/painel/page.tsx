@@ -7,6 +7,7 @@ import { consultarUnidades, type UnidadePainel } from './unidades';
 import { CadastroMedicos } from './medicos/cadastro';
 import { CadastroUsuarios } from './usuarios/cadastro';
 import { CadastroCatalogo } from './catalogo/cadastro';
+import { CadastroConvenios } from './convenios/cadastro';
 import './painel.css';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +21,7 @@ const icones: Record<string, string> = {
   catalogo: 'M3 4h7v7H3zm11 0h7v7h-7zM3 15h7v6H3zm11 0h7v6h-7z',
   usuarios: 'M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m16 0v-2a4 4 0 0 0-3-3.9M14 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
   medicos: 'M3 7h18v13H3zM9 7V4h6v3m-3 3v7m-3-3.5h6',
+  convenios: 'M3 6h18v13H3zM3 10h18m-13 5h4m4 0h2',
   financeiro: 'M4 7h16v12H4zM4 11h16m-12 4h3M7 4h10',
   conta: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
   busca: 'M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm-2 4 5 5',
@@ -67,7 +69,7 @@ function UnidadeAtual({ unidade, unidades }: { unidade: UnidadePainel; unidades:
 
 type Parametros = Promise<{
   unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
-  filtroMedico?: string; filtroCatalogo?: string; pagina?: string; estado?: string;
+  filtroMedico?: string; filtroCatalogo?: string; filtroConvenios?: string; referencia?: string; pagina?: string; estado?: string;
 }>;
 
 export default async function PaginaPainel({ searchParams }: { searchParams: Parametros }) {
@@ -161,7 +163,13 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
           </header>
-          {atual?.id === 'catalogo' && !busca ? (
+          {atual?.id === 'convenios' && !busca ? (
+            <CadastroConvenios cliente={cliente} unidade={unidade.id}
+              filtro={typeof parametros.filtroConvenios === 'string' ? parametros.filtroConvenios.trim().slice(0, 80) : ''}
+              referencia={typeof parametros.referencia === 'string' ? parametros.referencia : ''}
+              pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0}
+              estado={typeof parametros.estado === 'string' ? parametros.estado : ''} />
+          ) : atual?.id === 'catalogo' && !busca ? (
             <CadastroCatalogo cliente={cliente} unidade={unidade.id}
               filtro={typeof parametros.filtroCatalogo === 'string' ? parametros.filtroCatalogo.trim().slice(0, 80) : ''}
               pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0}

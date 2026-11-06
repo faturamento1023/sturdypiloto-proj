@@ -24,6 +24,7 @@ const modulos: readonly Modulo[] = [
   { id: 'catalogo', nome: 'Catálogo', descricao: 'Procedimentos disponíveis na unidade.', recurso: 'catalogo', termos: 'procedimento exame' },
   { id: 'medicos', nome: 'Cadastro de médicos', descricao: 'CRM, especialidades e situação dos profissionais.', recurso: 'cadastroMedico', termos: 'cadastro médico crm especialidade' },
   { id: 'usuarios', nome: 'Usuários e perfis', descricao: 'Convites, vínculos e acessos da unidade.', recurso: 'cadastroUsuario', termos: 'usuário convite permissões bloqueio' },
+  { id: 'convenios', nome: 'Convênios e preços', descricao: 'Tabelas por procedimento, vigências e coparticipação.', recurso: 'preco', termos: 'convênio preço tabela vigência coparticipação' },
   { id: 'financeiro', nome: 'Financeiro', descricao: 'Saldos e movimentações dos atendimentos.', recurso: 'financeiro', termos: 'caixa pagamento faturamento' },
 ];
 

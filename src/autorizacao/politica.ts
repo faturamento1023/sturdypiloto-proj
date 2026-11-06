@@ -19,7 +19,7 @@ const regra: Readonly<Record<Recurso, Partial<Record<Acao, readonly Perfil[]>>>>
   item: {ler:['recepcao','financeiro','gestao','administrador'],criar:['recepcao','gestao']},
   itemClinico: {ler:['medico']},
   catalogo: {ler:PERFIS,criar:['gestao','administrador'],alterar:['gestao','administrador']},
-  preco: {ler:['recepcao','financeiro','gestao','administrador']},
+  preco: {ler:['recepcao','financeiro','gestao','administrador'],criar:['gestao','administrador'],alterar:['gestao','administrador']},
   clinico: {ler:['medico'],criar:['medico'],alterar:['medico']},
   financeiro: {ler:['financeiro','gestao','administrador']},
   cadastroMedico: {ler:['gestao','administrador'],criar:['gestao','administrador'],alterar:['gestao','administrador']},
