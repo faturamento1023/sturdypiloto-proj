@@ -1,0 +1,19 @@
+name: DEV-020 — Impacto de cadastros
+on:
+  pull_request:
+    paths:
+      - 'database/dev020_*'
+      - '.github/workflows/dev020-impacto.yml'
+  workflow_dispatch:
+jobs:
+  impacto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar PostgreSQL descartável PGlite
+        run: npm install --prefix /tmp/piloto-dev020 --ignore-scripts --no-audit --no-fund --save-exact @electric-sql/pglite@0.5.15
+      - name: Executar teste de preservação histórica
+        run: NODE_PATH=/tmp/piloto-dev020/node_modules node --test database/dev020_impacto_cadastros.test.cjs
