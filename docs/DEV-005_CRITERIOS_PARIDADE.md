@@ -1,6 +1,6 @@
 # DEV-005 — Proposta de paridade funcional e critérios de aprovação
 
-**Projeto:** Projeto Piloto • **Data:** 05/11/2026 • **Versão:** 1.0 (proposta) • **Status:** **AGUARDANDO APROVAÇÃO DO RESPONSÁVEL**.
+**Projeto:** Projeto Piloto • **Data:** 05/11/2026 • **Versão:** 1.0 (proposta) • **Status:** **APROVADO PELO RESPONSÁVEL em 05/11/2026** — aprovação do escopo funcional/visual v1.0, não homologação clínica.
 
 Este documento e [DEV-005_CRITERIOS_POR_TELA.json](DEV-005_CRITERIOS_POR_TELA.json) definem **o que será construído**, como será testado e em qual fase. A proposta foi baseada nos manuais, no [mapa DEV-004](DEV-004_MAPA_FUNCIONAL.md) e na [matriz visual DEV-002](DEV-002_MATRIZ_VISUAL.md). Nenhum módulo está implementado ou homologado.
 
@@ -184,7 +184,7 @@ O registro JSON contém, **para cada um dos 65 tópicos**, os campos essenciais,
 
 > **Aprovo a proposta DEV-005 — Critérios de Paridade, versão 1.0**, incluindo distribuição MVP/V1/Futuro, identidade visual própria e validação clínica/financeira antes de uso real. Autorizo seguir para DEV-006 e para a construção dos protótipos em ambiente de testes, sem dados de pacientes.
 
-Se houver ressalvas, ajustar este documento antes de encerrar a DEV-005. **A publicação deste arquivo no GitHub não equivale à aprovação.**
+Se houver ressalvas, ajustar este documento antes de encerrar a DEV-005. **Decisão registrada:** o responsável aprovou explicitamente a proposta DEV-005 v1.0 em 05/11/2026 e autorizou seguir para DEV-006. A aprovação não habilita uso assistencial, assinatura real ou produção.
 
 ## 7. Rastreabilidade e próximos passos
 
@@ -192,8 +192,8 @@ Se houver ressalvas, ajustar este documento antes de encerrar a DEV-005. **A pub
 - [x] Proposta de fases MVP / V1 / Futura e papéis de acesso.
 - [x] Padrões de qualidade, visual, segurança e checklist mensurável.
 - [x] Itens não validados identificados sem presumir funcionamento.
-- [ ] **Aprovação explícita do responsável** e incorporação de eventuais ajustes.
-- [ ] Encerramento da issue DEV-005 após aprovação.
-- [ ] Abertura da DEV-006 / alinhamento técnico seguinte, conforme cronograma.
+- [x] **Aprovação explícita do responsável** recebida em conversa em 05/11/2026, sem ressalvas.
+- [x] Encerramento da issue DEV-005 autorizado pelo responsável.
+- [x] Autorizado iniciar DEV-006 — mapeamento detalhado de jornadas completas, conforme cronograma.
 
 **Fontes:** [Pasta Drive](https://drive.google.com/drive/folders/197rL9plJRd9hQYHAzOEOHR8xY-Q-XXE8), [manuais](https://drive.google.com/file/d/1BxsC35dauQ7ByHGgG7NtBaBj6GDxIgJG/view) [médico](https://drive.google.com/file/d/1Kco9DwEOoLhtS5I9vzuonn_GSGcAgrO6/view), [DEV-002](DEV-002_MATRIZ_VISUAL.md), [DEV-004](DEV-004_MAPA_FUNCIONAL.md), [inventário DEV-004](DEV-004_TELAS.json).
