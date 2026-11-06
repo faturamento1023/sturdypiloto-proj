@@ -1,0 +1,16 @@
+name: DEV-021 grade agenda
+on:
+  pull_request:
+    paths:
+      - 'scripts/dev021_grade*'
+      - '.github/workflows/dev021-grade.yml'
+  workflow_dispatch:
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test scripts/dev021_grade.test.cjs
