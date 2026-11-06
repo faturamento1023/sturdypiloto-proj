@@ -285,3 +285,10 @@ Registro histórico anterior ao aceite final.
 - Corrigido defeito verificável no teste estático de delimitadores PL/pgSQL: a expressão regular anterior continha barras escapadas em excesso e falharia mesmo diante de `as $$ ... $$;` correto. O teste agora procura abertura/fechamento e corpo da função (commit `9ee15f3`).
 - **Validação:** conferência lógica do padrão; execução integral dos testes, CI e migração PostgreSQL continuam não confirmadas. Não declarar aprovação clínica nem conclusão da DEV-023.
 - Próximo: executar a suíte no CI, aplicar migração em PostgreSQL descartável, integrar escrita transacional e grade, testar isolamento e concorrência. PR #24 segue em revisão. Nenhum dado real ou produção alterados.
+
+## Sessão de 06/11/2026 — validação pontual do teste DEV-023
+
+- Antes de escrever: conferidos controle da main e da branch, PR #24 aberto, Issues abertas (nenhuma), DEV-005 v1.0, cronograma XLSM do Drive e inventário da pasta Web Ultra. O cronograma confirma DEV-023 como exceções e feriados; não foi alterado.
+- Corrigido outro defeito real na expressão regular de `database/dev023_excecoes_feriados.test.cjs`: `public\\.piloto` no literal regex procurava uma barra invertida antes de qualquer caractere, não o ponto literal. Usada classe `[.]` inequívoca (commit `fe3192d`).
+- Executada localmente com Node uma prova isolada da expressão corrigida sobre trecho sintético `as $$ ... $$; revoke all on function public.piloto_ler_excecoes_agenda`: PASSOU. **Não equivale a executar o arquivo de teste completo, GitHub Actions ou PostgreSQL.**
+- DEV-023 continua aberta. Pendências: validar migração em banco descartável, integrar gravação transacional e grade, testes RLS/HTTP/navegador, revisar precedência de feriados com a operação. Sem publicação, pacientes ou mudanças no WebUltra.
