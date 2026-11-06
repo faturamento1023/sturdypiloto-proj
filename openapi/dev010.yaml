@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Projeto Piloto · API Clínica DM
-  version: 0.3.0
-  description: Contratos da DEV-010 e consulta de acesso da DEV-013. Exemplos inteiramente fictícios.
+  version: 0.4.0
+  description: Contratos da DEV-010, acesso da DEV-013 e grade da DEV-021. Exemplos inteiramente fictícios.
 servers:
 - url: /api/v1
   description: Prefixo relativo ao ambiente autorizado.
@@ -89,9 +89,13 @@ paths:
       operationId: listarAgenda
       tags:
       - Agenda
-      summary: Listar agenda
-      description: Retorna reservas cujo intervalo cruza a janela. Médico recebe a própria agenda. Ordenação por início
-        e ID crescentes.
+      summary: Consultar a grade de agenda
+      description: >
+        Retorna a grade completa da janela no escopo da sessão, sem dados de paciente.
+        Médico recebe a própria agenda. Compromissos são recortados nas fronteiras,
+        ordenados por início e ID e incluem cancelamentos. Horários livres vêm de
+        janelas explícitas, descontando compromissos que não foram cancelados.
+        Se a capacidade for excedida, reduza a janela ou filtre por profissional.
       x-perfis:
       - recepcao
       - gestao
@@ -101,47 +105,34 @@ paths:
       - $ref: '#/components/parameters/Inicio'
       - $ref: '#/components/parameters/Fim'
       - $ref: '#/components/parameters/ProfissionalFiltro'
-      - name: estado
-        in: query
-        required: false
-        description: Estado do agendamento.
-        schema:
-          $ref: '#/components/schemas/EstadoAgendamento'
-      - $ref: '#/components/parameters/Cursor'
-      - $ref: '#/components/parameters/Limite'
       responses:
         '200':
-          description: Página de resultados no escopo da sessão.
+          description: Grade no escopo da sessão. A resposta usa Cache-Control private, no-store.
           headers:
             X-Correlation-Id:
               $ref: '#/components/headers/CorrelationId'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginaAgendamento'
-              example:
-                dados:
-                - id: 00000000-0000-4000-8000-000000000031
-                  pacienteId: 00000000-0000-4000-8000-000000000011
-                  profissionalId: 00000000-0000-4000-8000-000000000021
-                  inicio: '2026-11-05T08:00:00-03:00'
-                  fim: '2026-11-05T08:30:00-03:00'
-                  estado: reservado
-                paginacao:
-                  proximoCursor: null
-                  limite: 25
+                $ref: '#/components/schemas/GradeAgenda'
         '400':
           $ref: '#/components/responses/EntradaInvalida'
         '401':
           $ref: '#/components/responses/AutenticacaoNecessaria'
         '403':
           $ref: '#/components/responses/AcessoNegado'
-        '404':
-          $ref: '#/components/responses/NaoEncontrado'
-        '429':
-          $ref: '#/components/responses/LimiteExcedido'
-        '500':
-          $ref: '#/components/responses/ErroInterno'
+        '422':
+          description: Grade excede o limite de 500 registros por categoria de entrada.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problema'
+        '503':
+          description: Consulta temporariamente indisponível.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problema'
   /unidades/{unidadeId}/agendamentos:
     parameters:
     - $ref: '#/components/parameters/UnidadeId'
@@ -2389,20 +2380,55 @@ components:
           maximum: 2147483647
         conteudo:
           $ref: '#/components/schemas/ConteudoDocumento'
-    PaginaAgendamento:
+    IntervaloGradeAgenda:
+      type: object
+      required: [profissional_id, inicio, fim]
+      properties:
+        profissional_id:
+          $ref: '#/components/schemas/Identificador'
+        inicio:
+          $ref: '#/components/schemas/Instante'
+        fim:
+          $ref: '#/components/schemas/Instante'
+    GradeAgenda:
       type: object
       additionalProperties: false
-      required:
-      - dados
-      - paginacao
+      required: [profissionais, agendamentos, livres]
       properties:
-        dados:
+        profissionais:
           type: array
-          maxItems: 100
+          maxItems: 500
           items:
-            $ref: '#/components/schemas/Agendamento'
-        paginacao:
-          $ref: '#/components/schemas/Paginacao'
+            type: object
+            additionalProperties: false
+            required: [id, nome, ativo]
+            properties:
+              id:
+                $ref: '#/components/schemas/Identificador'
+              nome:
+                type: string
+              ativo:
+                type: boolean
+        agendamentos:
+          type: array
+          maxItems: 500
+          items:
+            allOf:
+            - $ref: '#/components/schemas/IntervaloGradeAgenda'
+            - type: object
+              required: [id, estado]
+              properties:
+                id:
+                  $ref: '#/components/schemas/Identificador'
+                estado:
+                  $ref: '#/components/schemas/EstadoAgendamento'
+            unevaluatedProperties: false
+        livres:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/IntervaloGradeAgenda'
+            unevaluatedProperties: false
     PaginaPacienteResumo:
       type: object
       additionalProperties: false

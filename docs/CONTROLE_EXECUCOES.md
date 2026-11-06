@@ -44,6 +44,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-020 — Testar impacto cadastral | **Concluída em ambiente descartável** | [Histórico de itens, inativação e testes de integração](DEV-020_IMPACTO_CADASTROS.md). | DEV-021 — Desenhar grade de agenda. |
 
+| 2026-11-06 | DEV-021 — Desenhar grade de agenda | **Concluída em ambiente descartável** | [Grade por dia e profissional, consulta auditada e intervalos livres](DEV-021_GRADE_AGENDA.md). | DEV-022 — Configurar disponibilidade regular. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -55,9 +57,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **04 — Cadastros mestres** (cadastros mestres iniciados pelo cadastro de médicos).
-- Tarefas concluídas: **DEV-001 a DEV-020**.
-- Próxima tarefa: **DEV-021 — Desenhar grade de agenda**.
+- Fase do cronograma: **05 — Agendamento** (grade de agenda integrada).
+- Tarefas concluídas: **DEV-001 a DEV-021**.
+- Próxima tarefa: **DEV-022 — Configurar disponibilidade regular**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -203,3 +205,9 @@ Registro histórico anterior ao aceite final.
 - Na branch `dev-021-grade-agenda`, adicionados contrato de leitura autorizada `scripts/dev021_leitura.cjs` (commit `cc384bd`), oito testes sintéticos de perfil, MFA e escopo (commit `e4fe15f`), inclusão no CI (commit `dc0360a`) e documentação (commit `2b5c93a`).
 - **Testes novos escritos, mas não executados/confirmados no CI**. Nenhuma migração ou consulta PostgreSQL real foi executada. Não houve acesso a pacientes, edição do WebUltra ou publicação em produção.
 - DEV-021 permanece aberta. Próxima tarefa: repositório SQL com RLS e teste de isolamento em PostgreSQL descartável, HTTP e UI responsiva; conferir regras operacionais inferidas antes de homologar.
+
+## Sessão de 06/11/2026 — grade de agenda no painel DEV-021
+
+- Continuidade no [PR #22](https://github.com/faturamento1023/sturdypiloto-proj/pull/22) após a DEV-020. Os protótipos Node do rascunho foram substituídos pela implementação integrada e pelos testes no CI principal.
+- Entregue grade diária com filtros, intervalos livres calculados a partir de janelas explícitas, compromissos e cancelamentos. A leitura SQL respeita RLS e registra a decisão de acesso.
+- Cobertura de MFA, isolamento por unidade e profissional, virada de dia, cancelamento e proteção de dados de paciente. PostgreSQL e navegador usam dados fictícios. A próxima etapa é a DEV-022.

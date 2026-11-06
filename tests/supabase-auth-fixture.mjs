@@ -51,6 +51,19 @@ for (const unidade of [unidadeA, unidadeB]) {
   await db.query("insert into piloto.atendimentos (unidade_id,id,paciente_id,profissional_id) values ($1,$2,$3,$4)", [unidade, atendimento, paciente, profissional]);
   await db.query("insert into piloto.itens_atendimento (unidade_id,atendimento_id,procedimento_id,quantidade,valor_unitario_centavos) values ($1,$2,$3,2,12500)", [unidade, atendimento, procedimento]);
 }
+// Janelas datadas do piloto DEV-021, sem integração com agenda real.
+const agendaProfissional = '00000000-0000-4000-8000-000000000221';
+const agendaPaciente = '00000000-0000-4000-8000-000000000222';
+await db.query(`insert into piloto.profissionais (unidade_id,id,nome) values
+  ($1,$3,'Dra. Íris Fictícia'),($1,'00000000-0000-4000-8000-000000000223','Dr. Bento Fictício'),
+  ($2,$3,'Profissional de outra unidade')`, [unidadeA, unidadeB, agendaProfissional]);
+await db.query("insert into piloto.pacientes (unidade_id,id,nome) values ($1,$2,'Paciente sintético reservado')", [unidadeA, agendaPaciente]);
+await db.query(`insert into piloto.janelas_agenda (unidade_id,profissional_id,periodo)
+  values ($1,$2,tstzrange('2030-11-06 08:00-03','2030-11-06 12:00-03','[)'))`, [unidadeA, agendaProfissional]);
+await db.query(`insert into piloto.agendamentos (unidade_id,profissional_id,paciente_id,inicio,fim,estado) values
+  ($1,$2,$3,'2030-11-06 09:00-03','2030-11-06 09:30-03','confirmado'),
+  ($1,$2,$3,'2030-11-06 10:00-03','2030-11-06 10:30-03','cancelado')`, [unidadeA, agendaProfissional, agendaPaciente]);
+
 for (const projeto of ['desktop', 'celular']) {
   const recepcao = usuarios.get('login-' + projeto + '@example.com').user.id;
   const painel = usuarios.get('painel-' + projeto + '@example.com').user.id;
@@ -216,6 +229,7 @@ async function atender(req, res) {
         return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
       }
     }
+    case 'POST /rest/v1/rpc/piloto_ler_grade_agenda':
     case 'POST /rest/v1/rpc/piloto_listar_historico_itens':
     case 'POST /rest/v1/rpc/piloto_listar_convenios_precos':
     case 'POST /rest/v1/rpc/piloto_salvar_convenio':
@@ -231,6 +245,7 @@ async function atender(req, res) {
       if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
       const nome = url.pathname.split('/').at(-1);
       const parametros = {
+        piloto_ler_grade_agenda: [dados.unidade, dados.profissional, dados.de, dados.ate, dados.correlacao],
         piloto_listar_historico_itens: [dados.unidade, dados.busca, dados.pagina, dados.correlacao],
         piloto_listar_convenios_precos: [dados.unidade, dados.busca, dados.referencia, dados.pagina, dados.correlacao],
         piloto_salvar_convenio: [dados.unidade, dados.convenio, dados.revisao_esperada, dados.nome_convenio,

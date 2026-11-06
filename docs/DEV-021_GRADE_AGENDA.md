@@ -1,33 +1,18 @@
-# DEV-021 — Grade de agenda (início incremental)
+# DEV-021 — Grade de agenda
 
-**Situação:** em andamento. A `main` registra DEV-020 concluída. Esta entrega é um módulo de projeção de intervalos e testes sintéticos, **não** uma grade navegável ou homologada.
+## Consulta no painel
 
-## Fonte e limite de evidência
+Acesse **Agenda → Grade de horários**. Escolha o dia e o profissional ou pesquise pelo nome. A grade lista os horários no fuso de São Paulo. As cores complementam os rótulos textuais de disponibilidade e situação. Recepção, gestão e administração consultam a unidade vinculada. Um perfil exclusivamente médico só consulta a própria agenda ativa.
 
-- **Observado/documentado no WebUltra:** inventário DEV-004 registra grade por dia/agenda e telas ADM-01 a ADM-06; a persistência e as regras de bloqueio não foram testadas na fonte.
-- **Proposta do Piloto:** projetar compromissos da unidade em janela [início, fim), ordenar por horário, filtrar por profissional e não expor identidade do paciente na projeção pública do módulo.
-- **Testado:** oito cenários unitários foram escritos, mas a execução local e o CI ainda não estão confirmados. Nenhuma sessão clínica foi utilizada.
+A leitura apresenta intervalos livres dentro de janelas explícitas. Compromissos são recortados às fronteiras do período consultado. Cancelamentos aparecem na lista e não ocupam a janela. Cadastros inativos preservam compromissos existentes para perfis operacionais e deixam de indicar disponibilidade. Sem janelas cadastradas, não são inferidas vagas a partir dos espaços entre compromissos.
 
-## Entrega atual
+## Banco e API
 
-- `scripts/dev021_grade.cjs`: validação de horários ISO com deslocamento, janela máxima de 31 dias, filtragem por unidade e profissional, interseção temporal, ordenação determinística e projeção mínima.
-- `scripts/dev021_grade.test.cjs`: limites inclusivo/exclusivo, adjacência, fuso obrigatório, escopo, ordenação, privacidade e cancelamento.
-- `.github/workflows/dev021-grade.yml`: teste Node 22 para PR.
+- Aplicar `database/dev021_grade_agenda.sql` após DEV-020 no ambiente de teste. A tabela `piloto.janelas_agenda` recebe intervalos datados e não sobrepostos por unidade e profissional. O fixture de testes fornece janelas sintéticas.
+- A interface e o [GET da grade](../openapi/dev010.yaml) compartilham a leitura SQL. A função de consulta executa sob RLS, usa o JWT da sessão com MFA e registra a decisão na auditoria. Nomes e IDs de pacientes ficam fora da projeção.
+- A consulta usa uma janela de até 31 dias, com início inclusivo e fim exclusivo. Em vez da página de reservas prevista no contrato inicial, retorna a grade coerente com os intervalos livres. Se houver mais de 500 compromissos, janelas ou profissionais em uma consulta ampla, orienta a reduzir o intervalo ou filtrar por profissional, sem devolver horários livres parciais.
+- Testes usam PostgreSQL descartável, chamadas HTTP autenticadas e navegador em desktop e celular. O inventário DEV-004 orientou o recorte funcional. As regras internas do WebUltra continuam sem homologação.
 
-## Pendências para conclusão
+## Próxima tarefa
 
-1. Implementar consulta HTTP autenticada com autorização no servidor, vínculo ativo e MFA, conforme DEV-013.
-2. Grade responsiva em desktop/celular, com estados vazio, erro, carregando, seleção de agenda e filtros; não expor paciente a perfil não autorizado.
-3. Aplicar regras de reserva, conflito, feriados, exceções, cotas e situação de agenda somente após especificação e testes próprios; não inferir comportamento original.
-4. Executar testes em PostgreSQL descartável, HTTP e navegador; verificar CI e critérios DEV-005.
-5. Registrar decisão operacional de validação sem declarar homologação clínica ou publicação.
-
-**Próxima tarefa:** integração segura da leitura da grade com dados fictícios em ambiente descartável.
-
-## Leitura autorizada incremental — 06/11/2026
-
-- Adicionado `scripts/dev021_leitura.cjs`: contrato de leitura com validação da janela, MFA, perfil ativo, unidade vinculada e revalidação do vínculo via repositório antes de consultar dados. Médico só consulta seu próprio `professionalId`; recepção/gestão podem consultar agenda da unidade vinculada.
-- A projeção exclui `patientId` e outros campos não permitidos. A consulta real ao PostgreSQL ainda deverá aplicar RLS e escopo de profissional no próprio SQL, não apenas na aplicação.
-- Adicionados oito testes sintéticos em `scripts/dev021_leitura.test.cjs`, incluídos no workflow. **Execução dos novos testes e CI ainda não confirmadas.**
-- Trata-se de serviço agnóstico de banco, não endpoint HTTP nem autorização clínica homologada. Não usa dados reais.
-- Próxima tarefa: implementar repositório PostgreSQL seguro e testes de isolamento no banco descartável, depois endpoint HTTP e interface responsiva.
+DEV-022 — Configurar disponibilidade regular por profissional e local. Exceções, feriados, cotas e fluxos operacionais de gravação seguem o backlog. A implantação e homologação no Supabase hospedado ficam pendentes.
