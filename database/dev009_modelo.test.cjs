@@ -332,11 +332,84 @@ test('Modelo, RLS e auditoria em PostgreSQL descartável', async t => {
     assert.equal((await q('select count(*)::int total from piloto.atendimentos where profissional_id=$1', [otherPro])).rows[0].total, 1);
   });
 
+  await t.test('convites exigem e-mail verificado, MFA, validade e uso único', async () => {
+    const [convidado, semConfirmacao, medicoNovo, medicoConta] = [501, 502, 503, 504].map(uuid);
+    await q("insert into auth.users (id,email,email_confirmed_at) values ($1,'convite@example.com',now()),($2,'nao-confirmado@example.com',null),($3,'medico-novo@example.com',now())",
+      [convidado, semConfirmacao, medicoConta]);
+    await q("insert into piloto.profissionais (unidade_id,id,nome,crm,crm_uf) values ($1,$2,'Médico do convite','3456','GO')",
+      [a, medicoNovo]);
+
+    const emitir = (email, perfil, profissional = null, unidade = a) => q(
+      'select public.piloto_emitir_convite($1,$2,$3,$4,$5) as codigo',
+      [unidade, email, perfil, profissional, uuid(510)],
+    );
+    const aceitar = codigo => q('select public.piloto_aceitar_convite($1,$2) as unidade', [codigo, uuid(511)]);
+    const gerir = (operacao, alvo, habilitar = null) => q(
+      'select public.piloto_gerir_usuarios($1,$2,$3,$4,$5) as ok', [a, operacao, alvo, habilitar, uuid(512)],
+    );
+    const listar = (unidade = a) => q('select public.piloto_listar_usuarios($1,$2) as dados', [unidade, uuid(513)]);
+    await as(recep, async () => {
+      await assert.rejects(emitir('convite@example.com', 'recepcao'), { code: '42501' });
+      assert.equal((await listar()).rows[0].dados, null);
+    });
+    await as(admin, () => assert.rejects(emitir('convite@example.com', 'recepcao'), { code: '42501' }), { aal: 'aal1' });
+
+    let codigo, antigo, expirado, naoConfirmado, codigoMedico, cancelar, cancelado;
+    await as(admin, async () => {
+      await assert.rejects(emitir('convite@example.com', 'administrador'), { code: '22023' });
+      await assert.rejects(emitir('convite@example.com', 'recepcao', null, b), { code: '42501' });
+      await assert.rejects(emitir('medico-novo@example.com', 'medico', proB), { code: '22023' });
+      antigo = (await emitir('convite@example.com', 'recepcao')).rows[0].codigo;
+      codigo = (await emitir(' Convite@Example.com ', 'recepcao')).rows[0].codigo;
+      expirado = (await emitir('convite@example.com', 'financeiro')).rows[0].codigo;
+      naoConfirmado = (await emitir('nao-confirmado@example.com', 'recepcao')).rows[0].codigo;
+      codigoMedico = (await emitir('medico-novo@example.com', 'medico', medicoNovo)).rows[0].codigo;
+      cancelado = (await emitir('convite@example.com', 'gestao')).rows[0].codigo;
+      const dados = (await listar()).rows[0].dados;
+      cancelar = dados.convites.find(c => c.perfil === 'gestao').id;
+      assert.equal(JSON.stringify(dados).includes(codigo), false);
+      assert.equal(JSON.stringify(dados).includes('codigo_hash'), false);
+      assert.equal((await gerir('cancelar', cancelar)).rows[0].ok, true);
+    });
+    assert.match(codigo, /^[0-9a-f]{64}$/);
+    await q("update piloto_privado.convites set expira_em=clock_timestamp() - interval '1 second' where perfil='financeiro'");
+    await as(convidado, async () => assert.equal((await aceitar(codigo)).rows[0].unidade, null), { aal: 'aal1' });
+    await as(recep, async () => assert.equal((await aceitar(codigo)).rows[0].unidade, null));
+    await as(semConfirmacao, async () => assert.equal((await aceitar(naoConfirmado)).rows[0].unidade, null));
+    await as(convidado, async () => {
+      for (const invalido of [antigo, expirado, cancelado]) {
+        assert.equal((await aceitar(invalido)).rows[0].unidade, null);
+      }
+      assert.equal((await aceitar(codigo)).rows[0].unidade, a);
+      assert.equal((await aceitar(codigo)).rows[0].unidade, null);
+    });
+    await as(medicoConta, async () => assert.equal((await aceitar(codigoMedico)).rows[0].unidade, a));
+    assert.equal((await q('select usuario_id from piloto.profissionais where id=$1', [medicoNovo])).rows[0].usuario_id, medicoConta);
+
+    await q("insert into piloto_privado.vinculos (unidade_id,usuario_id,perfil) values ($1,$3,'financeiro'),($2,$3,'recepcao')", [a, b, convidado]);
+    await as(admin, async () => {
+      const dados = (await listar()).rows[0].dados;
+      const alvo = dados.vinculos.find(v => v.usuario_id === convidado);
+      const administrador = dados.vinculos.find(v => v.usuario_id === admin && v.perfil === 'administrador');
+      assert.equal((await gerir('bloquear', administrador.id)).rows[0].ok, false);
+      assert.equal((await gerir('bloquear', alvo.id)).rows[0].ok, true);
+      assert.equal((await gerir('perfil', alvo.id, true)).rows[0].ok, true);
+      assert.equal((await listar(b)).rows[0].dados, null);
+    });
+    const acessos = (await q('select unidade_id,perfil,ativo from piloto_privado.vinculos where usuario_id=$1 order by unidade_id,perfil', [convidado])).rows;
+    assert.equal(acessos.filter(v => v.unidade_id === a && v.ativo).length, 1);
+    assert.equal(acessos.find(v => v.unidade_id === b).ativo, true);
+    const trilha = (await q("select * from piloto_privado.auditoria where entidade in ('convites','vinculos') and correlacao_id=$1", [uuid(511)])).rows;
+    assert.equal(trilha.length, 4);
+    assert.equal(JSON.stringify(trilha).includes(codigo), false);
+    assert.equal(JSON.stringify(trilha).includes('@example.com'), false);
+  });
+
   await t.test('RLS em todas as tabelas e auditoria sem conteúdo clínico', async () => {
     const { rows } = await q(`select count(*)::int total, bool_and(c.relrowsecurity) protegidas
       from pg_class c join pg_namespace n on n.oid=c.relnamespace
       where n.nspname in ('piloto','piloto_privado') and c.relkind='r'`);
-    assert.deepEqual(rows, [{ total: 14, protegidas: true }]);
+    assert.deepEqual(rows, [{ total: 15, protegidas: true }]);
     await q("select set_config('request.jwt.claims', $1, false)", [JSON.stringify({ sub: recep })]);
     await q("update piloto.agendamentos set estado='confirmado' where id=$1", [booking]);
     await q("select set_config('request.jwt.claims', '{}', false)");

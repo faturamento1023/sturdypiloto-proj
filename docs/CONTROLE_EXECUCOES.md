@@ -36,6 +36,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-016 — Cadastro de médicos | **Concluída em ambiente descartável** | [Listagem, criação, edição, inativação e auditoria](DEV-016_CADASTRO_MEDICOS.md). | DEV-017 — Cadastro de usuários e perfis. |
 
+| 2026-11-06 | DEV-017 — Cadastro de usuários e perfis | **Concluída em ambiente descartável** | [Convites, vínculos, permissões e bloqueio por unidade](DEV-017_USUARIOS_PERFIS.md). | DEV-018 — Cadastro de procedimentos e grupos. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -48,8 +50,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **04 — Cadastros mestres** (cadastros mestres iniciados pelo cadastro de médicos).
-- Tarefas concluídas: **DEV-001 a DEV-016**.
-- Próxima tarefa: **DEV-017 — Cadastro de usuários e perfis**.
+- Tarefas concluídas: **DEV-001 a DEV-017**.
+- Próxima tarefa: **DEV-018 — Cadastro de procedimentos e grupos**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -154,3 +156,10 @@ Registro histórico anterior ao aceite final.
 - O PR #17 passou da validação preliminar para o cadastro operacional em homologação, com pesquisa, edição e inativação lógica.
 - Gestão e administração com MFA podem gerenciar o cadastro na unidade vinculada. CRM/UF é único por unidade e alterações usam revisão e auditoria transacional.
 - Testes usam cadastro fictício, PostgreSQL descartável e identidade simulada. A próxima etapa é a DEV-017, cadastro de usuários e perfis.
+
+## Sessão de 06/11/2026 — usuários e perfis DEV-017
+
+- Implementados gestão de perfis por unidade, emissão e aceite de convites com validade, vínculo médico, cancelamento e bloqueio auditado.
+- Administração exige MFA e vínculo ativo. O aceite exige e-mail confirmado e consome o código uma única vez.
+- O piloto usa contas previamente provisionadas e entrega manual do código. Homologação em Supabase hospedado e e-mails automáticos seguem pendentes.
+- A próxima etapa é a DEV-018, cadastro de procedimentos e grupos.

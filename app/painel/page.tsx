@@ -5,6 +5,7 @@ import { TelaAcesso } from '../auth/interface';
 import { sessaoNoServidor, verificarIdentidade } from '../auth/sessao';
 import { consultarUnidades, type UnidadePainel } from './unidades';
 import { CadastroMedicos } from './medicos/cadastro';
+import { CadastroUsuarios } from './usuarios/cadastro';
 import './painel.css';
 
 export const dynamic = 'force-dynamic';
@@ -16,6 +17,7 @@ const icones: Record<string, string> = {
   atendimentos: 'M9 5H5v16h14V5h-4M9 3h6v4H9zM9 14h6m-3-3v6',
   prontuario: 'M6 3h8l4 4v14H6zM14 3v5h4M9 12h6m-6 4h6',
   catalogo: 'M3 4h7v7H3zm11 0h7v7h-7zM3 15h7v6H3zm11 0h7v6h-7z',
+  usuarios: 'M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m16 0v-2a4 4 0 0 0-3-3.9M14 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
   medicos: 'M3 7h18v13H3zM9 7V4h6v3m-3 3v7m-3-3.5h6',
   financeiro: 'M4 7h16v12H4zM4 11h16m-12 4h3M7 4h10',
   conta: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
@@ -158,7 +160,10 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
           </header>
-          {atual?.id === 'medicos' && !busca ? (
+          {atual?.id === 'usuarios' && !busca ? (
+            <CadastroUsuarios cliente={cliente} unidade={unidade.id}
+              estado={typeof parametros.estado === 'string' ? parametros.estado : ''} />
+          ) : atual?.id === 'medicos' && !busca ? (
             <CadastroMedicos cliente={cliente} unidade={unidade.id}
               filtro={typeof parametros.filtroMedico === 'string' ? parametros.filtroMedico.trim().slice(0, 80) : ''}
               pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0}
