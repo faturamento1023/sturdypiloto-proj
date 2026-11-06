@@ -25,3 +25,6 @@ test('unidades nao-array nao autorizam',async()=>assert.equal((await createExcep
 test('profissional vazio rejeitado',async()=>assert.equal((await createException({actor,command:{...command,professionalId:'  '},db:fake()})).status,400));
 test('sala vazia rejeitada',async()=>assert.equal((await createException({actor,command:{...command,roomId:' '},db:fake()})).status,400));
 test('id ausente aborta auditoria',async()=>{const d=fake({insertException:async()=>({})});await assert.rejects(createException({actor,command,db:d}),/insercao sem id/);assert.equal(d.events.length,0);});
+
+test('perfil administrador do banco autorizado com MFA e vinculo',async()=>assert.equal((await createException({actor:{...actor,role:'administrador'},command,db:fake()})).status,201));
+test('nome de perfil inexistente administracao rejeitado',async()=>assert.equal((await createException({actor:{...actor,role:'administracao'},command,db:fake()})).status,403));
