@@ -12,7 +12,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-004 — Mapear lacunas e fluxos | **Concluída (especificação funcional)** | `docs/DEV-004_MAPA_FUNCIONAL.md`: 39 telas admin + 26 tópicos médicos, 3 fluxos Mermaid, 12 lacunas, 16 casos QA; `docs/DEV-004_TELAS.json`: inventário de 65 telas conferido | DEV-005 — Definir critérios de paridade por perfil e obter aprovação |
 
-| 2026-11-05 | DEV-005 — Definir critérios de paridade | **Em revisão — aguardando aprovação** | `docs/DEV-005_CRITERIOS_PARIDADE.md` e `docs/DEV-005_CRITERIOS_POR_TELA.json` com 65 critérios (MVP 24, V1 37, futura 4), validação estrutural e status sem testes | Aprovação do responsável antes de DEV-006 |
+| 2026-11-05 | DEV-005 — Definir critérios de paridade | **Concluída (escopo aprovado pelo responsável em 05/11/2026)** | `docs/DEV-005_CRITERIOS_PARIDADE.md` e `docs/DEV-005_CRITERIOS_POR_TELA.json` com 65 critérios (MVP 24, V1 37, futura 4), validação estrutural e status sem testes | DEV-006 — Mapear jornadas completas |
+
+| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento** | Fluxos detalhados de recepção, médico, laudos e financeiro em preparação; issue a abrir | Revisão de início/fim, estados e exceções |
 
 ## Regras para próximas execuções
 
@@ -26,9 +28,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **01 — Inventário e paridade**.
-- Tarefas concluídas: **DEV-001, DEV-002, DEV-003 e DEV-004** (documentação e inventário; sem implementação funcional).
-- Tarefa atual: **DEV-005 — Aguardando aprovação do responsável** (proposta e checklist entregues, issue #3 aberta).
-- Etapas 02–14: ainda não iniciadas.
+- Tarefas concluídas: **DEV-001, DEV-002, DEV-003, DEV-004 e DEV-005** (a DEV-005 recebeu aprovação expressa do escopo v1.0; sem implementação funcional).
+- Tarefa atual: **DEV-006 — Mapear jornadas completas** (iniciada após aprovação da DEV-005).
+- Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
 - Aplicação web: ainda não iniciada; não há link de homologação.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
 - A planilha Excel de cronograma no Drive ainda contém texto inicial que afirmava ausência dos JPG médicos; o documento `docs/DEV-002_MATRIZ_VISUAL.md` prevalece até a atualização controlada da planilha.
