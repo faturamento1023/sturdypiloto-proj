@@ -2,7 +2,7 @@
 
 Sistema web próprio para gestão ambulatorial da Clínica DM, desenvolvido com base nas **funcionalidades documentadas** do UltraSystem WEB (WebUltra). O objetivo é oferecer jornadas semelhantes (recepção, agendamento, atendimentos, prontuário, laudos, relatórios e financeiro), com código, identidade visual e arquitetura próprios.
 
-> **Estado atual — 05/11/2026:** Fase 02 — UX e arquitetura. Mapa das jornadas (DEV-006) aceito. Próxima tarefa: protótipo no Figma (DEV-007). O desenvolvimento usa dados fictícios.
+> **Estado atual — 05/11/2026:** Fase 02 — UX e arquitetura. [Protótipo DEV-007 entregue](docs/DEV-007_PROTOTIPO_FIGMA.md). Próxima tarefa: tokens e componentes reutilizáveis (DEV-008). O desenvolvimento usa dados fictícios.
 
 ## Fontes oficiais
 

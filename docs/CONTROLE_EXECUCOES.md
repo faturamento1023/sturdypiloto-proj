@@ -16,6 +16,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-006 — Mapear jornadas completas | **Concluída. Mapa aceito pelo responsável pelo projeto** | 7 jornadas e 53 passos, 4 requisitos de produto aprovados e 20 testes unitários do domínio sintético. Aceite final no [checklist](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão). | DEV-007 — Criar protótipo no Figma com dados fictícios e manter as regras operacionais abertas sinalizadas. |
 
+| 2026-11-05 | DEV-007 — Criar protótipo no Figma | **Concluída** | [Protótipo editável](DEV-007_PROTOTIPO_FIGMA.md) com 52 frames em desktop e celular, navegação por módulo e modal de inclusão de procedimento no atendimento. | DEV-008 — Formalizar tokens e componentes reutilizáveis. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -27,9 +29,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **02 — UX e arquitetura** (mapa da DEV-006 aceito).
-- Tarefas concluídas: **DEV-001 a DEV-006**.
-- Próxima tarefa: **DEV-007 — Criar protótipo no Figma**. A tarefa ainda não foi iniciada.
+- Fase do cronograma: **02 — UX e arquitetura** (protótipo da DEV-007 entregue).
+- Tarefas concluídas: **DEV-001 a DEV-007**.
+- Próxima tarefa: **DEV-008 — Formalizar tokens e componentes reutilizáveis**.
 - Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
 - Aplicação web de produção ainda não iniciada. O PR inclui demonstração HTML de recepção e funções de domínio em memória, com dados fictícios.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -51,3 +53,9 @@ Registro histórico anterior ao aceite final.
 - Em resposta à solicitação de aceite para encerramento, o responsável pelo projeto confirmou «Está aceito». O [checklist](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão) registra a confirmação e as questões operacionais sem resposta individual.
 - O commit técnico `b3bef24` passou na [validação das jornadas](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42142832609) e nos [testes de domínio](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42142832572). O aceite fecha o desenho das jornadas. A revisão especializada de regras clínicas e operacionais e a verificação da demonstração no navegador seguem pendentes.
 - Próxima ação: DEV-007 com jornadas aceitas, dados fictícios e estados para as regras que exigem validação posterior.
+
+## Sessão de 05/11/2026 — protótipo DEV-007
+
+- Criado o protótipo editável no Figma com duas entradas (desktop e celular), catálogo e inclusão de procedimentos, recepção, pacientes, atendimentos, prontuário, exames, laudos e financeiro. O [registro da entrega](DEV-007_PROTOTIPO_FIGMA.md) contém links e cobertura.
+- Conferidas a estrutura final, a ligação do modal de procedimentos e a composição da agenda nos dois dispositivos. A interface usa exemplos fictícios.
+- O responsável autorizou seguir o desenvolvimento sem pedir novos aceites de etapa. Próxima ação: DEV-008.
