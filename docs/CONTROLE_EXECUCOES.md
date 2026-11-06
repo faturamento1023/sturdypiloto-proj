@@ -165,3 +165,11 @@ Registro histórico anterior ao aceite final.
 - **Testes:** não executados localmente; consulta de runs para o commit intermediário não retornou execuções. O CI do último commit permanece sem resultado confirmado. Não declarar aprovação.
 - **Limites:** não há integração real com PostgreSQL/Supabase, handlers, RLS nem auditoria transacional; dados apenas fictícios. Sem mudança no WebUltra ou produção.
 - **Próxima tarefa:** conferir CI do último commit, corrigir falhas e conectar o adaptador a fonte PostgreSQL descartável com testes AUTHZ-01–16. DEV-013 permanece em andamento.
+
+## Sessão de 06/11/2026 — DEV-013: validação de entradas antes de leitura
+
+- Consultados antes da escrita o controle atualizado na branch DEV-013, PRs/Issues, cronograma XLSX e pasta Web Ultra no Drive; fontes originais preservadas. O controle indica DEV-001–DEV-012 concluídas e DEV-013 em andamento.
+- Identificado risco de executar `objetoNaUnidade` com `recurso`/ `acao` adulterados em runtime, pois TypeScript não valida valores recebidos por HTTP. Adicionada lista explícita de recursos e ações válidos em `src/autorizacao/servidor.ts`, com negação 403 antes da consulta a vínculos/objetos. **Esta validação não substitui a matriz de permissão.**
+- Teste sintético adicionado em `src/autorizacao/servidor.test.ts`: `__proto__`, `constructor`, recurso inexistente e ação `toString` devem ser negados sem consultas de dados. Commits: `2614884` e `7ba50b4`. PR existente: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
+- **Testes não executados localmente**; consulta de workflow do commit anterior não retornou execuções. CI deste incremento ainda não confirmado. Nenhuma integração real a PostgreSQL/Supabase, nenhuma alteração em WebUltra ou produção.
+- Bloqueios: confirmar CI, integrar fonte com banco descartável, RLS e auditoria, validar AUTHZ-01–16, resolver regras operacionais pendentes. DEV-013 permanece em andamento. Próxima tarefa: executar testes e corrigir falhas antes da integração.
