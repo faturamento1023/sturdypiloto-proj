@@ -11,8 +11,8 @@ test('migração usa transação explicita', () => {
 test('blocos DO possuem delimitadores validos', () => {
   assert.doesNotMatch(sql, /\bdo\s+\$\s+begin/i);
   assert.doesNotMatch(sql, /\bend\s+\$\s*;/i);
-  assert.equal((sql.match(/\bdo\s+\$\$/gi) || []).length, 2);
-  assert.equal((sql.match(/\bend\s+\$\$;/gi) || []).length, 2);
+  assert.equal((sql.match(/\bdo\s+\$dev019\$/gi) || []).length, 2);
+  assert.equal((sql.match(/\bend\s+\$dev019\$;/gi) || []).length, 2);
 });
 test('migração nao apaga tabelas ou linhas', () => {
   assert.doesNotMatch(sql, /\b(drop|truncate|delete)\s+(table|from|piloto\.)/i);
