@@ -26,3 +26,9 @@ test('RPC nao publica acesso anonimo',()=>{
  assert.match(sql,/revoke all on function public\.piloto_ler_excecoes_agenda/);
  assert.match(sql,/to authenticated/);
 });
+
+test('RPC usa delimitadores PLpgSQL validos',()=>{
+ assert.match(sql,/as \\$\\$\\s*declare resposta jsonb;/);
+ assert.match(sql,/end;\\s*\\$\\$;\\s*revoke all on function public\\.piloto_ler_excecoes_agenda/);
+ assert.doesNotMatch(sql,/as \\$\\s*declare resposta jsonb;/);
+});
