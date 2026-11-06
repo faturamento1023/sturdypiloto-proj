@@ -20,6 +20,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-008 — Definir design system original | **Concluída** | [Design system editável](DEV-008_DESIGN_SYSTEM.md), com 64 variáveis, 9 estilos de texto, 6 famílias de componentes, 8 ícones e tokens CSS. | DEV-009 — Modelar banco de dados, permissões e auditoria. |
 
+| 2026-11-05 | DEV-009 — Modelar banco de dados | **Concluída** | [Modelo PostgreSQL executável](DEV-009_MODELO_DADOS.md) com 14 tabelas, vínculos por unidade, versões, movimentações, políticas de leitura e trilha de mutações. Cinco grupos de cenários passaram em banco descartável. | DEV-010 — Definir endpoints, filtros, paginação e contratos de API. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -31,9 +33,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **02 — UX e arquitetura** (design system da DEV-008 entregue).
-- Tarefas concluídas: **DEV-001 a DEV-008**.
-- Próxima tarefa: **DEV-009 — Modelar banco de dados, permissões e auditoria**.
+- Fase do cronograma: **02 — UX e arquitetura** (modelo de dados da DEV-009 entregue).
+- Tarefas concluídas: **DEV-001 a DEV-009**.
+- Próxima tarefa: **DEV-010 — Definir API e limites**.
 - Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
 - Aplicação web de produção ainda não iniciada. O PR inclui demonstração HTML de recepção e funções de domínio em memória, com dados fictícios.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -67,3 +69,9 @@ Registro histórico anterior ao aceite final.
 - Criadas as fundações, os componentes com variantes e a prancha de referência no Figma. O [registro da entrega](DEV-008_DESIGN_SYSTEM.md) descreve os usos e referencia os tokens CSS.
 - Conferidos os vínculos entre variáveis, estilos e componentes, o encaixe da prancha e a correspondência dos tokens Web.
 - Próxima ação: DEV-009.
+
+## Sessão de 05/11/2026 — modelo de dados DEV-009
+
+- Modeladas as entidades de cadastro, agenda, atendimento, prontuário, financeiro e auditoria. O [registro técnico](DEV-009_MODELO_DADOS.md) descreve as chaves, a matriz de acesso e os limites desta fase.
+- O SQL foi executado somente em PostgreSQL descartável com dados sintéticos. Cinco grupos de cenários passaram. Autenticação integrada, comandos de escrita e auditoria de leitura pertencem às próximas etapas.
+- Próxima ação: DEV-010.
