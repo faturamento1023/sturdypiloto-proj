@@ -214,3 +214,11 @@ Registro histórico anterior ao aceite final.
 - Workflow DEV-019 atualizado para incluir o teste do serviço (commit `1ed9870`).
 - **Limitação importante:** serviço depende de adaptador `db.transaction` com bloqueio de linha, RLS e rollback real; não é um endpoint HTTP nem prova de persistência PostgreSQL. Falha de auditoria deve abortar transação no adaptador.
 - Próxima tarefa: implementar adaptador PostgreSQL descartável e executar testes reais de transação e rollback, depois HTTP e UI. DEV-019 segue aberta e sem homologação financeira.
+
+## Sessão de 06/11/2026 — revisão de consistência da migração DEV-019
+
+- Antes de escrever: consultados controle da branch, PR #20 aberto, Issues abertas (nenhuma), metadados do cronograma XLSX e da pasta Web Ultra no Drive. Fontes preservadas.
+- Identificada divergência verificável entre o registro anterior e o conteúdo real de `database/dev019_convenios_precos.sql`: os blocos `DO` ainda continham delimitador único `$` inválido. A tentativa com `$$` não persistiu mudança de conteúdo (SHA permaneceu igual); corrigido efetivamente para delimitador nomeado `$dev019$`, commit `e6ce619`, com novo SHA de arquivo.
+- Alinhado `scripts/dev019_migracao.test.cjs` ao delimitador nomeado, commit `930ccc9`.
+- **Não afirmar execução SQL ou testes:** ambiente local sem `psql`/`postgres` e acesso de download direto ao repositório indisponível nesta sessão; GitHub CI ainda não verificado. A correção está versionada, não homologada.
+- Próxima ação: executar testes e migração em PostgreSQL/PGlite descartável; depois adaptar serviço DEV-019 ao banco com transações e auditoria real. DEV-019 segue aberta.
