@@ -28,6 +28,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-012 — Implementar autenticação | **Concluída em ambiente simulado** | [Login, recuperação, sessão e MFA TOTP](DEV-012_AUTENTICACAO.md). Conta protegida por AAL2 no servidor, com fluxo testável em desktop e celular. | DEV-013 — Autorizar perfis e vínculos por unidade. |
 
+| 2026-11-06 | DEV-013 — Implementar autorização | **Concluída em ambiente descartável** | [Matriz, RLS, consulta HTTP de acesso e projeção médica](DEV-013_MATRIZ_AUTORIZACAO.md). | DEV-014 — Desenhar o shell do sistema. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -39,9 +41,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **03 — Infraestrutura e permissões** (base DEV-011 e autenticação DEV-012).
-- Tarefas concluídas: **DEV-001 a DEV-012**.
-- Próxima tarefa: **DEV-013 — Implementar autorização**.
+- Fase do cronograma: **03 — Infraestrutura e permissões** (base DEV-011, autenticação DEV-012 e autorização DEV-013).
+- Tarefas concluídas: **DEV-001 a DEV-013**.
+- Próxima tarefa: **DEV-014 — Desenhar o shell do sistema**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -110,3 +112,11 @@ Registro histórico anterior ao aceite final.
 - A conta exige MFA TOTP. Para evitar acesso só com senha antes da DEV-013, o piloto aplica essa exigência a todos os usuários. A recuperação preserva o segundo fator nas contas que já o têm.
 - Testes automatizados usam um provedor simulado em loopback e contas fictícias. A entrega de e-mail e a configuração de um projeto Supabase isolado ficam pendentes de homologação operacional.
 - Próxima ação: DEV-013.
+
+## Sessão de 06/11/2026 — autorização DEV-013
+
+- Retomado o PR #14 da execução agendada e reconciliado com a autenticação da `main`.
+- Integrados sessão AAL2, consulta HTTP dos próprios perfis por unidade, vínculos atualizados no PostgreSQL e RLS. A projeção médica do próprio atendimento usa uma função privada com três campos sem valores.
+- Testes cobrem negação por padrão, revogação durante a sessão, isolamento entre unidades, tentativas de acesso clínico indevido e integração da consulta HTTP com o banco descartável.
+- A aplicação dos SQLs em Supabase hospedado e o envio real de e-mails continuam pendentes de homologação operacional. Operações clínicas e financeiras do OpenAPI serão implementadas nos módulos correspondentes.
+- Próxima ação: DEV-014.

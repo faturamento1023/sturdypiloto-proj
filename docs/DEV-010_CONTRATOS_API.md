@@ -1,6 +1,6 @@
 # DEV-010 — Contratos de API e limites
 
-O [contrato OpenAPI 3.1](../openapi/dev010.yaml) define 24 operações em 19 rotas, com exemplos sintéticos, formatos de entrada e saída e perfis permitidos. A especificação parte das jornadas da DEV-006 e do [modelo de dados da DEV-009](DEV-009_MODELO_DADOS.md). A DEV-010 encerra o desenho da API. A implementação dos handlers, da sessão e das regras transacionais fica para as etapas correspondentes.
+O [contrato OpenAPI 3.1](../openapi/dev010.yaml) registra 24 operações da DEV-010 em 19 rotas e a consulta de acesso adicionada pela DEV-013, com exemplos sintéticos, formatos de entrada e saída e perfis permitidos. A especificação parte das jornadas da DEV-006 e do [modelo de dados da DEV-009](DEV-009_MODELO_DADOS.md). A DEV-010 encerra o desenho da API. A implementação dos handlers, da sessão e das regras transacionais fica para as etapas correspondentes.
 
 ## Operações por área
 

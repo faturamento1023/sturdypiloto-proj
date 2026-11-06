@@ -30,6 +30,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:database
+      - run: npm run test:authorization
       - run: npm run build
       - run: npm run prepare:homologacao
       - run: npm run test:e2e

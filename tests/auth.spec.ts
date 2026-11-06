@@ -2,6 +2,9 @@ import { expect, test, type Page } from '@playwright/test';
 
 const senhaInicial = 'Piloto-ficticio-123';
 const senhaNova = 'Piloto-senha-alterada-456';
+const unidadeA = '00000000-0000-4000-8000-000000000001';
+const unidadeB = '00000000-0000-4000-8000-000000000002';
+const acesso = (unidade: string) => '/api/v1/unidades/' + unidade + '/acesso';
 
 async function preencherLogin(page: Page, email: string, senha = senhaInicial) {
   await page.getByLabel('E-mail', { exact: true }).fill(email);
@@ -16,6 +19,7 @@ async function confirmarMfa(page: Page, codigo = '123456') {
 
 test('protege a conta, valida credenciais e encerra a sessão', async ({ page, context }, info) => {
   const email = `login-${info.project.name}@example.com`;
+  expect((await context.request.get(acesso(unidadeA))).status()).toBe(401);
   await page.goto('/conta');
   await expect(page).toHaveURL(/\/entrar$/);
 
@@ -24,6 +28,7 @@ test('protege a conta, valida credenciais e encerra a sessão', async ({ page, c
 
   await preencherLogin(page, email);
   await expect(page).toHaveURL(/\/verificar-acesso$/);
+  expect((await context.request.get(acesso(unidadeA))).status()).toBe(403);
   await page.goto('/conta');
   await expect(page).toHaveURL(/\/verificar-acesso$/);
   await page.getByRole('button', { name: 'Configurar autenticador' }).click();
@@ -34,6 +39,18 @@ test('protege a conta, valida credenciais e encerra a sessão', async ({ page, c
   await confirmarMfa(page);
   await expect(page.getByRole('heading', { name: 'Minha conta' })).toBeVisible();
   await expect(page.getByText(email, { exact: true })).toBeVisible();
+  const permitido = await context.request.get(acesso(unidadeA));
+  expect(permitido.status()).toBe(200);
+  expect(permitido.headers()['cache-control']).toContain('no-store');
+  expect(await permitido.json()).toEqual({ unidadeId: unidadeA, perfis: ['recepcao'] });
+  expect((await context.request.get(acesso('invalida'))).status()).toBe(400);
+  const proibido = await context.request.get(acesso(unidadeB) + '?perfil=administrador', {
+    headers: { 'X-Perfil': 'administrador', 'X-Unidade-Id': unidadeA },
+  });
+  expect(proibido.status()).toBe(403);
+  expect(await proibido.json()).toMatchObject({
+    codigo: 'ACESSO_NEGADO', correlacaoId: proibido.headers()['x-correlation-id'],
+  });
   const cookies = (await context.cookies()).filter(cookie => cookie.name.startsWith('dm-piloto-sessao'));
   expect(cookies.length).toBeGreaterThan(0);
   for (const cookie of cookies) {

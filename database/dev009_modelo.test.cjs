@@ -1,9 +1,6 @@
 const assert = require('node:assert/strict');
-const { readFileSync } = require('node:fs');
-const { join } = require('node:path');
 const test = require('node:test');
-const { PGlite } = require('@electric-sql/pglite');
-const { btree_gist } = require('@electric-sql/pglite/contrib/btree_gist');
+const { criarBancoTeste } = require('./ambiente-teste.cjs');
 
 const uuid = n => '00000000-0000-4000-8000-' + String(n).padStart(12, '0');
 const [a, b, recep, doctor, otherDoctor, finance, admin, revoked, doctorB] =
@@ -13,21 +10,8 @@ const [pro, otherPro, proB, patient, otherPatient, patientB, procedure, payer, b
   [21, 22, 23, 31, 32, 33, 41, 42, 51, 52, 61, 62, 63, 71, 81, 82, 91].map(uuid);
 
 test('DEV-009 — modelo e RLS em PostgreSQL descartável', async t => {
-  const db = await PGlite.create({ extensions: { btree_gist } });
+  const db = await criarBancoTeste();
   t.after(() => db.close());
-  await db.exec(`
-    create role anon nologin;
-    create role authenticated nologin;
-    create role service_role nologin bypassrls;
-    create schema auth;
-    create table auth.users (id uuid primary key);
-    create function auth.jwt() returns jsonb language sql stable as
-      $$ select coalesce(nullif(current_setting('request.jwt.claims', true), '')::jsonb, '{}'::jsonb) $$;
-    create function auth.uid() returns uuid language sql stable as
-      $$ select nullif(auth.jwt() ->> 'sub', '')::uuid $$;
-    grant usage on schema auth to authenticated;
-  `);
-  await db.exec(readFileSync(join(__dirname, 'dev009_modelo.sql'), 'utf8'));
 
   const q = (sql, args = []) => db.query(sql, args);
   const deny = (sql, args, code) => assert.rejects(q(sql, args), { code });
@@ -37,7 +21,7 @@ test('DEV-009 — modelo e RLS em PostgreSQL descartável', async t => {
   };
   async function as(user, work, options = {}) {
     await q("select set_config('request.jwt.claims', $1, false)", [
-      JSON.stringify({ sub: user, is_anonymous: options.anonymous ?? false,
+      JSON.stringify({ sub: user, aal: options.aal ?? 'aal2', is_anonymous: options.anonymous ?? false,
         user_metadata: { role: 'administrador' } }),
     ]);
     await db.exec(options.role === 'anon' ? 'set role anon' : 'set role authenticated');
@@ -170,6 +154,45 @@ test('DEV-009 — modelo e RLS em PostgreSQL descartável', async t => {
     await as(revoked, () => visible('unidades', []));
     await as(recep, () => visible('unidades', []), { anonymous: true });
     await as(undefined, () => deny('select * from piloto.unidades', [], '42501'), { role: 'anon' });
+  });
+
+  await t.test('MFA, consulta do próprio vínculo e revogação no mesmo contexto de sessão', async () => {
+    const perfis = async (unidade, esperado) => {
+      const { rows } = await q('select perfil from public.piloto_meus_perfis($1)', [unidade]);
+      assert.deepEqual(rows.map(row => row.perfil), esperado);
+    };
+    await as(recep, async () => {
+      await perfis(a, []);
+      await visible('pacientes', []);
+    }, { aal: 'aal1' });
+    await as(recep, () => perfis(a, []), { anonymous: true });
+    await as(undefined, () => deny('select * from public.piloto_meus_perfis($1)', [a], '42501'), { role: 'anon' });
+    await as(recep, async () => {
+      await perfis(a, ['recepcao']);
+      await perfis(b, []);
+      await db.exec('reset role');
+      await q('update piloto_privado.vinculos set ativo=false where unidade_id=$1 and usuario_id=$2', [a, recep]);
+      await db.exec('set role authenticated');
+      await perfis(a, []);
+      await visible('pacientes', []);
+    });
+    await q('update piloto_privado.vinculos set ativo=true where unidade_id=$1 and usuario_id=$2', [a, recep]);
+    await q('update piloto.unidades set ativa=false where id=$1', [a]);
+    await as(recep, () => perfis(a, []));
+    await q('update piloto.unidades set ativa=true where id=$1', [a]);
+  });
+
+  await t.test('projeção clínica devolve apenas os itens do próprio atendimento, sem valores', async () => {
+    const itens = (unidade, atendimento) => q('select * from piloto_privado.itens_clinicos($1, $2)', [unidade, atendimento]);
+    await as(doctor, async () => {
+      assert.deepEqual((await itens(a, encounter)).rows, [{ id: item, procedimento_id: procedure, quantidade: 2 }]);
+      assert.deepEqual((await itens(a, otherEncounter)).rows, []);
+      assert.deepEqual((await itens(b, encounter)).rows, []);
+      assert.deepEqual((await q('select valor_unitario_centavos from piloto.itens_atendimento')).rows, []);
+    });
+    for (const perfil of [recep, finance, admin, otherDoctor]) {
+      await as(perfil, async () => assert.deepEqual((await itens(a, encounter)).rows, []));
+    }
   });
 
   await t.test('RLS em todas as tabelas e auditoria sem conteúdo clínico', async () => {

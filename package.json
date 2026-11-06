@@ -9,6 +9,7 @@
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
     "typecheck": "tsc --noEmit",
+    "test:authorization": "node --test src/autorizacao/*.test.ts",
     "test:database": "node --test database/dev009_modelo.test.cjs",
     "test:e2e": "playwright test",
     "prepare:homologacao": "node scripts/prepare-homologacao.mjs",
