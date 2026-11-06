@@ -285,3 +285,12 @@
 .painel-acesso-usuario { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dm-spacing-md); overflow-wrap: anywhere; }
 .painel-lista-perfis { list-style: none; padding: 0; margin: var(--dm-spacing-md) 0; }
 .painel-lista-perfis li + li { margin-top: var(--dm-spacing-sm); }
+
+.painel-catalogo-gestao .painel-aviso { margin-top: var(--dm-spacing-sm); }
+.painel-form-medico textarea {
+  width: 100%; padding: var(--dm-spacing-md); border: 1px solid var(--dm-color-border-control);
+  border-radius: var(--dm-radius-md); font: inherit; resize: vertical;
+}
+.painel-dados-catalogo { display: grid; gap: var(--dm-spacing-xs); overflow-wrap: anywhere; }
+.painel-dados-catalogo dt { font-weight: 650; }
+.painel-dados-catalogo dd { margin: 0 0 var(--dm-spacing-sm); white-space: pre-wrap; color: var(--dm-color-text-secondary); }

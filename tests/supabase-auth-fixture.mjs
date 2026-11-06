@@ -207,6 +207,9 @@ async function atender(req, res) {
         return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
       }
     }
+    case 'POST /rest/v1/rpc/piloto_listar_catalogo':
+    case 'POST /rest/v1/rpc/piloto_salvar_grupo_procedimento':
+    case 'POST /rest/v1/rpc/piloto_salvar_procedimento':
     case 'POST /rest/v1/rpc/piloto_listar_usuarios':
     case 'POST /rest/v1/rpc/piloto_emitir_convite':
     case 'POST /rest/v1/rpc/piloto_aceitar_convite':
@@ -214,6 +217,11 @@ async function atender(req, res) {
       if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
       const nome = url.pathname.split('/').at(-1);
       const parametros = {
+        piloto_listar_catalogo: [dados.unidade, dados.busca, dados.pagina, dados.correlacao],
+        piloto_salvar_grupo_procedimento: [dados.unidade, dados.grupo, dados.revisao_esperada, dados.nome_grupo, dados.ativo_grupo, dados.correlacao],
+        piloto_salvar_procedimento: [dados.unidade, dados.procedimento, dados.revisao_esperada, dados.grupo,
+          dados.codigo_interno, dados.nome_procedimento, dados.tuss, dados.tipo_procedimento, dados.instrucoes,
+          dados.consentimento, dados.ativo_procedimento, dados.correlacao],
         piloto_listar_usuarios: [dados.unidade, dados.correlacao],
         piloto_emitir_convite: [dados.unidade, dados.email_convidado, dados.perfil_convidado, dados.profissional, dados.correlacao],
         piloto_aceitar_convite: [dados.codigo, dados.correlacao],

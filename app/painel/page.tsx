@@ -6,6 +6,7 @@ import { sessaoNoServidor, verificarIdentidade } from '../auth/sessao';
 import { consultarUnidades, type UnidadePainel } from './unidades';
 import { CadastroMedicos } from './medicos/cadastro';
 import { CadastroUsuarios } from './usuarios/cadastro';
+import { CadastroCatalogo } from './catalogo/cadastro';
 import './painel.css';
 
 export const dynamic = 'force-dynamic';
@@ -66,7 +67,7 @@ function UnidadeAtual({ unidade, unidades }: { unidade: UnidadePainel; unidades:
 
 type Parametros = Promise<{
   unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
-  filtroMedico?: string; pagina?: string; estado?: string;
+  filtroMedico?: string; filtroCatalogo?: string; pagina?: string; estado?: string;
 }>;
 
 export default async function PaginaPainel({ searchParams }: { searchParams: Parametros }) {
@@ -160,7 +161,12 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
           </header>
-          {atual?.id === 'usuarios' && !busca ? (
+          {atual?.id === 'catalogo' && !busca ? (
+            <CadastroCatalogo cliente={cliente} unidade={unidade.id}
+              filtro={typeof parametros.filtroCatalogo === 'string' ? parametros.filtroCatalogo.trim().slice(0, 80) : ''}
+              pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0}
+              estado={typeof parametros.estado === 'string' ? parametros.estado : ''} />
+          ) : atual?.id === 'usuarios' && !busca ? (
             <CadastroUsuarios cliente={cliente} unidade={unidade.id}
               estado={typeof parametros.estado === 'string' ? parametros.estado : ''} />
           ) : atual?.id === 'medicos' && !busca ? (
