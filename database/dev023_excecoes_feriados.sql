@@ -50,7 +50,7 @@ create function public.piloto_ler_excecoes_agenda(
  unidade uuid, profissional uuid, de date, ate date, correlacao uuid
 )
 returns jsonb language plpgsql volatile security invoker set search_path = ''
-as $
+as $$
 declare resposta jsonb;
 begin
  if de is null or ate is null or not isfinite(de) or not isfinite(ate)
@@ -84,7 +84,7 @@ begin
  ) into resposta;
  return resposta;
 end;
-$;
+$$;
 revoke all on function public.piloto_ler_excecoes_agenda(uuid,uuid,date,date,uuid)
  from public,anon,authenticated,service_role;
 grant execute on function public.piloto_ler_excecoes_agenda(uuid,uuid,date,date,uuid)
