@@ -11,6 +11,7 @@ import { CadastroCatalogo } from './catalogo/cadastro';
 import { CadastroConvenios } from './convenios/cadastro';
 import { HistoricoAtendimentos } from './atendimentos/historico';
 import { GradeAgenda } from './agenda/grade';
+import { ConfiguracaoAgenda } from './agenda/configuracao';
 import { perfisDaOperacao } from '../../src/autorizacao/politica';
 import './painel.css';
 
@@ -73,7 +74,7 @@ function UnidadeAtual({ unidade, unidades }: { unidade: UnidadePainel; unidades:
 
 type Parametros = Promise<{
   unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
-  dataAgenda?: string; profissionalAgenda?: string; buscaAgenda?: string;
+  dataAgenda?: string; profissionalAgenda?: string; buscaAgenda?: string; configuracaoAgenda?: string; estadoAgenda?: string;
   filtroMedico?: string; filtroCatalogo?: string; filtroConvenios?: string; filtroHistorico?: string; referencia?: string; pagina?: string; estado?: string;
 }>;
 
@@ -112,6 +113,9 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
   const busca = typeof parametros.busca === 'string' ? parametros.busca.trim().slice(0, 80) : '';
   const resultados = busca ? buscarModulos(modulos, busca) : modulos;
   const historicoPermitido = perfisDaOperacao('item', 'ler').some(perfil => unidade.perfis.includes(perfil));
+  const configuraAgenda = perfisDaOperacao('configuracaoAgenda', 'ler').some(perfil => unidade.perfis.includes(perfil));
+  const abreConfiguracao = atual?.id === 'agenda' && parametros.configuracaoAgenda === '1' && !busca;
+  if (abreConfiguracao && !configuraAgenda) notFound();
   const inicio = urlPainel(unidade.id);
   const titulo = busca ? 'Resultados da busca' : atual?.nome ?? 'Painel da unidade';
 
@@ -169,9 +173,12 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
           </header>
-          {atual?.id === 'agenda' && !busca ? (
+          {abreConfiguracao ? (
+            <ConfiguracaoAgenda cliente={cliente} unidade={unidade.id}
+              estado={typeof parametros.estadoAgenda === 'string' ? parametros.estadoAgenda : ''} />
+          ) : atual?.id === 'agenda' && !busca ? (
             <Suspense fallback={<p className="painel-aviso" role="status">Carregando a agenda…</p>}>
-              <GradeAgenda cliente={cliente} unidade={unidade.id}
+              <GradeAgenda cliente={cliente} unidade={unidade.id} configuraAgenda={configuraAgenda}
                 data={typeof parametros.dataAgenda === 'string' ? parametros.dataAgenda : ''}
                 profissional={typeof parametros.profissionalAgenda === 'string' ? parametros.profissionalAgenda : ''}
                 busca={typeof parametros.buscaAgenda === 'string' ? parametros.buscaAgenda.trim().slice(0, 80) : ''} />

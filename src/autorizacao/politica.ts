@@ -4,7 +4,7 @@
  */
 export const PERFIS = ['recepcao','medico','financeiro','gestao','administrador'] as const;
 export type Perfil = typeof PERFIS[number];
-export type Recurso = 'agenda'|'paciente'|'atendimento'|'item'|'itemClinico'|'catalogo'|'preco'|'clinico'|'financeiro'|'recebimento'|'vinculo'|'auditoria'|'cadastroMedico'|'cadastroUsuario';
+export type Recurso = 'agenda'|'paciente'|'atendimento'|'item'|'itemClinico'|'catalogo'|'preco'|'clinico'|'financeiro'|'recebimento'|'vinculo'|'auditoria'|'cadastroMedico'|'cadastroUsuario'|'configuracaoAgenda';
 export type Acao = 'ler'|'criar'|'alterar'|'receber'|'estornar';
 export type Vinculo = { usuarioId: string; unidadeId: string; perfil: Perfil; ativo: boolean };
 export type Identidade = { usuarioId: string; aal: 'aal1'|'aal2' };
@@ -14,6 +14,7 @@ export type Resultado = { autorizado: boolean; status: 200|401|403|404; motivo: 
 
 const regra: Readonly<Record<Recurso, Partial<Record<Acao, readonly Perfil[]>>>> = {
   agenda: {ler:['recepcao','medico','gestao','administrador'],criar:['recepcao','gestao'],alterar:['recepcao','gestao']},
+  configuracaoAgenda: {ler:['gestao','administrador'],criar:['gestao','administrador'],alterar:['gestao','administrador']},
   paciente: {ler:['recepcao','medico'],criar:['recepcao']},
   atendimento: {ler:['recepcao','medico','financeiro','gestao','administrador'],criar:['recepcao','gestao']},
   item: {ler:['recepcao','financeiro','gestao','administrador'],criar:['recepcao','gestao']},

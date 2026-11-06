@@ -229,6 +229,10 @@ async function atender(req, res) {
         return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
       }
     }
+    case 'POST /rest/v1/rpc/piloto_config_agenda':
+    case 'POST /rest/v1/rpc/piloto_criar_local_agenda':
+    case 'POST /rest/v1/rpc/piloto_criar_disponibilidade':
+    case 'POST /rest/v1/rpc/piloto_encerrar_disponibilidade':
     case 'POST /rest/v1/rpc/piloto_ler_grade_agenda':
     case 'POST /rest/v1/rpc/piloto_listar_historico_itens':
     case 'POST /rest/v1/rpc/piloto_listar_convenios_precos':
@@ -245,6 +249,11 @@ async function atender(req, res) {
       if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
       const nome = url.pathname.split('/').at(-1);
       const parametros = {
+        piloto_config_agenda: [dados.unidade],
+        piloto_criar_local_agenda: [dados.unidade, dados.nome_local, dados.correlacao],
+        piloto_criar_disponibilidade: [dados.unidade, dados.profissional, dados.local_agenda, dados.dia, dados.inicio,
+          dados.fim, dados.inicio_vigencia, dados.correlacao],
+        piloto_encerrar_disponibilidade: [dados.unidade, dados.regra, dados.fim_vigencia, dados.correlacao],
         piloto_ler_grade_agenda: [dados.unidade, dados.profissional, dados.de, dados.ate, dados.correlacao],
         piloto_listar_historico_itens: [dados.unidade, dados.busca, dados.pagina, dados.correlacao],
         piloto_listar_convenios_precos: [dados.unidade, dados.busca, dados.referencia, dados.pagina, dados.correlacao],
