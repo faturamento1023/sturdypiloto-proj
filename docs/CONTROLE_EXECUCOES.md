@@ -138,3 +138,12 @@ Registro histórico anterior ao aceite final.
 - **Testes não executados nesta sessão.** Consulta de workflow do commit anterior retornou vazio; CI do commit atual ainda não confirmada. Não há integração a handlers ou banco real.
 - Bloqueios: PR #13 aberto como dependência, consulta fresca de vínculos, escopo por objeto, auditoria transacional, testes integrados e homologação operacional. **DEV-013 continua em andamento.**
 - Próxima ação: confirmar CI do novo commit, corrigir falhas e integrar a política à autenticação e ao PostgreSQL descartável antes de qualquer merge.
+
+## Sessão de 06/11/2026 — DEV-013: defesa contra vínculos malformados
+
+- Antes das alterações, conferidos controle na `main`, PRs/Issues, cronograma XLSX no Drive e conteúdo da pasta Web Ultra (somente leitura). A planilha ainda tem status inicial de planejamento; o controle GitHub registra DEV-001 a DEV-012 concluídas e DEV-013 em andamento. PR #14 é o único PR aberto na consulta.
+- Revisados `src/autorizacao/politica.ts`, seus testes e a matriz DEV-013 na branch existente `dev-013-autorizacao-matriz`.
+- Commits: `7a8d0aa` (falha fechada em lista de vínculos inválida), `e1920bb` (casos sintéticos de entradas malformadas), `2052990` (documentação). Nenhuma nova branch ou PR criado.
+- Testes escritos, **não executados nesta sessão**; CI não confirmado. Não há evidência de homologação ou integração a PostgreSQL/Supabase.
+- Bloqueios: execução dos testes, integração com sessão e consulta fresca ao banco, auditoria, AUTHZ-01–16 integrados e decisões clínicas/operacionais V01/V05/V07/V09. DEV-013 continua **em andamento**.
+- Próxima ação: validar no CI os novos testes e iniciar integração de autorização nos handlers de homologação, preservando isolamento de unidade e RLS.
