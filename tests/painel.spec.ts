@@ -30,7 +30,7 @@ test('shell valida sessão, menus, busca e troca de unidade', async ({ page, con
   await menu.getByRole('link', { name: 'Agenda' }).click();
   await expect(page.getByRole('heading', { name: 'Agenda', exact: true })).toBeVisible();
   await expect(page.getByRole('navigation', { name: 'Você está em' })).toContainText('Agenda');
-  await expect(page.getByText('Em preparação')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Grade de horários' })).toBeVisible();
 
   const busca = page.getByRole('searchbox', { name: 'Buscar módulo' });
   const pesquisar = page.getByRole('button', { name: 'Pesquisar módulos' });

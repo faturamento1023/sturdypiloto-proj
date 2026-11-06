@@ -294,3 +294,65 @@
 .painel-dados-catalogo { display: grid; gap: var(--dm-spacing-xs); overflow-wrap: anywhere; }
 .painel-dados-catalogo dt { font-weight: 650; }
 .painel-dados-catalogo dd { margin: 0 0 var(--dm-spacing-sm); white-space: pre-wrap; color: var(--dm-color-text-secondary); }
+
+.agenda-cabecalho, .agenda-dias {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--dm-spacing-md);
+}
+.agenda-cabecalho { justify-content: space-between; }
+.agenda-cabecalho p, .agenda-contexto { color: var(--dm-color-text-muted); }
+.agenda-dias a {
+  min-height: var(--dm-size-touch);
+  display: inline-flex;
+  align-items: center;
+  color: var(--dm-color-text-action);
+}
+.agenda-filtros {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1fr) repeat(2, minmax(0, 1.4fr)) auto;
+  gap: var(--dm-spacing-md);
+  align-items: end;
+  margin: var(--dm-spacing-lg) 0;
+}
+.agenda-filtros label, .agenda-campo { display: grid; gap: var(--dm-spacing-xs); min-width: 0; font-weight: 650; }
+.agenda-filtros input:not([type="hidden"]), .agenda-filtros select {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--dm-size-touch);
+  padding: 0 var(--dm-spacing-sm);
+  border: 1px solid var(--dm-color-border-default);
+  border-radius: var(--dm-radius-md);
+  font: inherit;
+  color: inherit;
+  background: var(--dm-color-bg-surface);
+}
+.agenda-profissional {
+  margin-top: var(--dm-spacing-lg);
+  padding: var(--dm-spacing-md);
+  border: 1px solid var(--dm-color-border-default);
+  border-radius: var(--dm-radius-md);
+  background: var(--dm-color-bg-surface);
+}
+.agenda-profissional h3 { margin: 0 0 var(--dm-spacing-sm); }
+.agenda-profissional ul { list-style: none; margin: 0; padding: 0; }
+.agenda-profissional li {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 1fr) auto;
+  align-items: center;
+  gap: var(--dm-spacing-sm);
+  padding: var(--dm-spacing-sm) 0;
+  border-top: 1px solid var(--dm-color-border-default);
+  font-variant-numeric: tabular-nums;
+}
+.agenda-estado { font-weight: 650; }
+.agenda-profissional li[data-estado="livre"] .agenda-estado { color: var(--dm-color-text-action); }
+.agenda-profissional li[data-estado="cancelado"] .agenda-estado { color: var(--dm-color-text-muted); }
+
+@media (max-width: 720px) {
+  .agenda-filtros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .agenda-filtros { grid-template-columns: minmax(0, 1fr); }
+}

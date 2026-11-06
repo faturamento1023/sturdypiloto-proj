@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { buscarModulos, modulosPorPerfil, rotuloPerfil } from '../../src/navegacao/modulos';
 import { TelaAcesso } from '../auth/interface';
@@ -9,6 +10,7 @@ import { CadastroUsuarios } from './usuarios/cadastro';
 import { CadastroCatalogo } from './catalogo/cadastro';
 import { CadastroConvenios } from './convenios/cadastro';
 import { HistoricoAtendimentos } from './atendimentos/historico';
+import { GradeAgenda } from './agenda/grade';
 import { perfisDaOperacao } from '../../src/autorizacao/politica';
 import './painel.css';
 
@@ -71,6 +73,7 @@ function UnidadeAtual({ unidade, unidades }: { unidade: UnidadePainel; unidades:
 
 type Parametros = Promise<{
   unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
+  dataAgenda?: string; profissionalAgenda?: string; buscaAgenda?: string;
   filtroMedico?: string; filtroCatalogo?: string; filtroConvenios?: string; filtroHistorico?: string; referencia?: string; pagina?: string; estado?: string;
 }>;
 
@@ -166,7 +169,14 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
           </header>
-          {atual?.id === 'atendimentos' && !busca && historicoPermitido ? (
+          {atual?.id === 'agenda' && !busca ? (
+            <Suspense fallback={<p className="painel-aviso" role="status">Carregando a agenda…</p>}>
+              <GradeAgenda cliente={cliente} unidade={unidade.id}
+                data={typeof parametros.dataAgenda === 'string' ? parametros.dataAgenda : ''}
+                profissional={typeof parametros.profissionalAgenda === 'string' ? parametros.profissionalAgenda : ''}
+                busca={typeof parametros.buscaAgenda === 'string' ? parametros.buscaAgenda.trim().slice(0, 80) : ''} />
+            </Suspense>
+          ) : atual?.id === 'atendimentos' && !busca && historicoPermitido ? (
             <HistoricoAtendimentos cliente={cliente} unidade={unidade.id}
               filtro={typeof parametros.filtroHistorico === 'string' ? parametros.filtroHistorico.trim().slice(0, 80) : ''}
               pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0} />
