@@ -46,7 +46,7 @@ test('shell valida sessão, menus, busca e troca de unidade', async ({ page, con
   const proibido = await context.request.get(`/painel?unidade=${unidadeA}&modulo=financeiro&perfil=administrador`);
   expect(proibido.status()).toBe(404);
 
-  await page.getByText('Unidade fictícia A', { exact: true }).click();
+  await page.getByLabel('Trocar unidade. Unidade atual Unidade fictícia A').click();
   await page.getByRole('link', { name: 'Unidade fictícia B' }).click();
   await expect(page).toHaveURL(new RegExp(unidadeB));
   await expect(page.getByRole('heading', { name: 'Painel da unidade' })).toBeVisible();

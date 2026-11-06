@@ -44,7 +44,9 @@ function UnidadeAtual({ unidade, unidades }: { unidade: UnidadePainel; unidades:
   }
   return (
     <details className="painel-unidades">
-      <summary className="painel-seletor"><Icone nome="unidade" /><span>{unidade.nome}</span></summary>
+      <summary className="painel-seletor" aria-label={'Trocar unidade. Unidade atual ' + unidade.nome}>
+        <Icone nome="unidade" /><span>{unidade.nome}</span>
+      </summary>
       <ul aria-label="Unidades disponíveis">
         {unidades.map(item => (
           <li key={item.id}>
