@@ -1,0 +1,32 @@
+name: Validate UX Journey Contracts
+
+on:
+  pull_request:
+    paths:
+      - 'docs/DEV-004_TELAS.json'
+      - 'docs/DEV-006_JORNADAS.json'
+      - 'scripts/validate-ux.mjs'
+      - '.github/workflows/ux-validation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/DEV-004_TELAS.json'
+      - 'docs/DEV-006_JORNADAS.json'
+      - 'scripts/validate-ux.mjs'
+      - '.github/workflows/ux-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-ux-journeys:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout original project code
+        uses: actions/checkout@v4
+      - name: Configure Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate journey references
+        run: node scripts/validate-ux.mjs
