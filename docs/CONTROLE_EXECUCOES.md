@@ -179,3 +179,12 @@ Registro histórico anterior ao aceite final.
 - O PR #20 consolidou o trabalho inicial da automação e integrou cadastro, consulta por data, revisão e inativação.
 - O banco impede sobreposição de preços ativos, mantém os preços anteriores e registra auditoria. Coparticipação é registrada como valor fixo por preço nesta etapa.
 - Os testes usam dados fictícios. A próxima etapa é a DEV-020, impacto dos cadastros nas demais telas e nos registros históricos.
+
+## Sessão de 06/11/2026 — início DEV-020 (impacto de cadastros)
+
+- Antes de escrever, consultados controle da `main` (DEV-019 registrada como concluída), buscas de Issues/PRs abertos (nenhum retornado), critérios DEV-005, cronograma XLSX e pasta Web Ultra no Drive. O cronograma ainda apresenta status de planejamento e não foi alterado.
+- Criada branch `dev-020-impacto-cadastros` a partir da `main`; [PR #21](https://github.com/faturamento1023/sturdypiloto-proj/pull/21) aberto em rascunho.
+- Criada visão SQL `piloto.impacto_cadastros_itens` com `security_invoker`, preservando valores de itens de atendimento e apresentando separadamente o estado atual do procedimento (commit `5d10876`).
+- Adicionado teste sintético de preservação após inativação de procedimento (commit `e254720`), documentação de impacto (commit `b9493b5`) e workflow PGlite (commit `1cf3ad8`).
+- **Teste PGlite e CI ainda não executados/confirmados nesta sessão**: clone direto indisponível por falha de resolução DNS do GitHub no ambiente local. A visão e a autorização por RLS ainda precisam de validação real.
+- DEV-020 em andamento. Próximos passos: confirmar CI, testar RLS por perfil/unidade, verificar impacto nos demais cadastros e construir API/UI de histórico. Sem alteração no WebUltra ou produção; sem dados reais.
