@@ -11,3 +11,5 @@ test('revisao obsoleta',async()=>{const d=db({lockPrice:async()=>({id:'price-fak
 test('centavos fracionarios',async()=>assert.equal((await revisePrice({actor,input:{...input,cents:1.2},db:null})).status,400));
 test('atualiza e audita',async()=>{const d=db();assert.deepEqual(await revisePrice({actor,input,db:d}),{status:200,revision:3});assert.equal(d.events.length,1);assert.equal(d.commits,1)});
 test('falha de auditoria exige rollback',async()=>{const d=db({audit:async()=>{throw Error('audit-failed')}});await assert.rejects(()=>revisePrice({actor,input,db:d}),/audit-failed/);assert.equal(d.commits,0)});
+
+test('atualizacao usa id da linha bloqueada',async()=>{let update=null;const d=db({updatePrice:async data=>{update=data;return true;}});assert.equal((await revisePrice({actor,input,db:d})).status,200);assert.equal(update.priceId,'price-fake');assert.equal(update.unitId,'u1');assert.equal(update.expectedRevision,2);});
