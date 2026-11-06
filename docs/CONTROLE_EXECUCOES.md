@@ -187,3 +187,12 @@ Registro histórico anterior ao aceite final.
 - O PR #21 aproveitou a projeção inicial da automação e conectou o histórico de itens ao painel de atendimentos, com acesso auditado.
 - A regressão cobre bloqueio de novas referências a cadastros inativos, preservação do histórico e do saldo, isolamento e MFA. A inativação também é exercitada no navegador.
 - Os testes usam dados fictícios. A próxima etapa é a DEV-021, grade de agenda.
+
+## Sessão de 06/11/2026 — início DEV-021, grade de agenda
+
+- Antes de escrever, consultados controle na `main` (DEV-001 a DEV-020 registradas como concluídas), PRs/Issues abertos (nenhum), DEV-005 v1.0, cronograma XLSX do Drive e metadados da pasta Web Ultra. O cronograma ainda contém status original de planejamento e não foi modificado.
+- Criada a branch `dev-021-grade-agenda` e [PR #22](https://github.com/faturamento1023/sturdypiloto-proj/pull/22) em rascunho, sem reutilizar branches antigas.
+- Projeção pura da grade com intervalo [início, fim), janela até 31 dias, fuso obrigatório, filtragem por unidade/profissional e ausência de dados de paciente: `scripts/dev021_grade.cjs` (commit `5151322`).
+- Oito testes unitários sintéticos escritos em `scripts/dev021_grade.test.cjs` (commit `64debbe`), workflow Node 22 (commit `a1f6442`) e documentação de evidência versus proposta (commit `ec49fd2`).
+- **Testes não executados nesta sessão:** tentativa de baixar branch para execução local falhou por resolução DNS de `raw.githubusercontent.com`. CI remoto ainda não confirmado. Não afirmar que DEV-021 está concluída.
+- Próxima tarefa: implementar consulta HTTP com MFA, vínculo ativo e auditoria, grade responsiva, integração PostgreSQL descartável e testes de navegador; revisar regras de agenda com responsáveis. Nenhum dado real, WebUltra original ou produção alterados.
