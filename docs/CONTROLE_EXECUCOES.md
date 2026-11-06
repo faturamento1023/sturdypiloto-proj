@@ -228,3 +228,13 @@ Registro histórico anterior ao aceite final.
 - **Testes ainda não confirmados:** tentativa local de baixar arquivos do GitHub falhou por DNS `raw.githubusercontent.com`; consulta dos workflows do commit `42b3f28` retornou lista vazia. Não afirmar execução ou conclusão.
 - **Bloqueios:** persistência SQL, RLS/MFA/auditoria, integração à grade DEV-021/022, testes HTTP/PostgreSQL/navegador e aprovação operacional da precedência. Feriado prevalecer sobre substituição é proposta, não comportamento comprovado do WebUltra.
 - Próxima ação: executar CI, implementar migração e endpoints transacionais com testes descartáveis e revisar regras inferidas. DEV-023 continua aberta. Sem alteração de pacientes, WebUltra ou produção.
+
+## Sessão de 06/11/2026 — comandos DEV-023 e proteção de reservas
+
+- Conferidos antes das alterações: controle da main, PRs abertos (PR #24), Issues abertas (nenhuma) e estado da branch DEV-023. Não foi avançada a DEV-024.
+- Registradas salvaguardas operacionais em `docs/DEV-023_NOTAS_VALIDACAO.md` (commit `c208a76`).
+- Criado contrato de comando `scripts/dev023_comandos.cjs` (commit `3fa9c81`): MFA, gestão/administração, unidade vinculada, revalidação de vínculo no adaptador transacional, impedimento de exceções que afetem reservas e auditoria obrigatória.
+- Criados nove testes sintéticos de autorização, isolamento, reservas, conflito e auditoria em `scripts/dev023_comandos.test.cjs` (commit `bbacd5f`).
+- Atualizado workflow para incluir os testes de comandos (commit `223c3a4`).
+- **Testes escritos, não executados nesta sessão; CI não confirmado.** A transação depende de adaptador real que implemente rollback. Ainda não há persistência PostgreSQL, endpoint ou UI de exceções.
+- Feriado bloqueante permanece regra proposta não homologada. Próxima tarefa: integrar banco e grade, executar testes PostgreSQL/HTTP/navegador com dados fictícios e validar precedência com responsáveis.
