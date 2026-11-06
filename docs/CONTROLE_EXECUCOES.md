@@ -262,3 +262,11 @@ Registro histórico anterior ao aceite final.
 - Adicionados dois testes de regressão que autorizam `administrador` com MFA/vínculo e rejeitam o perfil inexistente `administracao` (commit `2ca76bb`).
 - **Testes não executados nesta sessão:** `git ls-remote` falhou por DNS de github.com. CI não confirmado. Não houve aplicação da migração em banco nem testes em navegador.
 - DEV-023 permanece em andamento; falta adaptador SQL transacional real, integração de exceções à grade e homologação da regra de feriados. Sem dados reais ou alterações em produção.
+
+## Sessão de 06/11/2026 — leitura segura DEV-023
+
+- Consultados antes da escrita: controle `main` e branch DEV-023, PR #24 aberto, Issues abertas (nenhuma), metadados atuais do cronograma XLSM (modificado em 06/11/2026) e pasta Web Ultra no Drive; critérios DEV-005 e migrações DEV-021/022 como referência. Cronograma não editado.
+- Implementada RPC de leitura de feriados e exceções por período de até 31 dias, com auditoria de acesso e isolamento por unidade/profissional; política RLS permite ao médico ver bloqueios gerais da unidade sem abrir exceções de outros profissionais (commit `9f2b4c3`).
+- Quatro testes estáticos adicionados (commit `43974ba`) e documentação atualizada (commit `1deb325`).
+- **Sem execução confirmada:** testes Node, migração PostgreSQL, CI e navegador. Git local ainda não acessa GitHub por falha DNS; alterações realizadas pela integração GitHub. Não marcar DEV-023 concluída.
+- **Próxima tarefa:** operação transacional SQL de gravação com checagem concorrente de reservas, integração efetiva ao cálculo da grade, testes de RLS/HTTP/UX em ambiente descartável, validação operacional da precedência. Nenhum dado real ou produção alterados.
