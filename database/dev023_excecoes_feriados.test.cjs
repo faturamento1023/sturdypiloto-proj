@@ -8,3 +8,21 @@ test('isolamento RLS nas duas tabelas',()=>{for(const t of ['feriados_agenda','e
 test('escrita direta nao autorizada',()=>{assert.match(sql,/revoke all on piloto\.feriados_agenda,piloto\.excecoes_agenda/);assert.doesNotMatch(sql,/grant (insert|update|delete|all) on/i);});
 test('auditoria em mutacoes',()=>assert.equal((sql.match(/execute function piloto_privado\.registrar_mutacao\(\)/g)||[]).length,2));
 test('validacao de intervalo e profissional em substituicao',()=>{assert.match(sql,/fim_minuto > inicio_minuto/);assert.match(sql,/tipo <> 'substituicao' or profissional_id is not null/);});
+
+test('leitura de excecoes valida janela e audita via grade',()=>{
+ assert.match(sql,/create function public\.piloto_ler_excecoes_agenda/);
+ assert.match(sql,/ate - de > 31/);
+ assert.match(sql,/piloto_privado\.autorizar_grade\(unidade,profissional,correlacao\)/);
+});
+test('consulta restringe profissional e nao inclui paciente',()=>{
+ assert.match(sql,/e\.profissional_id=profissional/);
+ assert.doesNotMatch(sql,/paciente_id|cpf|nome_paciente/i);
+});
+test('medico enxerga bloqueio geral da unidade com RLS',()=>{
+ assert.match(sql,/profissional_id is null and exists/);
+ assert.match(sql,/piloto_privado\.e_profissional\(p\.unidade_id,p\.id\)/);
+});
+test('RPC nao publica acesso anonimo',()=>{
+ assert.match(sql,/revoke all on function public\.piloto_ler_excecoes_agenda/);
+ assert.match(sql,/to authenticated/);
+});
