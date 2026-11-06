@@ -52,12 +52,13 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca 
         <input type="hidden" name="unidade" value={unidade} />
         <input type="hidden" name="modulo" value="agenda" />
         <label>Data da agenda<input name="dataAgenda" type="date" defaultValue={dataConsulta} min={primeiraData} max={ultimaData} required /></label>
-        <label>Profissional
-          <select name="profissionalAgenda" defaultValue={opcoes.length ? profissional.toLowerCase() : ''}>
+        <div className="agenda-campo">
+          <label htmlFor="agenda-profissional-filtro">Profissional</label>
+          <select id="agenda-profissional-filtro" name="profissionalAgenda" defaultValue={opcoes.length ? profissional.toLowerCase() : ''}>
             <option value="">Todas as agendas acessíveis</option>
             {opcoes.map(p => <option key={p.id} value={p.id}>{p.nome}{p.ativo ? '' : ' (inativo)'}</option>)}
           </select>
-        </label>
+        </div>
         <label>Pesquisar profissional<input name="buscaAgenda" type="search" placeholder="Nome do profissional" maxLength={80} defaultValue={busca} /></label>
         <button type="submit" className="botao">Consultar</button>
       </form>

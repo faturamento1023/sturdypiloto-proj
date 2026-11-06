@@ -90,6 +90,8 @@ paths:
       tags:
       - Agenda
       summary: Consultar a grade de agenda
+      security:
+      - SessaoCookie: []
       description: >
         Retorna a grade completa da janela no escopo da sessão, sem dados de paciente.
         Médico recebe a própria agenda. Compromissos são recortados nas fronteiras,
@@ -115,6 +117,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GradeAgenda'
+              example:
+                profissionais:
+                - id: 00000000-0000-4000-8000-000000000021
+                  nome: Profissional fictício
+                  ativo: true
+                agendamentos:
+                - id: 00000000-0000-4000-8000-000000000031
+                  profissional_id: 00000000-0000-4000-8000-000000000021
+                  inicio: '2026-11-05T08:00:00-03:00'
+                  fim: '2026-11-05T08:30:00-03:00'
+                  estado: reservado
+                livres:
+                - profissional_id: 00000000-0000-4000-8000-000000000021
+                  inicio: '2026-11-05T08:30:00-03:00'
+                  fim: '2026-11-05T09:00:00-03:00'
         '400':
           $ref: '#/components/responses/EntradaInvalida'
         '401':
@@ -123,16 +140,34 @@ paths:
           $ref: '#/components/responses/AcessoNegado'
         '422':
           description: Grade excede o limite de 500 registros por categoria de entrada.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problema'
+              example:
+                type: about:blank
+                title: Reduza o intervalo ou filtre por profissional
+                status: 422
+                codigo: GRADE_EXCEDIDA
+                correlacaoId: 00000000-0000-4000-8000-000000000099
         '503':
           description: Consulta temporariamente indisponível.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problema'
+              example:
+                type: about:blank
+                title: Agenda temporariamente indisponível
+                status: 503
+                codigo: AGENDA_INDISPONIVEL
+                correlacaoId: 00000000-0000-4000-8000-000000000099
   /unidades/{unidadeId}/agendamentos:
     parameters:
     - $ref: '#/components/parameters/UnidadeId'

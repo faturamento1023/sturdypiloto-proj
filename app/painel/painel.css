@@ -316,7 +316,7 @@
   align-items: end;
   margin: var(--dm-spacing-lg) 0;
 }
-.agenda-filtros label { display: grid; gap: var(--dm-spacing-xs); min-width: 0; font-weight: 650; }
+.agenda-filtros label, .agenda-campo { display: grid; gap: var(--dm-spacing-xs); min-width: 0; font-weight: 650; }
 .agenda-filtros input:not([type="hidden"]), .agenda-filtros select {
   width: 100%;
   min-width: 0;
