@@ -42,3 +42,10 @@
 - Confirmar políticas financeiras V02/V05 e fonte contratual antes de automatizar preço de atendimento. Validação especializada não é presumida.
 
 **Próxima ação:** criar migração reversível, handlers com autorização e auditoria, UI responsiva, testes em PGlite/HTTP e CI; só então marcar DEV-019 concluída.
+
+## Implementação incremental de 06/11/2026
+
+- Corrigida falha na filtragem de linhas nulas em `scripts/dev019_precos.cjs` (o acesso a propriedades ocorria antes da checagem de nulidade).
+- **12/12 testes unitários passaram em Node.js 22**, em cópia local reconstruída a partir do conteúdo da branch. A execução do GitHub Actions ainda não foi confirmada; não confundir a execução local com CI.
+- Criada `database/dev019_convenios_precos.sql`: acrescenta revisão positiva a convênios e preços e índice único por unidade/nome normalizado; não altera valores históricos nem concede acesso. Índice pode recusar implantação se existirem nomes legados duplicados — exigir reconciliação prévia. Não executada em PostgreSQL nesta sessão.
+- Não há endpoints nem UI operacional; DEV-019 permanece aberta. A validação financeira e clínica não está implícita.
