@@ -2,7 +2,7 @@
 
 Sistema web próprio para gestão ambulatorial da Clínica DM, desenvolvido com base nas **funcionalidades documentadas** do UltraSystem WEB (WebUltra). O objetivo é oferecer jornadas semelhantes (recepção, agendamento, atendimentos, prontuário, laudos, relatórios e financeiro), com código, identidade visual e arquitetura próprios.
 
-> **Estado atual — 06/11/2026:** Fase 04 — Cadastros mestres. [Base e ambientes DEV-011](docs/DEV-011_INFRAESTRUTURA.md), [autenticação DEV-012](docs/DEV-012_AUTENTICACAO.md), [autorização DEV-013](docs/DEV-013_MATRIZ_AUTORIZACAO.md), [shell DEV-014](docs/DEV-014_SHELL_SISTEMA.md), [auditoria DEV-015](docs/DEV-015_AUDITORIA_CENTRAL.md), [cadastro de médicos DEV-016](docs/DEV-016_CADASTRO_MEDICOS.md), [usuários e perfis DEV-017](docs/DEV-017_USUARIOS_PERFIS.md) e [catálogo DEV-018](docs/DEV-018_PROCEDIMENTOS_GRUPOS.md). A próxima tarefa é o cadastro de convênios e preços (DEV-019). O desenvolvimento usa dados fictícios.
+> **Estado atual — 06/11/2026:** Fase 04 — Cadastros mestres. [Base e ambientes DEV-011](docs/DEV-011_INFRAESTRUTURA.md), [autenticação DEV-012](docs/DEV-012_AUTENTICACAO.md), [autorização DEV-013](docs/DEV-013_MATRIZ_AUTORIZACAO.md), [shell DEV-014](docs/DEV-014_SHELL_SISTEMA.md), [auditoria DEV-015](docs/DEV-015_AUDITORIA_CENTRAL.md), [cadastro de médicos DEV-016](docs/DEV-016_CADASTRO_MEDICOS.md), [usuários e perfis DEV-017](docs/DEV-017_USUARIOS_PERFIS.md), [catálogo DEV-018](docs/DEV-018_PROCEDIMENTOS_GRUPOS.md) e [convênios e preços DEV-019](docs/DEV-019_CONVENIOS_PRECOS.md). A próxima tarefa é testar o impacto cadastral (DEV-020). O desenvolvimento usa dados fictícios.
 
 ## Fontes oficiais
 

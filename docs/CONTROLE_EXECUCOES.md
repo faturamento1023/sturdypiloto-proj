@@ -40,6 +40,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-018 — Cadastro de procedimentos e grupos | **Concluída em ambiente descartável** | [Catálogo, categorias, preparo, TUSS e indicação de consentimento](DEV-018_PROCEDIMENTOS_GRUPOS.md). | DEV-019 — Cadastro de convênios e preços. |
 
+| 2026-11-06 | DEV-019 — Cadastro de convênios e preços | **Concluída em ambiente descartável** | [Convênios, tabelas por procedimento, vigências e coparticipação](DEV-019_CONVENIOS_PRECOS.md). | DEV-020 — Testar impacto cadastral. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -52,8 +54,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **04 — Cadastros mestres** (cadastros mestres iniciados pelo cadastro de médicos).
-- Tarefas concluídas: **DEV-001 a DEV-018**.
-- Próxima tarefa: **DEV-019 — Cadastro de convênios e preços**.
+- Tarefas concluídas: **DEV-001 a DEV-019**.
+- Próxima tarefa: **DEV-020 — Testar impacto cadastral**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -172,61 +174,8 @@ Registro histórico anterior ao aceite final.
 - Escrita restrita a gestão e administração com MFA. Testes cobrem revisão, auditoria, preservação do legado e bloqueio de grupo em uso.
 - A validação usa dados fictícios. A próxima etapa é a DEV-019, convênios e preços.
 
-## Sessão de 06/11/2026 — início DEV-019 (convênios e preços)
+## Sessão de 06/11/2026 — convênios e preços DEV-019
 
-- Antes de escrever: conferidos controle atualizado na `main` (DEV-001–DEV-018 concluídas), buscas de Issues e PRs abertos (nenhum retornado), critérios DEV-005, mapa DEV-004 e modelo DEV-009. Metadados do cronograma XLSX e da pasta Web Ultra confirmados no Drive; fonte preservada sem edição. O conteúdo integral do XLSX não foi reprocessado nesta sessão.
-- Criada a branch `dev-019-convenios-precos` a partir da `main`, com [especificação inicial](DEV-019_CONVENIOS_PRECOS.md), funções puras de vigência/preço e oito casos unitários sintéticos; [PR #20](https://github.com/faturamento1023/sturdypiloto-proj/pull/20) aberto em rascunho.
-- O validador rejeita datas e centavos inválidos; consulta não aplica fallback silencioso entre convênios/unidades e bloqueia preço ausente/ambíguo. Ajustada a expressão regular de data no commit `01047b9`.
-- **Testes escritos, mas não executados nem confirmados no CI nesta sessão**. Não houve execução PostgreSQL/HTTP/navegador. Nenhuma funcionalidade clínica ou financeira foi homologada.
-- **DEV-019 permanece em andamento**. Próxima ação: rodar testes, implementar migração incremental e endpoints com MFA/autorização e auditoria transacional, UI responsiva, integração PostgreSQL descartável e revisão das regras V02/V05 com o financeiro. Não publicar produção.
-
-## Sessão de 06/11/2026 — reforço de validação DEV-019
-
-- Conferidos `main` (DEV-001 a DEV-018 concluídas), branch `dev-019-convenios-precos`, PR #20 aberto e busca de Issues. Mantida a sequência da DEV-019.
-- Corrigida `scripts/dev019_precos.cjs`: chave de preço incompleta passa a ser rejeitada e linha nula não interrompe a busca. Adicionados quatro testes em `scripts/dev019_precos.test.cjs`.
-- Criado `.github/workflows/dev019-prices.yml` para executar `node --test scripts/dev019_precos.test.cjs` em PR ou acionamento manual.
-- Commits: `bbabea2` (validação), `e7f176d` (testes), `a8dcd2e` (CI).
-- Consulta dos workflows vinculados a `a8dcd2e` retornou lista vazia. **Testes escritos, mas execução ainda não confirmada**. Não houve testes PostgreSQL, HTTP ou navegador.
-- Bloqueios: migração incremental, endpoints com autorização/auditoria transacional, interface e validação financeira V02/V05 ainda pendentes. Próxima tarefa: verificar CI e integrar persistência em banco descartável, mantendo DEV-019 aberta.
-
-## Sessão de 06/11/2026 — DEV-019, testes e migração incremental
-
-- Antes das alterações, conferidos controle na branch, PR #20 ainda aberto, busca de Issues (nenhuma aberta), cronograma Excel no Drive e especificação DEV-019. O cronograma permanece no estado inicial de planejamento e não foi modificado.
-- Identificada e corrigida falha real no filtro `selectPrice`: `r.unitId` era acessado antes de `r != null`, quebrando o teste de linha nula. Commit `abda46a`.
-- **12 testes unitários executados localmente e aprovados** com Node 22 em cópia reconstruída do código da branch (12 pass, 0 fail). O teste remoto/CI ainda não está confirmado.
-- Criada migração incremental `database/dev019_convenios_precos.sql` para revisão e unicidade de nome normalizado por unidade. Commits `31e9b2c` e `d1ac26d` (reexecução de constraints). Migração **não executada em PostgreSQL**; pode exigir reconciliação de duplicatas legadas.
-- Documento DEV-019 atualizado. **Não concluir DEV-019**: falta validar migração em banco descartável, implementar endpoints com autorização e auditoria transacional, UI responsiva e testes HTTP/navegador; decisões financeiras V02/V05 pendentes. Não houve alteração no WebUltra nem em produção.
-
-## Sessão de 06/11/2026 — correção de migração DEV-019
-
-- Consultados controle atualizado da branch, PR #20 e Issues abertas antes de alterar arquivos. DEV-019 segue em andamento; nenhuma tarefa posterior iniciada.
-- Identificado erro sintático nos blocos PL/pgSQL da migração: `DO $ BEGIN ... END $;` não possui delimitador válido. Corrigido para `DO $$ BEGIN ... END $$;` no commit `6bf6d47`.
-- Criados quatro testes estruturais em `scripts/dev019_migracao.test.cjs` (commit `2c945c5`) e atualizado CI para executar também esse arquivo (commit `e9b24de`).
-- **Testes desta sessão não executados nem CI confirmado**. Testes estruturais não substituem execução real da migração em PostgreSQL descartável.
-- Pendências: executar SQL em banco descartável, verificar conflitos de nomes legados, handlers autorizados e auditados, UI, testes HTTP/navegador e validação financeira V02/V05.
-- Próxima ação: validar migração em PostgreSQL descartável e implementar endpoints sem alterar produção.
-
-## Sessão de 06/11/2026 — serviço transacional DEV-019
-
-- Antes da alteração: consultados controle da branch, PR #20 aberto e Issues abertas; nenhuma etapa posterior iniciada.
-- Criado `scripts/dev019_servico.cjs` (commit `f6b2503`): contrato de revisão de preço com MFA, perfil gestão/administração, escopo de unidade, revalidação de vínculo ativo dentro da transação, trava lógica de revisão e auditoria.
-- Criados oito testes com identidades fictícias (commit `bf6f299`); **8/8 passaram em Node 22 em protótipo local equivalente**. A execução da versão enviada ao GitHub e o CI remoto ainda não foram confirmados.
-- Workflow DEV-019 atualizado para incluir o teste do serviço (commit `1ed9870`).
-- **Limitação importante:** serviço depende de adaptador `db.transaction` com bloqueio de linha, RLS e rollback real; não é um endpoint HTTP nem prova de persistência PostgreSQL. Falha de auditoria deve abortar transação no adaptador.
-- Próxima tarefa: implementar adaptador PostgreSQL descartável e executar testes reais de transação e rollback, depois HTTP e UI. DEV-019 segue aberta e sem homologação financeira.
-
-## Sessão de 06/11/2026 — revisão de consistência da migração DEV-019
-
-- Antes de escrever: consultados controle da branch, PR #20 aberto, Issues abertas (nenhuma), metadados do cronograma XLSX e da pasta Web Ultra no Drive. Fontes preservadas.
-- Identificada divergência verificável entre o registro anterior e o conteúdo real de `database/dev019_convenios_precos.sql`: os blocos `DO` ainda continham delimitador único `$` inválido. A tentativa com `$$` não persistiu mudança de conteúdo (SHA permaneceu igual); corrigido efetivamente para delimitador nomeado `$dev019$`, commit `e6ce619`, com novo SHA de arquivo.
-- Alinhado `scripts/dev019_migracao.test.cjs` ao delimitador nomeado, commit `930ccc9`.
-- **Não afirmar execução SQL ou testes:** ambiente local sem `psql`/`postgres` e acesso de download direto ao repositório indisponível nesta sessão; GitHub CI ainda não verificado. A correção está versionada, não homologada.
-- Próxima ação: executar testes e migração em PostgreSQL/PGlite descartável; depois adaptar serviço DEV-019 ao banco com transações e auditoria real. DEV-019 segue aberta.
-
-## Sessão de 06/11/2026 — vínculo entre linha bloqueada e atualização DEV-019
-
-- Conferidos controle da branch, PR #20 aberto e Issues abertas (nenhuma) antes da alteração.
-- Corrigido serviço de revisão para enviar `priceId` derivado da linha retornada por `lockPrice` à operação `updatePrice`, evitando que o adaptador escolha linha apenas por critérios de busca. Commit `24944bf`.
-- Adicionado teste que confere `priceId`, unidade e revisão transmitidos ao adaptador, commit `8033a6c`.
-- Consulta de workflow vinculada ao commit `8033a6c` retornou lista vazia. **Teste novo não executado/CI não confirmado nesta sessão.**
-- Ainda não há adaptador PostgreSQL implementado nem execução da migração. Próxima ação: construir adaptador transacional com bloqueio de linha e atualização condicional, depois validar rollback de auditoria em PostgreSQL/PGlite descartável. DEV-019 permanece aberta.
+- O PR #20 consolidou o trabalho inicial da automação e integrou cadastro, consulta por data, revisão e inativação.
+- O banco impede sobreposição de preços ativos, mantém os preços anteriores e registra auditoria. Coparticipação é registrada como valor fixo por preço nesta etapa.
+- Os testes usam dados fictícios. A próxima etapa é a DEV-020, impacto dos cadastros nas demais telas e nos registros históricos.

@@ -1,7 +1,7 @@
 'use strict';
 // DEV-019: regras puras de fronteira, sem contratos ou dados de pacientes.
 function assertDate(value) {
-  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new TypeError('data invalida');
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith('0000')) throw new TypeError('data invalida');
   const date = new Date(value + 'T00:00:00Z');
   if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== value) throw new TypeError('data invalida');
   return value;
@@ -9,6 +9,13 @@ function assertDate(value) {
 function validatePriceCents(value) {
   if (!Number.isSafeInteger(value) || value < 0 || value > 2147483647) throw new TypeError('valor_centavos invalido');
   return value;
+}
+function centavosDeReais(value) {
+  if (typeof value !== 'string') throw new TypeError('valor invalido');
+  const partes = /^(\d{1,8})(?:[,.](\d{1,2}))?$/.exec(value.trim());
+  if (!partes) throw new TypeError('valor invalido');
+  const [, reais, fracao = ''] = partes;
+  return validatePriceCents(Number(reais) * 100 + Number(fracao.padEnd(2, '0')));
 }
 function overlaps(a, b) {
   const startA = assertDate(a.start), startB = assertDate(b.start);
@@ -25,4 +32,4 @@ function selectPrice(rows, {unitId, procedureId, agreementId, date}) {
   validatePriceCents(candidates[0].cents);
   return candidates[0];
 }
-module.exports = {assertDate, validatePriceCents, overlaps, selectPrice};
+module.exports = {assertDate, validatePriceCents, centavosDeReais, overlaps, selectPrice};

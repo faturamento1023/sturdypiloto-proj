@@ -42,6 +42,7 @@ for (const projeto of ['desktop', 'celular']) {
 
 await db.query('insert into piloto.unidades (id, nome) values ($1, $2), ($3, $4)',
   [unidadeA, 'Unidade fictícia A', unidadeB, 'Unidade fictícia B']);
+await db.query("insert into piloto.procedimentos (unidade_id,codigo,descricao) values ($1,'FICT-TABELA','Procedimento da tabela'),($2,'FICT-TABELA','Procedimento da tabela')", [unidadeA, unidadeB]);
 for (const projeto of ['desktop', 'celular']) {
   const recepcao = usuarios.get('login-' + projeto + '@example.com').user.id;
   const painel = usuarios.get('painel-' + projeto + '@example.com').user.id;
@@ -207,6 +208,10 @@ async function atender(req, res) {
         return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
       }
     }
+    case 'POST /rest/v1/rpc/piloto_listar_convenios_precos':
+    case 'POST /rest/v1/rpc/piloto_salvar_convenio':
+    case 'POST /rest/v1/rpc/piloto_cadastrar_preco':
+    case 'POST /rest/v1/rpc/piloto_revisar_preco':
     case 'POST /rest/v1/rpc/piloto_listar_catalogo':
     case 'POST /rest/v1/rpc/piloto_salvar_grupo_procedimento':
     case 'POST /rest/v1/rpc/piloto_salvar_procedimento':
@@ -217,6 +222,12 @@ async function atender(req, res) {
       if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
       const nome = url.pathname.split('/').at(-1);
       const parametros = {
+        piloto_listar_convenios_precos: [dados.unidade, dados.busca, dados.referencia, dados.pagina, dados.correlacao],
+        piloto_salvar_convenio: [dados.unidade, dados.convenio, dados.revisao_esperada, dados.nome_convenio,
+          dados.ativo_convenio, dados.correlacao],
+        piloto_cadastrar_preco: [dados.unidade, dados.convenio, dados.procedimento, dados.inicio, dados.fim,
+          dados.valor, dados.coparticipacao, dados.correlacao],
+        piloto_revisar_preco: [dados.unidade, dados.preco, dados.revisao_esperada, dados.fim, dados.ativo_preco, dados.correlacao],
         piloto_listar_catalogo: [dados.unidade, dados.busca, dados.pagina, dados.correlacao],
         piloto_salvar_grupo_procedimento: [dados.unidade, dados.grupo, dados.revisao_esperada, dados.nome_grupo, dados.ativo_grupo, dados.correlacao],
         piloto_salvar_procedimento: [dados.unidade, dados.procedimento, dados.revisao_esperada, dados.grupo,
