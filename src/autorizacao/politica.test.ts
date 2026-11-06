@@ -12,3 +12,21 @@ test('AUTHZ-10/11: recebimento e estorno bloqueados',()=>{for(const perfil of ['
 test('AUTHZ-12: união de papéis só na mesma unidade',()=>{assert.equal(avaliarAutorizacao({...base,vinculos:[v('recepcao'),v('financeiro','b')],recurso:'financeiro'}).status,403);assert.equal(avaliarAutorizacao({...base,vinculos:[v('recepcao'),v('financeiro')],recurso:'financeiro'}).status,200)});
 test('AUTHZ-13/14: ID conhecido de outra unidade não autoriza',()=>{assert.equal(avaliarAutorizacao({...base,objeto:{unidadeId:'b'}}).status,404);assert.equal(avaliarAutorizacao({...base,recurso:'auditoria'}).status,403)});
 test('Falha fechada para operações sem política e objetos clínicos sem atribuição',()=>{assert.equal(avaliarAutorizacao({...base,recurso:'vinculo',acao:'alterar'}).status,403);assert.equal(avaliarAutorizacao({...base,vinculos:[v('medico')],recurso:'clinico',objeto:{unidadeId:'a'}}).status,404)});
+
+test('Entradas HTTP malformadas não podem acessar propriedades herdadas da política',()=>{
+  for(const recurso of ['__proto__','constructor','toString','nao_existe']){
+    const resultado=avaliarAutorizacao({...base,recurso:recurso as typeof base.recurso});
+    assert.deepEqual(resultado,{autorizado:false,status:403,motivo:'permissao_negada'});
+  }
+  for(const acao of ['__proto__','constructor','toString','nao_existe']){
+    const resultado=avaliarAutorizacao({...base,acao:acao as typeof base.acao});
+    assert.equal(resultado.status,403);
+  }
+});
+test('Vínculo de outra identidade nunca herda permissão',()=>{
+  assert.equal(avaliarAutorizacao({...base,vinculos:[{...v('recepcao'),usuarioId:'outra-conta'}]}).status,403);
+});
+test('Perfil operacional adicional não autoriza conteúdo clínico',()=>{
+  const resultado=avaliarAutorizacao({...base,vinculos:[v('medico'),v('recepcao')],recurso:'clinico',objeto:{unidadeId:'a',profissionalUsuarioId:'u2'}});
+  assert.equal(resultado.status,404);
+});
