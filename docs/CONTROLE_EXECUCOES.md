@@ -156,3 +156,12 @@ Registro histórico anterior ao aceite final.
 - Não foram executados testes locais nesta sessão; a correção foi inspecionada no texto do arquivo. Não houve alteração do WebUltra, dados reais ou produção.
 - Bloqueios: confirmar CI, integrar sessão e vínculos frescos do PostgreSQL, auditar transações e executar AUTHZ-01–16 integrados. DEV-013 continua em andamento; não mesclar PR #14 sem essas evidências.
 - Próxima tarefa: consultar conclusão do run, corrigir eventuais falhas e implementar adaptador de autorização server-side com banco descartável.
+
+## Sessão de 06/11/2026 — DEV-013: adaptador server-side e testes sintéticos
+
+- Antes de escrever, consultados controle da branch, PRs/Issues do repositório, cronograma XLSX no Drive e pasta Web Ultra (somente leitura). DEV-006 está concluída conforme histórico; DEV-013 segue em andamento. PR #14 preservado.
+- Criado `src/autorizacao/servidor.ts` com fonte injetável de identidade, AAL2, unidade ativa, vínculos consultados por requisição e escopo de objeto; falhas da fonte negam acesso sem expor mensagens internas. Criado `src/autorizacao/servidor.test.ts` com 6 cenários sintéticos. Workflow de autorização atualizado para ambos os arquivos de teste.
+- Commits: `2d1c663`, `2352dd2`, `fba1299`, `2766f04`, `9dc2755`. PR: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
+- **Testes:** não executados localmente; consulta de runs para o commit intermediário não retornou execuções. O CI do último commit permanece sem resultado confirmado. Não declarar aprovação.
+- **Limites:** não há integração real com PostgreSQL/Supabase, handlers, RLS nem auditoria transacional; dados apenas fictícios. Sem mudança no WebUltra ou produção.
+- **Próxima tarefa:** conferir CI do último commit, corrigir falhas e conectar o adaptador a fonte PostgreSQL descartável com testes AUTHZ-01–16. DEV-013 permanece em andamento.
