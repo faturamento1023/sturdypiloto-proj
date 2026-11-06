@@ -171,3 +171,11 @@ Registro histórico anterior ao aceite final.
 - Implementados catálogo da unidade, pesquisa, cadastro e inativação de procedimentos e grupos, com TUSS, tipo, preparo e exigência de consentimento.
 - Escrita restrita a gestão e administração com MFA. Testes cobrem revisão, auditoria, preservação do legado e bloqueio de grupo em uso.
 - A validação usa dados fictícios. A próxima etapa é a DEV-019, convênios e preços.
+
+## Sessão de 06/11/2026 — início DEV-019 (convênios e preços)
+
+- Antes de escrever: conferidos controle atualizado na `main` (DEV-001–DEV-018 concluídas), buscas de Issues e PRs abertos (nenhum retornado), critérios DEV-005, mapa DEV-004 e modelo DEV-009. Metadados do cronograma XLSX e da pasta Web Ultra confirmados no Drive; fonte preservada sem edição. O conteúdo integral do XLSX não foi reprocessado nesta sessão.
+- Criada a branch `dev-019-convenios-precos` a partir da `main`, com [especificação inicial](DEV-019_CONVENIOS_PRECOS.md), funções puras de vigência/preço e oito casos unitários sintéticos; [PR #20](https://github.com/faturamento1023/sturdypiloto-proj/pull/20) aberto em rascunho.
+- O validador rejeita datas e centavos inválidos; consulta não aplica fallback silencioso entre convênios/unidades e bloqueia preço ausente/ambíguo. Ajustada a expressão regular de data no commit `01047b9`.
+- **Testes escritos, mas não executados nem confirmados no CI nesta sessão**. Não houve execução PostgreSQL/HTTP/navegador. Nenhuma funcionalidade clínica ou financeira foi homologada.
+- **DEV-019 permanece em andamento**. Próxima ação: rodar testes, implementar migração incremental e endpoints com MFA/autorização e auditoria transacional, UI responsiva, integração PostgreSQL descartável e revisão das regras V02/V05 com o financeiro. Não publicar produção.
