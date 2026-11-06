@@ -31,12 +31,12 @@ function FormProcedimento({ unidade, grupos, item }: { unidade: string; grupos: 
         <label>Código TUSS<input name="tuss" defaultValue={item?.codigo_tuss ?? ''} pattern="[0-9]{8}" inputMode="numeric" maxLength={8} /></label>
       </div>
       <label>Tipo
-        <select name="tipo" defaultValue={item?.tipo ?? 'procedimento'}>
+        <select name="tipo" aria-label="Tipo" defaultValue={item?.tipo ?? 'procedimento'}>
           {Object.entries(nomesTipos).map(([valor, nome]) => <option value={valor} key={valor}>{nome}</option>)}
         </select>
       </label>
       <label>Grupo
-        <select name="grupo" defaultValue={item?.grupo_id ?? ''}>
+        <select name="grupo" aria-label="Grupo" defaultValue={item?.grupo_id ?? ''}>
           <option value="">Sem grupo</option>
           {grupos.filter(grupo => grupo.ativo || grupo.id === item?.grupo_id).map(grupo => (
             <option value={grupo.id} key={grupo.id}>{grupo.nome}{grupo.ativo ? '' : ' (inativo)'}</option>
