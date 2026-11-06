@@ -1,0 +1,27 @@
+'use strict';
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const {readFileSync}=require('node:fs');
+const {join}=require('node:path');
+const {criarBancoTeste}=require('./ambiente-teste.cjs');
+const id=n=>'00000000-0000-4000-8000-'+String(n).padStart(12,'0');
+test('DEV-020: valor historico preservado ao inativar cadastro',async t=>{
+ const db=await criarBancoTeste();t.after(()=>db.close());
+ await db.exec(readFileSync(join(__dirname,'dev020_impacto_cadastros.sql'),'utf8'));
+ const [u,doc,patient,proc,att,item]=[1,2,3,4,5,6].map(id);
+ await db.query('insert into piloto.unidades(id,nome) values($1,$2)',[u,'Unidade sintética']);
+ await db.query('insert into piloto.profissionais(unidade_id,id,nome) values($1,$2,$3)',[u,doc,'Profissional sintético']);
+ await db.query('insert into piloto.pacientes(unidade_id,id,nome) values($1,$2,$3)',[u,patient,'Paciente sintético']);
+ await db.query('insert into piloto.procedimentos(unidade_id,id,codigo,descricao) values($1,$2,$3,$4)',[u,proc,'TST','Procedimento sintético']);
+ await db.query('insert into piloto.atendimentos(unidade_id,id,paciente_id,profissional_id) values($1,$2,$3,$4)',[u,att,patient,doc]);
+ await db.query('insert into piloto.itens_atendimento(unidade_id,id,atendimento_id,procedimento_id,quantidade,valor_unitario_centavos) values($1,$2,$3,$4,2,12500)',[u,item,att,proc]);
+ let r=await db.query('select valor_historico_centavos,cobrado_historico_centavos,procedimento_ativo_atual from piloto.impacto_cadastros_itens where unidade_id=$1 and item_id=$2',[u,item]);
+ assert.equal(r.rows[0].valor_historico_centavos,12500);
+ assert.equal(Number(r.rows[0].cobrado_historico_centavos),25000);
+ assert.equal(r.rows[0].procedimento_ativo_atual,true);
+ await db.query('update piloto.procedimentos set ativo=false where unidade_id=$1 and id=$2',[u,proc]);
+ r=await db.query('select valor_historico_centavos,cobrado_historico_centavos,procedimento_ativo_atual from piloto.impacto_cadastros_itens where unidade_id=$1 and item_id=$2',[u,item]);
+ assert.equal(r.rows[0].valor_historico_centavos,12500);
+ assert.equal(Number(r.rows[0].cobrado_historico_centavos),25000);
+ assert.equal(r.rows[0].procedimento_ativo_atual,false);
+});
