@@ -19,11 +19,22 @@ Para cada item, registrar: **Confirmado / Corrigir / Indeterminado**, regra exat
 | V11 | Ambos | Quais estados de erro, duplicidade, acesso negado e recuperação são necessários? | UX-01–07 | Pendente |
 | V12 | Ambos | A navegação desktop e celular atende os objetivos de cada perfil? | UX-01–07 | Pendente |
 
+## Decisões de produto confirmadas pelo responsável em 05/11/2026
+
+1. **Recepção:** agendamento e abertura do atendimento são operações separadas. O vínculo e as transições ainda precisam de detalhamento técnico.
+2. **Médico:** permitir salvar evolução como rascunho e retomá-la posteriormente; controle de acesso e histórico de alterações ainda exigem especificação.
+3. **Laudos:** exigir revisão antes da assinatura e liberação; regras de assinatura e responsáveis exigem validação clínica/operacional.
+4. **Financeiro:** manter valores cobrados, recebidos e pendentes em controles distintos; conciliação e integração com caixa/NFSe ainda exigem especificação.
+
+Essas quatro decisões são **requisitos aprovados para o Projeto Piloto**, não alegações de funcionamento comprovado no WebUltra nem aprovação de todas as questões V01–V12.
+
 ## Registro de decisão
 
 | ID | Decisão validada | Papel responsável | Data | Evidência permitida | Passos afetados |
 |---|---|---|---|---|---|
 | ACEITE-01 | Responsável pelo projeto declarou «Validado» em conversa, após apresentação do checklist e do CI; aceite do documento para prosseguir, sem respostas técnicas específicas | Responsável pelo projeto | 05/11/2026 | Registro textual de aceite, sem dados clínicos | Documento DEV-006; V01–V12 permanecem pendentes de confirmação detalhada |
+
+| ACEITE-02 | Quatro decisões de produto confirmadas explicitamente pelo responsável: agendamento separado do atendimento; rascunho de evolução; revisão de laudos antes de assinatura/liberação; controles separados de valores cobrados, recebidos e pendentes | Responsável pelo projeto | 05/11/2026 | Confirmação textual em conversa | V04 (parcial), V05 (parcial), V06 (parcial), V09 (parcial) |
 
 ## Critério de saída DEV-006
 
