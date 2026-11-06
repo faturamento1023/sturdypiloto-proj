@@ -238,3 +238,11 @@ Registro histórico anterior ao aceite final.
 - Atualizado workflow para incluir os testes de comandos (commit `223c3a4`).
 - **Testes escritos, não executados nesta sessão; CI não confirmado.** A transação depende de adaptador real que implemente rollback. Ainda não há persistência PostgreSQL, endpoint ou UI de exceções.
 - Feriado bloqueante permanece regra proposta não homologada. Próxima tarefa: integrar banco e grade, executar testes PostgreSQL/HTTP/navegador com dados fictícios e validar precedência com responsáveis.
+
+## Sessão de 06/11/2026 — persistência inicial DEV-023
+
+- Conferidos PR #24, controle da branch e esquema anterior DEV-022 antes da migração.
+- Criado `database/dev023_excecoes_feriados.sql` (commit `9ce4d71`): tabelas de feriados e exceções, chaves de unidade, integridade referencial, RLS para leitura e gatilhos de auditoria. Escrita direta revogada até existir operação privada transacional.
+- Criados cinco testes estáticos da migração `database/dev023_excecoes_feriados.test.cjs` (commit `6dc0122`) e adicionados ao workflow DEV-023 (commit `0807afa`).
+- **Não executado/confirmado:** migração em PostgreSQL, testes Node e CI remoto. Testes estáticos não substituem testes de RLS e concorrência em banco.
+- **Pendente:** operação SQL segura com rechecagem de reservas e auditoria, leitura integrada na grade, endpoints/UI, testes PostgreSQL/navegador, homologação operacional da precedência dos feriados. DEV-023 permanece aberta e PR #24 não deve ser mesclado ainda.
