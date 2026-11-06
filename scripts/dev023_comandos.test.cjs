@@ -14,3 +14,14 @@ test('conflito bloqueia',async()=>assert.equal((await createException({actor,com
 test('sucesso audita',async()=>{const d=fake();assert.equal((await createException({actor,command,db:d})).status,201);assert.equal(d.events.length,1);});
 test('auditoria falha aborta transacao',async()=>{const d=fake({audit:async()=>{throw Error('audit failure')}});await assert.rejects(createException({actor,command,db:d}),/audit failure/);assert.equal(d.committed,0);});
 test('substituicao sem profissional invalida',async()=>assert.equal((await createException({actor,command:{...command,kind:'substituicao'},db:fake()})).status,400));
+
+test('campos arbitrarios nao sao enviados para persistencia',async()=>{
+ let inserted;const d=fake({insertException:async c=>{inserted=c;return {id:'e1'};}});
+ assert.equal((await createException({actor,command:{...command,patientId:'SEGREDO-FICTICIO',role:'administracao'},db:d})).status,201);
+ assert.equal(Object.hasOwn(inserted,'patientId'),false);
+ assert.equal(Object.hasOwn(inserted,'role'),false);
+});
+test('unidades nao-array nao autorizam',async()=>assert.equal((await createException({actor:{...actor,units:'u1'},command})).status,403));
+test('profissional vazio rejeitado',async()=>assert.equal((await createException({actor,command:{...command,professionalId:'  '},db:fake()})).status,400));
+test('sala vazia rejeitada',async()=>assert.equal((await createException({actor,command:{...command,roomId:' '},db:fake()})).status,400));
+test('id ausente aborta auditoria',async()=>{const d=fake({insertException:async()=>({})});await assert.rejects(createException({actor,command,db:d}),/insercao sem id/);assert.equal(d.events.length,0);});
