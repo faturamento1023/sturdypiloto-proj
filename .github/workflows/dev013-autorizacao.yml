@@ -1,0 +1,17 @@
+name: DEV-013 authorization unit tests
+on:
+  pull_request:
+    paths:
+      - 'src/autorizacao/**'
+      - '.github/workflows/dev013-autorizacao.yml'
+  workflow_dispatch:
+jobs:
+  authorization-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Testar politica isolada com dados ficticios
+        run: node --test src/autorizacao/politica.test.ts
