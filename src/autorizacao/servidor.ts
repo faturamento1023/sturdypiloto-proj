@@ -21,6 +21,10 @@ export async function autorizarNoServidor(fonte: FonteAutorizacao, req: Solicita
     if (!identidade?.usuarioId) return negar(401,'sessao_ausente');
     if (identidade.aal !== 'aal2') return negar(403,'mfa_pendente');
     if (typeof req.unidadeId !== 'string' || !req.unidadeId.trim()) return negar(403,'unidade_invalida');
+    // Entradas HTTP não são garantidas pelos tipos TypeScript; negar antes de consultar objetos.
+    const recursos = ['agenda','paciente','atendimento','item','catalogo','preco','clinico','financeiro','recebimento','vinculo','auditoria'];
+    const acoes = ['ler','criar','alterar','receber','estornar'];
+    if (!recursos.includes(req.recurso) || !acoes.includes(req.acao)) return negar(403,'permissao_negada');
     const ativa = await fonte.unidadeAtiva(req.unidadeId);
     if (!ativa) return negar(403,'unidade_invalida');
     const vinculos = await fonte.vinculosAtuais(identidade.usuarioId,req.unidadeId);
