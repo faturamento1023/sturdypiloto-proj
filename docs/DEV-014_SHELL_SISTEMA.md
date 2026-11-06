@@ -14,7 +14,7 @@ Após validar a sessão e o MFA, abra **Minha conta → Abrir painel**. O painel
 
 O servidor consulta as unidades e os perfis ativos da própria conta a cada carregamento. A primeira unidade em ordem de nome é o padrão quando nenhuma unidade foi selecionada. A seleção é registrada na URL para manter a navegação reproduzível. URLs de unidades ou módulos fora do escopo retornam 404. A configuração de autenticação, o estado sem vínculo e a indisponibilidade do provedor têm tratamento separado.
 
-No Supabase isolado, aplique [o SQL DEV-014](../database/dev014_shell.sql) após os [SQLs DEV-009 e DEV-013](DEV-013_MATRIZ_AUTORIZACAO.md). O RPC `public.piloto_minhas_unidades()` executa com os privilégios da sessão e usa o RLS de unidades e o auxiliar de vínculos da DEV-013. A resposta contém apenas identificador, nome e perfis de cada unidade acessível. Os schemas internos permanecem fora da Data API. As respostas do painel usam `Cache-Control: private, no-store`.
+No Supabase isolado, aplique [o SQL DEV-014](../database/dev014_shell.sql) após os [SQLs DEV-009 e DEV-013](DEV-013_MATRIZ_AUTORIZACAO.md) e depois aplique o [SQL de auditoria DEV-015](DEV-015_AUDITORIA_CENTRAL.md). O RPC `public.piloto_minhas_unidades()` executa com os privilégios da sessão e usa o RLS de unidades e o auxiliar de vínculos da DEV-013. A resposta contém apenas identificador, nome e perfis de cada unidade acessível. Os schemas internos permanecem fora da Data API. As respostas do painel usam `Cache-Control: private, no-store`.
 
 ## Verificação
 

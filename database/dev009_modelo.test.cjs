@@ -9,7 +9,7 @@ const [pro, otherPro, proB, patient, otherPatient, patientB, procedure, payer, b
   canceled, encounter, otherEncounter, encounterB, item, evolution, report, payment] =
   [21, 22, 23, 31, 32, 33, 41, 42, 51, 52, 61, 62, 63, 71, 81, 82, 91].map(uuid);
 
-test('DEV-009 — modelo e RLS em PostgreSQL descartável', async t => {
+test('Modelo, RLS e auditoria em PostgreSQL descartável', async t => {
   const db = await criarBancoTeste();
   t.after(() => db.close());
 
@@ -213,6 +213,83 @@ test('DEV-009 — modelo e RLS em PostgreSQL descartável', async t => {
     await q('update piloto.unidades set ativa=true where id=$1', [b]);
   });
 
+  await t.test('trilha correlaciona leituras clínicas, consultas de perfis e bloqueios', async () => {
+    const [okPerfil, negadoPerfil, painel, itensOk, itensVazios, docOk, docNegado, semMfa, anonimo] =
+      [201, 202, 203, 204, 205, 206, 207, 208, 209].map(uuid);
+    await as(recep, async () => {
+      await q('select * from public.piloto_meus_perfis($1, $2)', [a, okPerfil]);
+      assert.deepEqual((await q('select * from public.piloto_meus_perfis($1, $2)', [uuid(999), negadoPerfil])).rows, []);
+      await q('select * from public.piloto_minhas_unidades($1)', [painel]);
+    });
+    await as(doctor, async () => {
+      await q('select * from piloto_privado.itens_clinicos($1, $2, $3)', [a, encounter, itensOk]);
+      const { rows } = await q('select * from piloto_privado.documento_atual_auditado($1, $2, $3)', [a, report, docOk]);
+      assert.deepEqual(rows, [{
+        id: report, atendimento_id: encounter, item_id: item, tipo: 'laudo',
+        versao: 5, estado: 'liberado', conteudo: { texto: 'Conteúdo sintético' },
+      }]);
+    });
+    await as(otherDoctor, async () => {
+      assert.deepEqual((await q('select * from piloto_privado.itens_clinicos($1, $2, $3)', [a, otherEncounter, itensVazios])).rows, []);
+      assert.deepEqual((await q('select * from piloto_privado.documento_atual_auditado($1, $2, $3)', [a, report, docNegado])).rows, []);
+    });
+    await as(doctor, () => q('select * from piloto_privado.documento_atual_auditado($1, $2, $3)', [a, report, semMfa]), { aal: 'aal1' });
+    await as(doctor, () => q('select * from public.piloto_minhas_unidades($1)', [anonimo]), { anonymous: true });
+    const { rows } = await q(`select entidade, unidade_id, registro_id, ator_id, operacao, resultado, correlacao_id
+      from piloto_privado.auditoria where correlacao_id = any($1::uuid[]) order by correlacao_id`,
+    [[okPerfil, negadoPerfil, painel, itensOk, itensVazios, docOk, docNegado, semMfa, anonimo]]);
+    assert.deepEqual(rows.map(e => [e.correlacao_id, e.entidade, e.unidade_id, e.registro_id, e.ator_id, e.operacao, e.resultado]), [
+      [okPerfil, 'acesso_unidade', a, a, recep, 'SELECT', 'permitido'],
+      [negadoPerfil, 'acesso_unidade', null, null, recep, 'SELECT', 'negado'],
+      [painel, 'painel_unidades', null, null, recep, 'SELECT', 'permitido'],
+      [itensOk, 'itens_clinicos', a, encounter, doctor, 'SELECT', 'permitido'],
+      [itensVazios, 'itens_clinicos', a, otherEncounter, otherDoctor, 'SELECT', 'permitido'],
+      [docOk, 'documentos_clinicos', a, report, doctor, 'SELECT', 'permitido'],
+      [docNegado, 'documentos_clinicos', null, null, otherDoctor, 'SELECT', 'negado'],
+      [semMfa, 'documentos_clinicos', null, null, doctor, 'SELECT', 'negado'],
+    ]);
+    const trilha = await q('select * from piloto_privado.auditoria where correlacao_id = $1', [docOk]);
+    assert.equal(JSON.stringify(trilha.rows).includes('Conteúdo sintético'), false);
+  });
+
+  await t.test('alteração e auditoria confirmam ou revertem juntas', async () => {
+    const correlacao = uuid(210);
+    const ajustar = async tx => {
+      await tx.query("select set_config('request.jwt.claims', $1, true), set_config('piloto.correlacao_id', $2, true)",
+        [JSON.stringify({ sub: recep, aal: 'aal2' }), correlacao]);
+      await tx.query("update piloto.agendamentos set estado='remarcado' where id=$1", [booking]);
+    };
+    const trilha = () => q('select ator_id, operacao, resultado from piloto_privado.auditoria where correlacao_id=$1', [correlacao]);
+    await assert.rejects(db.transaction(async tx => {
+      await ajustar(tx);
+      throw new Error('reverter a alteração de teste');
+    }), /reverter a alteração de teste/);
+    assert.deepEqual((await trilha()).rows, []);
+    assert.equal((await q('select estado from piloto.agendamentos where id=$1', [booking])).rows[0].estado, 'reservado');
+    await db.transaction(ajustar);
+    assert.deepEqual((await trilha()).rows, [{ ator_id: recep, operacao: 'UPDATE', resultado: 'permitido' }]);
+    assert.equal((await q('select estado from piloto.agendamentos where id=$1', [booking])).rows[0].estado, 'remarcado');
+  });
+
+  await t.test('falha de registro bloqueia leitura e alteração e a trilha resiste a reescrita', async () => {
+    await q("alter table piloto_privado.auditoria add constraint teste_auditoria_indisponivel check (false) not valid");
+    try {
+      await as(doctor, () => deny('select * from piloto_privado.documento_atual_auditado($1, $2)', [a, report], '23514'));
+      await as(recep, () => deny('select * from public.piloto_meus_perfis($1)', [a], '23514'));
+      await deny("update piloto.agendamentos set estado='confirmado' where id=$1", [booking], '23514');
+    } finally {
+      await q('alter table piloto_privado.auditoria drop constraint teste_auditoria_indisponivel');
+    }
+    assert.equal((await q('select estado from piloto.agendamentos where id=$1', [booking])).rows[0].estado, 'remarcado');
+    await as(admin, async () => {
+      await deny('select * from piloto_privado.auditoria', [], '42501');
+      await deny('delete from piloto_privado.auditoria', [], '42501');
+      await deny('truncate piloto_privado.auditoria', [], '42501');
+    });
+    await deny('delete from piloto_privado.auditoria', [], '55000');
+    await deny('truncate piloto_privado.auditoria', [], '55000');
+  });
+
   await t.test('RLS em todas as tabelas e auditoria sem conteúdo clínico', async () => {
     const { rows } = await q(`select count(*)::int total, bool_and(c.relrowsecurity) protegidas
       from pg_class c join pg_namespace n on n.oid=c.relnamespace
@@ -222,8 +299,8 @@ test('DEV-009 — modelo e RLS em PostgreSQL descartável', async t => {
     await q("update piloto.agendamentos set estado='confirmado' where id=$1", [booking]);
     await q("select set_config('request.jwt.claims', '{}', false)");
     const events = (await q("select * from piloto_privado.auditoria where registro_id=$1 order by id", [booking])).rows;
-    assert.deepEqual(events.map(x => [x.operacao, x.ator_id]), [['INSERT', null], ['UPDATE', recep]]);
-    assert.deepEqual(Object.keys(events[0]).sort(), ['ator_id', 'entidade', 'id', 'ocorrido_em', 'operacao', 'registro_id', 'unidade_id']);
+    assert.deepEqual(events.map(x => [x.operacao, x.ator_id]), [['INSERT', null], ['UPDATE', recep], ['UPDATE', recep]]);
+    assert.deepEqual(Object.keys(events[0]).sort(), ['ator_id', 'correlacao_id', 'entidade', 'id', 'ocorrido_em', 'operacao', 'registro_id', 'resultado', 'unidade_id']);
     await deny('update piloto_privado.auditoria set ator_id=$1 where registro_id=$2', [recep, booking], '55000');
   });
 });

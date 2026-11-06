@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { criarBancoTeste } from '../database/ambiente-teste.cjs';
@@ -154,15 +155,25 @@ async function atender(req, res) {
     case 'POST /rest/v1/rpc/piloto_meus_perfis':
     case 'POST /rest/v1/rpc/piloto_minhas_unidades': {
       if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
+      const acessoUnidade = url.pathname.endsWith('/piloto_meus_perfis');
       const { rows } = await db.transaction(async tx => {
         await tx.exec('set local role authenticated');
         await tx.query("select set_config('request.jwt.claims', $1, true)", [
           JSON.stringify({ sub: acesso.conta.user.id, aal: acesso.aal, is_anonymous: false }),
         ]);
-        return url.pathname.endsWith('/piloto_meus_perfis')
-          ? tx.query('select * from public.piloto_meus_perfis($1)', [dados.unidade])
-          : tx.query('select * from public.piloto_minhas_unidades()');
+        return acessoUnidade
+          ? tx.query('select * from public.piloto_meus_perfis($1, $2)', [dados.unidade, dados.correlacao])
+          : tx.query('select * from public.piloto_minhas_unidades($1)', [dados.correlacao]);
       });
+      const evento = await db.query(
+        'select entidade, ator_id, resultado from piloto_privado.auditoria where correlacao_id = $1',
+        [dados.correlacao],
+      );
+      assert.deepEqual(evento.rows, [{
+        entidade: acessoUnidade ? 'acesso_unidade' : 'painel_unidades',
+        ator_id: acesso.conta.user.id,
+        resultado: rows.length ? 'permitido' : 'negado',
+      }]);
       return json(res, 200, rows);
     }
     case 'GET /auth/v1/user':
