@@ -246,3 +246,11 @@ Registro histórico anterior ao aceite final.
 - Criados cinco testes estáticos da migração `database/dev023_excecoes_feriados.test.cjs` (commit `6dc0122`) e adicionados ao workflow DEV-023 (commit `0807afa`).
 - **Não executado/confirmado:** migração em PostgreSQL, testes Node e CI remoto. Testes estáticos não substituem testes de RLS e concorrência em banco.
 - **Pendente:** operação SQL segura com rechecagem de reservas e auditoria, leitura integrada na grade, endpoints/UI, testes PostgreSQL/navegador, homologação operacional da precedência dos feriados. DEV-023 permanece aberta e PR #24 não deve ser mesclado ainda.
+
+## Sessão de 06/11/2026 — endurecimento do contrato DEV-023
+
+- Conferidos controle da main, PR #24 aberto, Issues abertas (nenhuma), cronograma do Drive (DEV-023: exceções e feriados, status original Planejado) e pasta Web Ultra antes das alterações.
+- `scripts/dev023_comandos.cjs` corrigido para aceitar somente campos conhecidos na persistência, rejeitar vínculos malformados e profissional/sala vazios e exigir identificador após inserção (commit `08c4551`).
+- Adicionados cinco testes sintéticos de campos extras, formatos inválidos e inserção sem identificador (commit `6629e62`).
+- Tentativa de obter código via git local falhou por DNS; consulta de workflow para o commit retornou lista vazia. **Testes não executados/CI não confirmado**. Não houve alteração de produção ou de dados reais.
+- DEV-023 ainda em andamento; pendências: executar testes, aplicar migração em PostgreSQL descartável, transação com concorrência e checagem de reservas, grade e interface, homologação operacional de feriados.
