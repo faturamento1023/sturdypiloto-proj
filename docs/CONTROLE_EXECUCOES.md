@@ -196,3 +196,12 @@ Registro histórico anterior ao aceite final.
 - **12 testes unitários executados localmente e aprovados** com Node 22 em cópia reconstruída do código da branch (12 pass, 0 fail). O teste remoto/CI ainda não está confirmado.
 - Criada migração incremental `database/dev019_convenios_precos.sql` para revisão e unicidade de nome normalizado por unidade. Commits `31e9b2c` e `d1ac26d` (reexecução de constraints). Migração **não executada em PostgreSQL**; pode exigir reconciliação de duplicatas legadas.
 - Documento DEV-019 atualizado. **Não concluir DEV-019**: falta validar migração em banco descartável, implementar endpoints com autorização e auditoria transacional, UI responsiva e testes HTTP/navegador; decisões financeiras V02/V05 pendentes. Não houve alteração no WebUltra nem em produção.
+
+## Sessão de 06/11/2026 — correção de migração DEV-019
+
+- Consultados controle atualizado da branch, PR #20 e Issues abertas antes de alterar arquivos. DEV-019 segue em andamento; nenhuma tarefa posterior iniciada.
+- Identificado erro sintático nos blocos PL/pgSQL da migração: `DO $ BEGIN ... END $;` não possui delimitador válido. Corrigido para `DO $$ BEGIN ... END $$;` no commit `6bf6d47`.
+- Criados quatro testes estruturais em `scripts/dev019_migracao.test.cjs` (commit `2c945c5`) e atualizado CI para executar também esse arquivo (commit `e9b24de`).
+- **Testes desta sessão não executados nem CI confirmado**. Testes estruturais não substituem execução real da migração em PostgreSQL descartável.
+- Pendências: executar SQL em banco descartável, verificar conflitos de nomes legados, handlers autorizados e auditados, UI, testes HTTP/navegador e validação financeira V02/V05.
+- Próxima ação: validar migração em PostgreSQL descartável e implementar endpoints sem alterar produção.
