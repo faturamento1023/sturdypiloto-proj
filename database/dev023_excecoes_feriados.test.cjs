@@ -1,0 +1,10 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const sql=fs.readFileSync(require('node:path').join(__dirname,'dev023_excecoes_feriados.sql'),'utf8');
+test('tabelas de feriados e excecoes',()=>{assert.match(sql,/create table piloto\.feriados_agenda/);assert.match(sql,/create table piloto\.excecoes_agenda/);});
+test('isolamento RLS nas duas tabelas',()=>{for(const t of ['feriados_agenda','excecoes_agenda']){assert.match(sql,new RegExp('alter table piloto\\.'+t+' enable row level security'));assert.match(sql,new RegExp('create policy '+t+'_ler'));}});
+test('escrita direta nao autorizada',()=>{assert.match(sql,/revoke all on piloto\.feriados_agenda,piloto\.excecoes_agenda/);assert.doesNotMatch(sql,/grant (insert|update|delete|all) on/i);});
+test('auditoria em mutacoes',()=>assert.equal((sql.match(/execute function piloto_privado\.registrar_mutacao\(\)/g)||[]).length,2));
+test('validacao de intervalo e profissional em substituicao',()=>{assert.match(sql,/fim_minuto > inicio_minuto/);assert.match(sql,/tipo <> 'substituicao' or profissional_id is not null/);});
