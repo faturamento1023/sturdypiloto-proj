@@ -75,3 +75,13 @@ Registro histórico anterior ao aceite final.
 - Modeladas as entidades de cadastro, agenda, atendimento, prontuário, financeiro e auditoria. O [registro técnico](DEV-009_MODELO_DADOS.md) descreve as chaves, a matriz de acesso e os limites desta fase.
 - O SQL foi executado somente em PostgreSQL descartável com dados sintéticos. Cinco grupos de cenários passaram. Autenticação integrada, comandos de escrita e auditoria de leitura pertencem às próximas etapas.
 - Próxima ação: DEV-010.
+
+
+## Sessão de 05/11/2026 — início DEV-010 (contratos de API)
+
+- Antes de escrever, conferidos controle da branch principal, Issue #4, PRs #5–#8 e cronograma XLSX do Drive. O estado atualizado registra DEV-001 a DEV-009 concluídas; a próxima tarefa é DEV-010.
+- Conferida a fonte da pasta Web Ultra (somente leitura) e o SQL da DEV-009. A planilha de cronograma permanece inalterada.
+- Criada a branch `dev-010-contratos-api`, o documento [DEV-010_CONTRATOS_API.md](DEV-010_CONTRATOS_API.md) e o [PR #9](https://github.com/faturamento1023/sturdypiloto-proj/pull/9) em rascunho.
+- Entrega: proposta de 15 rotas para agenda, pacientes, atendimentos, catálogo, documentos e financeiro, com RBAC, limites, paginação, erros, idempotência e bloqueios explícitos.
+- Testes: **não executados nesta sessão**; documento técnico não é endpoint implementado. Nenhum dado real, credencial ou código proprietário foi publicado.
+- Bloqueios: decisões V01–V12, especificação OpenAPI formal, testes automatizados de contrato e autorização; DEV-010 permanece em andamento. Próxima ação: criar OpenAPI validado e cenários negativos.
