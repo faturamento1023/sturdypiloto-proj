@@ -278,3 +278,10 @@ Registro histórico anterior ao aceite final.
 - Adicionado teste estático de regressão para abertura e fechamento dos delimitadores (commit `493c930`).
 - **Validação pendente:** sem execução de migração PostgreSQL ou teste Node nesta sessão; acesso git local continua bloqueado por DNS e consulta de workflow do commit retornou lista vazia. Os testes estruturais não equivalem a validação real do banco.
 - DEV-023 permanece em andamento. Próximo: executar migração em banco descartável, conferir RLS/RPC, implementar gravação transacional com bloqueio concorrente e integração da grade; validar regra proposta de feriados com responsáveis.
+
+## Sessão de 06/11/2026 — regressão de testes DEV-023
+
+- Conferidos previamente controle atualizado na main e na branch, PR #24 aberto, Issues abertas (nenhuma), DEV-005 v1.0, cronograma XLSM do Drive e inventário da pasta Web Ultra. O cronograma é um arquivo Excel macro-enabled, não uma planilha nativa do Sheets; nenhuma célula foi alterada.
+- Corrigido defeito verificável no teste estático de delimitadores PL/pgSQL: a expressão regular anterior continha barras escapadas em excesso e falharia mesmo diante de `as $$ ... $$;` correto. O teste agora procura abertura/fechamento e corpo da função (commit `9ee15f3`).
+- **Validação:** conferência lógica do padrão; execução integral dos testes, CI e migração PostgreSQL continuam não confirmadas. Não declarar aprovação clínica nem conclusão da DEV-023.
+- Próximo: executar a suíte no CI, aplicar migração em PostgreSQL descartável, integrar escrita transacional e grade, testar isolamento e concorrência. PR #24 segue em revisão. Nenhum dado real ou produção alterados.
