@@ -1,7 +1,7 @@
 {
   "project": "Projeto Piloto",
   "task": "DEV-006",
-  "version": "0.1",
+  "version": "0.2",
   "date": "2026-11-05",
   "stage": "UX e arquitetura",
   "status": "em_andamento_proposta_para_revisao",
@@ -65,7 +65,18 @@
           "inputs": "perfil_e_permissoes",
           "output": "Sessão com ações permitidas",
           "evidence": "observado",
-          "error": "Acesso negado quando fora da política; não elevar privilégios."
+          "error": "Acesso negado quando fora da política; não elevar privilégios.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 25
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "A2",
@@ -77,7 +88,22 @@
           "inputs": "profissional",
           "output": "Profissional disponível como opção",
           "evidence": "observado",
-          "error": "CRM/UF inválidos; certificado real não solicitado no sandbox."
+          "error": "CRM/UF inválidos; certificado real não solicitado no sandbox.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 17
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 18
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "A3",
@@ -90,7 +116,28 @@
           "inputs": "catalogo",
           "output": "Procedimento consistente com grupo",
           "evidence": "documentado",
-          "error": "Nome repetido, código inválido e consentimento ausente."
+          "error": "Nome repetido, código inválido e consentimento ausente.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 20
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 19
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 38
+            }
+          ],
+          "source_visual_missing": [
+            "ADM-38"
+          ],
+          "action_is_proven": false
         },
         {
           "id": "A4",
@@ -102,7 +149,24 @@
           "inputs": "convenio",
           "output": "Convênio ativo na lista",
           "evidence": "documentado",
-          "error": "Coparticipação depende de regra ainda não validada."
+          "error": "Coparticipação depende de regra ainda não validada.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 22
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 23
+            }
+          ],
+          "source_visual_missing": [
+            "ADM-23"
+          ],
+          "action_is_proven": false
         },
         {
           "id": "A5",
@@ -113,7 +177,18 @@
           "inputs": "preco_por_vigencia",
           "output": "Preço pronto para seleção no atendimento",
           "evidence": "observado",
-          "error": "Preço inexistente / datas conflitantes: exigir confirmação, não inventar valor."
+          "error": "Preço inexistente / datas conflitantes: exigir confirmação, não inventar valor.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 21
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "A6",
@@ -125,7 +200,22 @@
           "inputs": "agenda_e_local",
           "output": "Agenda consultável na recepção",
           "evidence": "documentado",
-          "error": "Conflito, local não cadastrado e horário indisponível."
+          "error": "Conflito, local não cadastrado e horário indisponível.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 2
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 5
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "A7",
@@ -136,7 +226,18 @@
           "inputs": "agenda",
           "output": "Configuração verificada visualmente",
           "evidence": "observado",
-          "error": "Se listagem vazia, exibir estado vazio em vez de falha de sistema."
+          "error": "Se listagem vazia, exibir estado vazio em vez de falha de sistema.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 1
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         }
       ],
       "variants": [
@@ -197,7 +298,18 @@
           "inputs": "agenda,data",
           "output": "Grade de horários",
           "evidence": "observado",
-          "error": "Nenhuma agenda configurada, erro de filtro e sem acesso."
+          "error": "Nenhuma agenda configurada, erro de filtro e sem acesso.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 1
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "B2",
@@ -210,7 +322,26 @@
           "inputs": "disponibilidade",
           "output": "Horários elegíveis destacados",
           "evidence": "proposto",
-          "error": "Cota esgotada ou feriado bloqueia seleção após regra aprovada."
+          "error": "Cota esgotada ou feriado bloqueia seleção após regra aprovada.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 3
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 4
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 6
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "B3",
@@ -221,7 +352,18 @@
           "inputs": "nome",
           "output": "Paciente existente ou resultado vazio",
           "evidence": "observado",
-          "error": "Exibir opção 'Novo paciente' quando não encontrado."
+          "error": "Exibir opção 'Novo paciente' quando não encontrado.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 15
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "B4",
@@ -232,7 +374,18 @@
           "inputs": "identificacao_contatos",
           "output": "Paciente fictício cadastrado",
           "evidence": "observado",
-          "error": "CPF de teste inválido, duplicidade, campos vazios."
+          "error": "CPF de teste inválido, duplicidade, campos vazios.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 16
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "B5",
@@ -244,7 +397,22 @@
           "inputs": "selecoes",
           "output": "Resumo para confirmação",
           "evidence": "proposto",
-          "error": "Agenda ou médico indisponível, cota excedida, convênio inativo."
+          "error": "Agenda ou médico indisponível, cota excedida, convênio inativo.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 1
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 5
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "B6",
@@ -255,7 +423,18 @@
           "inputs": "reserva",
           "output": "Horário confirmado e identificador de teste",
           "evidence": "proposto",
-          "error": "Duas pessoas tentam mesmo horário: apenas uma reserva aceita."
+          "error": "Duas pessoas tentam mesmo horário: apenas uma reserva aceita.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 1
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "B7",
@@ -266,7 +445,18 @@
           "inputs": "agenda",
           "output": "Fluxo termina com grade atualizada",
           "evidence": "proposto",
-          "error": "Operação falhou: manter dados e permitir nova tentativa segura."
+          "error": "Operação falhou: manter dados e permitir nova tentativa segura.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 1
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         }
       ],
       "variants": [
@@ -328,7 +518,22 @@
           "inputs": "paciente_opcional",
           "output": "Formulário vazio ou pré-selecionado",
           "evidence": "observado",
-          "error": "Falta de permissão ou agendamento removido."
+          "error": "Falta de permissão ou agendamento removido.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 13
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 14
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "C2",
@@ -340,7 +545,22 @@
           "inputs": "paciente",
           "output": "Vínculo com prontuário sintético",
           "evidence": "observado",
-          "error": "Paciente não existe; duplicidade de cadastro."
+          "error": "Paciente não existe; duplicidade de cadastro.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 15
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 16
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "C3",
@@ -352,7 +572,22 @@
           "inputs": "cobertura",
           "output": "Cabeçalho do atendimento preenchido",
           "evidence": "observado",
-          "error": "Convênio inativo, guia incompleta ou data inválida."
+          "error": "Convênio inativo, guia incompleta ou data inválida.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 14
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 22
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "C4",
@@ -365,7 +600,26 @@
           "inputs": "itens",
           "output": "Tabela de itens calculada para revisão",
           "evidence": "observado",
-          "error": "Procedimento ausente ou preço inválido; apresentar aviso."
+          "error": "Procedimento ausente ou preço inválido; apresentar aviso.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 19
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 21
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 14
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "C5",
@@ -377,7 +631,22 @@
           "inputs": "precos",
           "output": "Totais sem arredondamentos ocultos",
           "evidence": "proposto",
-          "error": "Não presumir mesmo valor para pago, cobrado e faturado."
+          "error": "Não presumir mesmo valor para pago, cobrado e faturado.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 21
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 14
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "C6",
@@ -390,7 +659,26 @@
           "inputs": "pagamento",
           "output": "Pagamento ligado ao atendimento",
           "evidence": "observado",
-          "error": "Pagamento parcial e saldo aberto devem permanecer distintos."
+          "error": "Pagamento parcial e saldo aberto devem permanecer distintos.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 26
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 27
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 14
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "C7",
@@ -401,7 +689,18 @@
           "inputs": "atendimento",
           "output": "Registro de atendimento com identificador auditável",
           "evidence": "documentado",
-          "error": "Falha de validação mantém dados no formulário sem duplicar."
+          "error": "Falha de validação mantém dados no formulário sem duplicar.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 14
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "C8",
@@ -412,7 +711,18 @@
           "inputs": "periodo",
           "output": "Atendimento encontrado na grade",
           "evidence": "observado",
-          "error": "Falta de permissão deve bloquear detalhes/edição."
+          "error": "Falta de permissão deve bloquear detalhes/edição.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 13
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         }
       ],
       "variants": [
@@ -471,7 +781,18 @@
           "inputs": "periodo",
           "output": "Linha selecionada",
           "evidence": "observado",
-          "error": "Nenhuma consulta; tentativa de acessar outra unidade."
+          "error": "Nenhuma consulta; tentativa de acessar outra unidade.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 1
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "D2",
@@ -483,7 +804,22 @@
           "inputs": "registro",
           "output": "Contexto clínico e triagem visíveis conforme permissão",
           "evidence": "documentado",
-          "error": "Acesso sem consentimento/permissão indevido é negado."
+          "error": "Acesso sem consentimento/permissão indevido é negado.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 1
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 2
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "D3",
@@ -494,7 +830,18 @@
           "inputs": "prontuario",
           "output": "Contexto clínico do atendimento",
           "evidence": "observado",
-          "error": "Dados ausentes exibidos como não informados, sem valor padrão fictício."
+          "error": "Dados ausentes exibidos como não informados, sem valor padrão fictício.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 2
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "D4",
@@ -506,7 +853,22 @@
           "inputs": "tipo_consulta",
           "output": "Editor específico ativo",
           "evidence": "observado",
-          "error": "Alternar sem salvar deve alertar sobre alterações."
+          "error": "Alternar sem salvar deve alertar sobre alterações.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 14
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 15
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "D5",
@@ -518,7 +880,22 @@
           "inputs": "texto_ou_queixa_hda",
           "output": "Rascunho coerente com tipo escolhido",
           "evidence": "observado",
-          "error": "Campos obrigatórios e texto vazio sinalizados."
+          "error": "Campos obrigatórios e texto vazio sinalizados.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 14
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 15
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "D6",
@@ -530,7 +907,22 @@
           "inputs": "rascunho",
           "output": "Versão gravada com timestamp e autor",
           "evidence": "proposto",
-          "error": "Concorrência na edição: não sobrescrever silenciosamente."
+          "error": "Concorrência na edição: não sobrescrever silenciosamente.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 14
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 15
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "D7",
@@ -542,7 +934,22 @@
           "inputs": "modelo",
           "output": "Documento fictício sem validade clínica",
           "evidence": "observado",
-          "error": "Não gerar assinatura médica real sem autorização."
+          "error": "Não gerar assinatura médica real sem autorização.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 16
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 18
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "D8",
@@ -553,7 +960,18 @@
           "inputs": "id_consulta",
           "output": "Registro localizável e auditável",
           "evidence": "proposto",
-          "error": "Falha ao sincronizar: apresentar erro e opção segura de nova tentativa."
+          "error": "Falha ao sincronizar: apresentar erro e opção segura de nova tentativa.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 2
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         }
       ],
       "variants": [
@@ -613,7 +1031,18 @@
           "inputs": "prontuario",
           "output": "Lista de evoluções",
           "evidence": "observado",
-          "error": "Sem registros exibir vazio com ação de teste."
+          "error": "Sem registros exibir vazio com ação de teste.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 3
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "E2",
@@ -626,7 +1055,26 @@
           "inputs": "tipo",
           "output": "Formulário com abas específicas",
           "evidence": "observado",
-          "error": "Tipo indefinido impede persistência."
+          "error": "Tipo indefinido impede persistência.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 3
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 4
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 8
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "E3",
@@ -640,7 +1088,32 @@
           "inputs": "medidas_obstetricas",
           "output": "Campos correspondentes ao tipo",
           "evidence": "observado",
-          "error": "Fórmulas de IG, DPP e percentis bloqueadas enquanto não validadas."
+          "error": "Fórmulas de IG, DPP e percentis bloqueadas enquanto não validadas.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 4
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 5
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 6
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 7
+            }
+          ],
+          "source_visual_missing": [
+            "MED-07"
+          ],
+          "action_is_proven": false
         },
         {
           "id": "E4",
@@ -655,7 +1128,34 @@
           "inputs": "medidas_ginecologicas",
           "output": "Campos e listas de múltiplos achados",
           "evidence": "observado",
-          "error": "Unidades/dimensões inconsistentes produzem mensagem clara."
+          "error": "Unidades/dimensões inconsistentes produzem mensagem clara.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 8
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 9
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 10
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 11
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 12
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "E5",
@@ -666,7 +1166,18 @@
           "inputs": "rascunho",
           "output": "Registro de evolução fictícia disponível",
           "evidence": "proposto",
-          "error": "Cancelar não pode persistir alterações."
+          "error": "Cancelar não pode persistir alterações.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 3
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "E6",
@@ -677,7 +1188,18 @@
           "inputs": "serie_temporal",
           "output": "Gráfico reproduz dados registrados",
           "evidence": "observado",
-          "error": "Ausência de medida ou unidade válida exibe aviso, sem percentual inventado."
+          "error": "Ausência de medida ou unidade válida exibe aviso, sem percentual inventado.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 13
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "E7",
@@ -688,7 +1210,18 @@
           "inputs": "resumo",
           "output": "Fluxo encerrado com rastreabilidade",
           "evidence": "proposto",
-          "error": "Medida de outro paciente nunca compõe série."
+          "error": "Medida de outro paciente nunca compõe série.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 3
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         }
       ],
       "variants": [
@@ -745,7 +1278,18 @@
           "inputs": "filtros",
           "output": "Lista de laudos pendentes com exame e paciente",
           "evidence": "observado",
-          "error": "Fila vazia sem expor dados de outras pessoas."
+          "error": "Fila vazia sem expor dados de outras pessoas.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 20
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "F2",
@@ -756,7 +1300,18 @@
           "inputs": "exame",
           "output": "Detalhes mínimos e ação para editar rascunho",
           "evidence": "documentado",
-          "error": "Exame inexistente, concluído ou sem permissão."
+          "error": "Exame inexistente, concluído ou sem permissão.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 20
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "F3",
@@ -768,7 +1323,22 @@
           "inputs": "modelo",
           "output": "Editor original do Projeto Piloto preenchido com texto de teste",
           "evidence": "proposto",
-          "error": "Modelo ausente: editor vazio com aviso; proibir inserção de dados não autorizados."
+          "error": "Modelo ausente: editor vazio com aviso; proibir inserção de dados não autorizados.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 29
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 28
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "F4",
@@ -779,7 +1349,18 @@
           "inputs": "rascunho",
           "output": "Texto e título revisáveis",
           "evidence": "proposto",
-          "error": "HTML do editor sanitizado; evitar execução de script."
+          "error": "HTML do editor sanitizado; evitar execução de script.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 20
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "F5",
@@ -790,7 +1371,18 @@
           "inputs": "versao_laudo",
           "output": "Rascunho vinculado ao exame",
           "evidence": "proposto",
-          "error": "Conflito de edição e travamento de versão expostos ao usuário."
+          "error": "Conflito de edição e travamento de versão expostos ao usuário.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 20
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "F6",
@@ -802,7 +1394,22 @@
           "inputs": "cabecalho",
           "output": "Prévia identificada como DOCUMENTO DE TESTE",
           "evidence": "proposto",
-          "error": "Falha no modelo: salvar rascunho sem criar PDF inválido."
+          "error": "Falha no modelo: salvar rascunho sem criar PDF inválido.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 37
+            },
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 25
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "F7",
@@ -813,7 +1420,18 @@
           "inputs": "estado_laudo",
           "output": "Rascunho ou revisão pendente; não publicado",
           "evidence": "proposto",
-          "error": "Botões reais bloqueados até segurança, certificado e homologação."
+          "error": "Botões reais bloqueados até segurança, certificado e homologação.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 20
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "F8",
@@ -824,7 +1442,18 @@
           "inputs": "fila",
           "output": "Fim com status persistido e auditável",
           "evidence": "proposto",
-          "error": "Não alterar status sem registro do evento."
+          "error": "Não alterar status sem registro do evento.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Perfil_Medico.txt",
+              "section": 20
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         }
       ],
       "variants": [
@@ -891,7 +1520,18 @@
           "inputs": "preco",
           "output": "Tabela de preço da homologação definida",
           "evidence": "observado",
-          "error": "Sem preço aplicável exibir origem e solicitar decisão de gestão."
+          "error": "Sem preço aplicável exibir origem e solicitar decisão de gestão.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 21
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "G2",
@@ -903,7 +1543,22 @@
           "inputs": "atendimentos",
           "output": "Base analítica segregada por evento",
           "evidence": "observado",
-          "error": "Estorno, desconto e pagamento parcial devem ser explicitados."
+          "error": "Estorno, desconto e pagamento parcial devem ser explicitados.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 13
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 14
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "G3",
@@ -915,7 +1570,22 @@
           "inputs": "formas",
           "output": "Regra de interface de teste aplicada",
           "evidence": "observado",
-          "error": "Não emitir nota real, mesmo com flag ligada."
+          "error": "Não emitir nota real, mesmo com flag ligada.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 26
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 27
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "G4",
@@ -927,7 +1597,22 @@
           "inputs": "pagamentos",
           "output": "Total de pagamentos recebidos de teste",
           "evidence": "observado",
-          "error": "Duplicidade e pagamento de competência distinta exigem regra explícita."
+          "error": "Duplicidade e pagamento de competência distinta exigem regra explícita.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 10
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 11
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "G5",
@@ -940,7 +1625,26 @@
           "inputs": "faturamento",
           "output": "Resultado por convênio e período",
           "evidence": "observado",
-          "error": "Não misturar receita, pagamento e valor cobrado."
+          "error": "Não misturar receita, pagamento e valor cobrado.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 9
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 7
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 8
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "G6",
@@ -954,7 +1658,30 @@
           "inputs": "financeiro",
           "output": "Visão sintética de lançamentos",
           "evidence": "observado",
-          "error": "Geração automática de receita e recorrência NÃO presumida."
+          "error": "Geração automática de receita e recorrência NÃO presumida.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 32
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 33
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 34
+            },
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 35
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "G7",
@@ -965,7 +1692,18 @@
           "inputs": "totais",
           "output": "Diferenças apresentadas com origem e datas",
           "evidence": "proposto",
-          "error": "Inconsistência não desaparece silenciosamente."
+          "error": "Inconsistência não desaparece silenciosamente.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 35
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         },
         {
           "id": "G8",
@@ -976,7 +1714,18 @@
           "inputs": "relatorio",
           "output": "Fluxo termina com evidência de valores e status",
           "evidence": "proposto",
-          "error": "Nunca enviar dados reais nem transmitir NFSe."
+          "error": "Nunca enviar dados reais nem transmitir NFSe.",
+          "functional_tested": false,
+          "clinically_approved": false,
+          "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
+          "source_manual_sections": [
+            {
+              "manual": "Manual_Visual_Webultra.txt",
+              "section": 35
+            }
+          ],
+          "source_visual_missing": [],
+          "action_is_proven": false
         }
       ],
       "variants": [
@@ -991,5 +1740,32 @@
         "Separar data de atendimento, pagamento e lançamento"
       ]
     }
-  ]
+  ],
+  "review_date": "2026-11-05",
+  "review_scope": "Confronto documental com manuais administrativo e medico no Drive; nenhuma acao executada no sistema original",
+  "evidence_semantics": {
+    "observado": "Elemento ou controle visto/documentado na captura ou manual; NÃO prova execução, gravação, permissão ou integração.",
+    "documentado": "Descrição textual no manual; sem confirmação funcional independente.",
+    "proposto": "Comportamento especificado para o Projeto Piloto; não verificado no WebUltra."
+  },
+  "review_summary": {
+    "steps_reviewed": 53,
+    "steps_functionally_tested": 0,
+    "steps_clinically_approved": 0,
+    "proposed_steps": 17,
+    "unique_screens_referenced": 52,
+    "uncaptured_screens_referenced": [
+      "ADM-23",
+      "ADM-38",
+      "MED-07"
+    ],
+    "open_questions": [
+      "Relação entre agendamento e atendimento não foi exercitada.",
+      "Aplicação de cotas, feriados e exceções à marcação não foi testada.",
+      "Preço automático por convênio no atendimento não foi confirmado.",
+      "Editor de laudo, assinatura e publicação não foram testados.",
+      "Vínculo caixa e financeiro e emissão de NFSe não foram testados.",
+      "Permissões do perfil médico em telas administrativas não foram verificadas."
+    ]
+  }
 }
