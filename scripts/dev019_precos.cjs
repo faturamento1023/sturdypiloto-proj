@@ -20,7 +20,7 @@ function overlaps(a, b) {
 function selectPrice(rows, {unitId, procedureId, agreementId, date}) {
   assertDate(date);
   if (!Array.isArray(rows) || !unitId || !procedureId || !agreementId || [unitId,procedureId,agreementId].some(v => typeof v !== 'string')) throw new TypeError('chave de preco invalida');
-  const candidates = rows.filter(r => r.unitId === unitId && r.procedureId === procedureId && r.agreementId === agreementId && r && r.active === true && r.start <= date && (r.end == null || date < r.end));
+  const candidates = rows.filter(r => r != null && r.unitId === unitId && r.procedureId === procedureId && r.agreementId === agreementId && r.active === true && r.start <= date && (r.end == null || date < r.end));
   if (candidates.length !== 1) return null; // missing or ambiguous: never guess
   validatePriceCents(candidates[0].cents);
   return candidates[0];
