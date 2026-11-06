@@ -14,7 +14,7 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-005 — Definir critérios de paridade | **Concluída (escopo aprovado pelo responsável em 05/11/2026)** | `docs/DEV-005_CRITERIOS_PARIDADE.md` e `docs/DEV-005_CRITERIOS_POR_TELA.json` com 65 critérios (MVP 24, V1 37, futura 4), validação estrutural e status sem testes | DEV-006 — Mapear jornadas completas |
 
-| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento — PR #5 em revisão** | 7 jornadas/53 passos; JSON v0.2 com proveniência por passo, revisão cruzada `DEV-006_REVISAO_FONTES.md`, wireflows e CI em PR #5 (rascunho) | CI v0.2 passou (run 42136139775); obter revisão conjunta administrativa/médica antes de mesclar |
+| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Concluída. Mapa aceito pelo responsável pelo projeto** | 7 jornadas e 53 passos, 4 requisitos de produto aprovados e 20 testes unitários do domínio sintético. Aceite final no [checklist](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão). | DEV-007 — Criar protótipo no Figma com dados fictícios e manter as regras operacionais abertas sinalizadas. |
 
 ## Regras para próximas execuções
 
@@ -27,10 +27,27 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **02 — UX e arquitetura** (DEV-006 em revisão, DEV-005 aprovada).
-- Tarefas concluídas: **DEV-001, DEV-002, DEV-003, DEV-004 e DEV-005** (a DEV-005 recebeu aprovação expressa do escopo v1.0; sem implementação funcional).
-- Tarefa atual: **DEV-006 — Mapear jornadas completas** (iniciada após aprovação da DEV-005).
+- Fase do cronograma: **02 — UX e arquitetura** (mapa da DEV-006 aceito).
+- Tarefas concluídas: **DEV-001 a DEV-006**.
+- Próxima tarefa: **DEV-007 — Criar protótipo no Figma**. A tarefa ainda não foi iniciada.
 - Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
-- Aplicação web: ainda não iniciada; não há link de homologação.
+- Aplicação web de produção ainda não iniciada. O PR inclui demonstração HTML de recepção e funções de domínio em memória, com dados fictícios.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
 - A planilha Excel de cronograma no Drive ainda contém texto inicial que afirmava ausência dos JPG médicos; o documento `docs/DEV-002_MATRIZ_VISUAL.md` prevalece até a atualização controlada da planilha.
+
+## Sessão de 05/11/2026 — preparação da revisão conjunta
+
+Registro histórico anterior ao aceite final.
+
+- Conferidos controle da branch, DEV-005, checklist, contratos, revisão de fontes, PR #5 e Issue #4; nenhuma revisão formal, thread ou comentário de revisão encontrado no PR/Issue.
+- Confirmado no Drive que o cronograma é `Plano_Desenvolvimento_Sistema_DM_Ultra_2026-2027.xlsx` (XLSX), na pasta Web Ultra; fonte preservada, sem edição.
+- Criado `docs/DEV-006_PACOTE_REVISAO_CONJUNTA.md` no commit `13f7977`: pauta de decisões V01–V12, propostas conservadoras, responsáveis, bloqueios e critérios de aceite.
+- Testes: não foram executados novamente nesta sessão; há registro anterior de 20 testes unitários locais aprovados. Consulta de workflow do commit anterior `0753ccf` retornou lista vazia; **CI do PR atualizado não confirmada**.
+- Bloqueio: faltam revisão conjunta administrativa/médica e aceite final; DEV-006 continua aberta. **Não mesclar PR #5, fechar Issue #4 ou iniciar DEV-007.**
+- Próxima ação: registrar decisões dos responsáveis por perfil, conferir CI atual e sanar ressalvas com alterações rastreáveis.
+
+## Sessão de 05/11/2026 — aceite final do mapa
+
+- Em resposta à solicitação de aceite para encerramento, o responsável pelo projeto confirmou «Está aceito». O [checklist](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão) registra a confirmação e as questões operacionais sem resposta individual.
+- O commit técnico `b3bef24` passou na [validação das jornadas](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42142832609) e nos [testes de domínio](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42142832572). O aceite fecha o desenho das jornadas. A revisão especializada de regras clínicas e operacionais e a verificação da demonstração no navegador seguem pendentes.
+- Próxima ação: DEV-007 com jornadas aceitas, dados fictícios e estados para as regras que exigem validação posterior.
