@@ -128,3 +128,13 @@ Registro histórico anterior ao aceite final.
 - Commits: `fc350996`, `9c1e0565`, `464b947e`, `13bb9ca6`. PR: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
 - Testes unitários escritos, **execução do novo workflow ainda não confirmada**. Não há endpoint integrado, acesso real ao banco ou homologação clínica. Não mesclar PR #14 antes de reconciliar a base do PR #13.
 - Próxima ação: verificar CI e corrigir falhas; implementar consulta fresca de vínculos no servidor, escopo de objeto, projeções por papel e auditoria transacional; executar testes de integração AUTHZ-01–16. DEV-013 **em andamento**.
+
+## Sessão de 06/11/2026 — DEV-013, endurecimento do avaliador
+
+- Antes da alteração, conferidos controle em `main` e branch, PRs #13/#14, Issue #4, cronograma XLSX e pasta Web Ultra no Drive (somente leitura). DEV-006 já está encerrada no histórico; a tarefa corrente é DEV-013.
+- Detectado que a indexação dinâmica da matriz TypeScript podia alcançar propriedades herdadas de objeto quando valores de recurso/ação chegassem de HTTP sem validação. Corrigido para negar chaves não próprias e políticas sem lista de perfis.
+- Adicionados cenários unitários sintéticos para chaves herdadas, ação desconhecida, vínculo de outra identidade e médico com segundo perfil tentando acessar conteúdo clínico alheio.
+- Commits: `cf718f9` (correção), `9e566a7` (testes), `665cb11` (documentação). PR existente: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
+- **Testes não executados nesta sessão.** Consulta de workflow do commit anterior retornou vazio; CI do commit atual ainda não confirmada. Não há integração a handlers ou banco real.
+- Bloqueios: PR #13 aberto como dependência, consulta fresca de vínculos, escopo por objeto, auditoria transacional, testes integrados e homologação operacional. **DEV-013 continua em andamento.**
+- Próxima ação: confirmar CI do novo commit, corrigir falhas e integrar a política à autenticação e ao PostgreSQL descartável antes de qualquer merge.
