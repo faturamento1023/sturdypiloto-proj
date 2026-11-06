@@ -254,3 +254,11 @@ Registro histórico anterior ao aceite final.
 - Adicionados cinco testes sintéticos de campos extras, formatos inválidos e inserção sem identificador (commit `6629e62`).
 - Tentativa de obter código via git local falhou por DNS; consulta de workflow para o commit retornou lista vazia. **Testes não executados/CI não confirmado**. Não houve alteração de produção ou de dados reais.
 - DEV-023 ainda em andamento; pendências: executar testes, aplicar migração em PostgreSQL descartável, transação com concorrência e checagem de reservas, grade e interface, homologação operacional de feriados.
+
+## Sessão de 06/11/2026 — correção de autorização DEV-023
+
+- Antes de escrever: conferidos controle atualizado da branch, PR #24 aberto, Issues abertas (nenhuma), critérios DEV-005 e metadados do cronograma XLSM e da pasta Web Ultra no Drive. Não foi alterado o cronograma.
+- Detectada divergência entre o papel `administracao` usado no serviço inicial e `administrador` empregado pelas políticas e operações SQL de DEV-022. Corrigido o serviço `scripts/dev023_comandos.cjs` (commit `734bc55`).
+- Adicionados dois testes de regressão que autorizam `administrador` com MFA/vínculo e rejeitam o perfil inexistente `administracao` (commit `2ca76bb`).
+- **Testes não executados nesta sessão:** `git ls-remote` falhou por DNS de github.com. CI não confirmado. Não houve aplicação da migração em banco nem testes em navegador.
+- DEV-023 permanece em andamento; falta adaptador SQL transacional real, integração de exceções à grade e homologação da regra de feriados. Sem dados reais ou alterações em produção.
