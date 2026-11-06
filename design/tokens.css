@@ -1,0 +1,111 @@
+/* Clínica DM · tokens da DEV-008. Valores em sincronia com o Figma. */
+:root {
+  /* Paleta */
+  --dm-palette-ink: #162B2C;
+  --dm-palette-muted: #4B6665;
+  --dm-palette-sidebar: #132C2C;
+  --dm-palette-side-text: #B9CFCC;
+  --dm-palette-sidebar-active: #254948;
+  --dm-palette-paper: #FFFFFF;
+  --dm-palette-canvas: #F1F6F4;
+  --dm-palette-line: #D7E4DF;
+  --dm-palette-control-line: #688582;
+  --dm-palette-soft: #E7F0ED;
+  --dm-palette-teal: #13665B;
+  --dm-palette-mint: #CCEEE2;
+  --dm-palette-green-text: #175A4E;
+  --dm-palette-amber: #F9ECCF;
+  --dm-palette-amber-text: #704C11;
+  --dm-palette-red-soft: #FCE4E1;
+  --dm-palette-red-text: #8B2C27;
+  --dm-palette-violet: #EBE9F8;
+  --dm-palette-violet-text: #4F417F;
+
+  /* Cores por função */
+  --dm-color-bg-canvas: var(--dm-palette-canvas);
+  --dm-color-bg-surface: var(--dm-palette-paper);
+  --dm-color-bg-quiet: var(--dm-palette-soft);
+  --dm-color-bg-sidebar: var(--dm-palette-sidebar);
+  --dm-color-bg-sidebar-active: var(--dm-palette-sidebar-active);
+  --dm-color-bg-action: var(--dm-palette-teal);
+  --dm-color-bg-disabled: var(--dm-palette-soft);
+  --dm-color-text-primary: var(--dm-palette-ink);
+  --dm-color-text-secondary: var(--dm-palette-muted);
+  --dm-color-text-on-action: var(--dm-palette-paper);
+  --dm-color-text-action: var(--dm-palette-teal);
+  --dm-color-text-on-sidebar: var(--dm-palette-paper);
+  --dm-color-text-sidebar-muted: var(--dm-palette-side-text);
+  --dm-color-border-default: var(--dm-palette-line);
+  --dm-color-border-control: var(--dm-palette-control-line);
+  --dm-color-border-focus: var(--dm-palette-teal);
+  --dm-color-border-error: var(--dm-palette-red-text);
+  --dm-color-icon-default: var(--dm-palette-teal);
+  --dm-color-icon-on-action: var(--dm-palette-paper);
+  --dm-color-icon-muted: var(--dm-palette-muted);
+  --dm-color-status-success-bg: var(--dm-palette-mint);
+  --dm-color-status-success-text: var(--dm-palette-green-text);
+  --dm-color-status-warning-bg: var(--dm-palette-amber);
+  --dm-color-status-warning-text: var(--dm-palette-amber-text);
+  --dm-color-status-error-bg: var(--dm-palette-red-soft);
+  --dm-color-status-error-text: var(--dm-palette-red-text);
+  --dm-color-status-progress-bg: var(--dm-palette-violet);
+  --dm-color-status-progress-text: var(--dm-palette-violet-text);
+  --dm-color-status-neutral-bg: var(--dm-palette-soft);
+  --dm-color-status-neutral-text: var(--dm-palette-muted);
+
+  /* Espaçamento, raios, controles e bordas */
+  --dm-spacing-xs: 4px;
+  --dm-spacing-sm: 8px;
+  --dm-spacing-md: 12px;
+  --dm-spacing-lg: 16px;
+  --dm-spacing-xl: 20px;
+  --dm-spacing-2xl: 24px;
+  --dm-spacing-3xl: 32px;
+  --dm-radius-sm: 6px;
+  --dm-radius-md: 8px;
+  --dm-radius-lg: 11px;
+  --dm-size-control: 40px;
+  --dm-size-touch: 44px;
+  --dm-size-icon: 20px;
+  --dm-stroke-default: 1px;
+  --dm-stroke-focus: 2px;
+
+  /* Tipografia */
+  --dm-font-family: "Inter", system-ui, sans-serif;
+  --dm-type-titulo-desktop-size: 40px;
+  --dm-type-titulo-desktop-line-height: 45px;
+  --dm-type-titulo-desktop-weight: 700;
+  --dm-type-titulo-desktop-tracking: -1.2px;
+  --dm-type-titulo-celular-size: 29px;
+  --dm-type-titulo-celular-line-height: 33px;
+  --dm-type-titulo-celular-weight: 700;
+  --dm-type-titulo-celular-tracking: -0.87px;
+  --dm-type-titulo-secao-size: 19px;
+  --dm-type-titulo-secao-line-height: 25px;
+  --dm-type-titulo-secao-weight: 700;
+  --dm-type-titulo-secao-tracking: 0px;
+  --dm-type-corpo-normal-size: 14px;
+  --dm-type-corpo-normal-line-height: 19px;
+  --dm-type-corpo-normal-weight: 400;
+  --dm-type-corpo-normal-tracking: 0px;
+  --dm-type-corpo-pequeno-size: 12px;
+  --dm-type-corpo-pequeno-line-height: 16px;
+  --dm-type-corpo-pequeno-weight: 400;
+  --dm-type-corpo-pequeno-tracking: 0px;
+  --dm-type-rotulo-controle-size: 13px;
+  --dm-type-rotulo-controle-line-height: 17px;
+  --dm-type-rotulo-controle-weight: 600;
+  --dm-type-rotulo-controle-tracking: 0px;
+  --dm-type-rotulo-estado-size: 11px;
+  --dm-type-rotulo-estado-line-height: 15px;
+  --dm-type-rotulo-estado-weight: 600;
+  --dm-type-rotulo-estado-tracking: 0px;
+  --dm-type-rotulo-contexto-size: 10px;
+  --dm-type-rotulo-contexto-line-height: 13px;
+  --dm-type-rotulo-contexto-weight: 700;
+  --dm-type-rotulo-contexto-tracking: 0.8px;
+  --dm-type-indicador-valor-size: 26px;
+  --dm-type-indicador-valor-line-height: 30px;
+  --dm-type-indicador-valor-weight: 700;
+  --dm-type-indicador-valor-tracking: 0px;
+}

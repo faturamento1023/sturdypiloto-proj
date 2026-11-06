@@ -18,6 +18,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-007 — Criar protótipo no Figma | **Concluída** | [Protótipo editável](DEV-007_PROTOTIPO_FIGMA.md) com 52 frames em desktop e celular, navegação por módulo e modal de inclusão de procedimento no atendimento. | DEV-008 — Formalizar tokens e componentes reutilizáveis. |
 
+| 2026-11-05 | DEV-008 — Definir design system original | **Concluída** | [Design system editável](DEV-008_DESIGN_SYSTEM.md), com 64 variáveis, 9 estilos de texto, 6 famílias de componentes, 8 ícones e tokens CSS. | DEV-009 — Modelar banco de dados, permissões e auditoria. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -29,9 +31,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **02 — UX e arquitetura** (protótipo da DEV-007 entregue).
-- Tarefas concluídas: **DEV-001 a DEV-007**.
-- Próxima tarefa: **DEV-008 — Formalizar tokens e componentes reutilizáveis**.
+- Fase do cronograma: **02 — UX e arquitetura** (design system da DEV-008 entregue).
+- Tarefas concluídas: **DEV-001 a DEV-008**.
+- Próxima tarefa: **DEV-009 — Modelar banco de dados, permissões e auditoria**.
 - Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
 - Aplicação web de produção ainda não iniciada. O PR inclui demonstração HTML de recepção e funções de domínio em memória, com dados fictícios.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -59,3 +61,9 @@ Registro histórico anterior ao aceite final.
 - Criado o protótipo editável no Figma com duas entradas (desktop e celular), catálogo e inclusão de procedimentos, recepção, pacientes, atendimentos, prontuário, exames, laudos e financeiro. O [registro da entrega](DEV-007_PROTOTIPO_FIGMA.md) contém links e cobertura.
 - Conferidas a estrutura final, a ligação do modal de procedimentos e a composição da agenda nos dois dispositivos. A interface usa exemplos fictícios.
 - O responsável autorizou seguir o desenvolvimento sem pedir novos aceites de etapa. Próxima ação: DEV-008.
+
+## Sessão de 05/11/2026 — design system DEV-008
+
+- Criadas as fundações, os componentes com variantes e a prancha de referência no Figma. O [registro da entrega](DEV-008_DESIGN_SYSTEM.md) descreve os usos e referencia os tokens CSS.
+- Conferidos os vínculos entre variáveis, estilos e componentes, o encaixe da prancha e a correspondência dos tokens Web.
+- Próxima ação: DEV-009.
