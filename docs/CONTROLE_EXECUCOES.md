@@ -188,3 +188,11 @@ Registro histórico anterior ao aceite final.
 - Commits: `bbabea2` (validação), `e7f176d` (testes), `a8dcd2e` (CI).
 - Consulta dos workflows vinculados a `a8dcd2e` retornou lista vazia. **Testes escritos, mas execução ainda não confirmada**. Não houve testes PostgreSQL, HTTP ou navegador.
 - Bloqueios: migração incremental, endpoints com autorização/auditoria transacional, interface e validação financeira V02/V05 ainda pendentes. Próxima tarefa: verificar CI e integrar persistência em banco descartável, mantendo DEV-019 aberta.
+
+## Sessão de 06/11/2026 — DEV-019, testes e migração incremental
+
+- Antes das alterações, conferidos controle na branch, PR #20 ainda aberto, busca de Issues (nenhuma aberta), cronograma Excel no Drive e especificação DEV-019. O cronograma permanece no estado inicial de planejamento e não foi modificado.
+- Identificada e corrigida falha real no filtro `selectPrice`: `r.unitId` era acessado antes de `r != null`, quebrando o teste de linha nula. Commit `abda46a`.
+- **12 testes unitários executados localmente e aprovados** com Node 22 em cópia reconstruída do código da branch (12 pass, 0 fail). O teste remoto/CI ainda não está confirmado.
+- Criada migração incremental `database/dev019_convenios_precos.sql` para revisão e unicidade de nome normalizado por unidade. Commits `31e9b2c` e `d1ac26d` (reexecução de constraints). Migração **não executada em PostgreSQL**; pode exigir reconciliação de duplicatas legadas.
+- Documento DEV-019 atualizado. **Não concluir DEV-019**: falta validar migração em banco descartável, implementar endpoints com autorização e auditoria transacional, UI responsiva e testes HTTP/navegador; decisões financeiras V02/V05 pendentes. Não houve alteração no WebUltra nem em produção.
