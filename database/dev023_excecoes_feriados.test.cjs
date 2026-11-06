@@ -33,5 +33,5 @@ test('RPC usa delimitadores PLpgSQL validos',()=>{
  assert.ok(open>=0,'abertura $$ ausente');
  assert.ok(close>open,'fechamento $$ ausente');
  assert.match(sql.slice(open,close),/declare resposta jsonb;/);
- assert.match(sql.slice(close),/revoke all on function public\\.piloto_ler_excecoes_agenda/);
+ assert.match(sql.slice(close),/revoke all on function public[.]piloto_ler_excecoes_agenda/);
 });
