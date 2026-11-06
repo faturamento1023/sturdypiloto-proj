@@ -91,3 +91,11 @@
 - Adicionados testes unitários sintéticos para listas nulas, tipos inesperados e entradas inválidas misturadas com vínculos válidos.
 - **Verificação desta sessão:** código e testes publicados, execução local e CI **não confirmadas**. Não há integração com sessão Supabase, PostgreSQL, handlers ou auditoria nesta alteração.
 - **Próxima ação:** executar testes no runner, revisar tipagem e conectar consulta fresca de vínculos no servidor sem habilitar rotas clínicas.
+
+## Incremento de 06/11/2026 — adaptador server-side testável
+
+- Criado `src/autorizacao/servidor.ts` com interface de fonte injetada para sessão atual, unidade ativa, vínculos consultados por requisição e objeto filtrado por unidade. Nenhum parâmetro do cliente define a identidade autenticada.
+- Criado `src/autorizacao/servidor.test.ts` com seis cenários sintéticos: revogação imediata, ausência de sessão/MFA, objeto de outra unidade, atribuição médica, indisponibilidade da fonte e permissões entre unidades.
+- Workflow DEV-013 ampliado para executar testes de política e adaptador com Node 24.
+- **Limite:** fonte injetada nos testes é simulada. Não existe conexão real ao Supabase/PostgreSQL, handler HTTP, auditoria transacional nem RLS validada neste incremento. O adaptador não deve ser considerado autorização implantada.
+- **Testes:** código e workflow enviados; execução do commit final ainda não confirmada. Próximo passo: conferir CI, corrigir eventuais falhas e integrar fonte PostgreSQL descartável com auditoria sem dados clínicos.
