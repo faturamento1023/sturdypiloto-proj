@@ -32,6 +32,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-014 — Desenhar o shell do sistema | **Concluída em ambiente descartável** | [Painel responsivo e navegação por unidade e perfil](DEV-014_SHELL_SISTEMA.md). | DEV-015 — Implementar auditoria central. |
 
+| 2026-11-06 | DEV-015 — Implementar auditoria central | **Concluída em ambiente descartável** | [Trilha de consultas, bloqueios e alterações](DEV-015_AUDITORIA_CENTRAL.md). | DEV-016 — Cadastro de médicos. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -43,9 +45,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **03 — Infraestrutura e permissões** (infraestrutura, autenticação, autorização e shell navegável).
-- Tarefas concluídas: **DEV-001 a DEV-014**.
-- Próxima tarefa: **DEV-015 — Implementar auditoria central**.
+- Fase do cronograma: **03 — Infraestrutura e permissões** (infraestrutura, autenticação, autorização, shell e auditoria).
+- Tarefas concluídas: **DEV-001 a DEV-015**.
+- Próxima tarefa: **DEV-016 — Cadastro de médicos**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -129,3 +131,10 @@ Registro histórico anterior ao aceite final.
 - A consulta de unidades usa a sessão com MFA e as políticas do PostgreSQL. A troca de unidade recalcula permissões, e a navegação direta aplica as mesmas verificações.
 - Homologação usa contas fictícias, provedor de identidade simulado e PostgreSQL descartável. A busca cobre módulos e os destinos indicam as áreas ainda em preparação.
 - Próxima ação: DEV-015.
+
+## Sessão de 06/11/2026 — auditoria DEV-015
+
+- A trilha privada passou a registrar consultas permitidas e negadas no banco, com metadados e correlação. A consulta HTTP de perfis e a listagem de unidades do painel usam a trilha.
+- Testados a leitura clínica no banco, a proteção dos eventos contra reescrita e o vínculo transacional entre auditoria e alteração.
+- Base legal, retenção, responsáveis pela consulta da trilha e homologação com Supabase hospedado permanecem pendentes de validação institucional.
+- A próxima etapa é a DEV-016, cadastro de médicos.

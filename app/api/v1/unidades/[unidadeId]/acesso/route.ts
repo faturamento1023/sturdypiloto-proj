@@ -30,7 +30,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ uni
     if (!uuid.test(unidadeId)) return problema(400);
 
     // O RPC usa o JWT desta sessão e consulta os vínculos atuais, sem receber um ID de usuário.
-    const { data, error } = await cliente.rpc('piloto_meus_perfis', { unidade: unidadeId });
+    const { data, error } = await cliente.rpc('piloto_meus_perfis', { unidade: unidadeId, correlacao: correlacaoId });
     if (error || !Array.isArray(data)) return problema(503);
 
     const perfis: Perfil[] = [];

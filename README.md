@@ -2,7 +2,7 @@
 
 Sistema web próprio para gestão ambulatorial da Clínica DM, desenvolvido com base nas **funcionalidades documentadas** do UltraSystem WEB (WebUltra). O objetivo é oferecer jornadas semelhantes (recepção, agendamento, atendimentos, prontuário, laudos, relatórios e financeiro), com código, identidade visual e arquitetura próprios.
 
-> **Estado atual — 06/11/2026:** Fase 03 — Infraestrutura e permissões. [Base e ambientes DEV-011](docs/DEV-011_INFRAESTRUTURA.md), [autenticação DEV-012](docs/DEV-012_AUTENTICACAO.md), [autorização DEV-013](docs/DEV-013_MATRIZ_AUTORIZACAO.md) e [shell DEV-014](docs/DEV-014_SHELL_SISTEMA.md). Próxima tarefa: auditoria central (DEV-015). O desenvolvimento usa dados fictícios.
+> **Estado atual — 06/11/2026:** Fase 03 — Infraestrutura e permissões. [Base e ambientes DEV-011](docs/DEV-011_INFRAESTRUTURA.md), [autenticação DEV-012](docs/DEV-012_AUTENTICACAO.md), [autorização DEV-013](docs/DEV-013_MATRIZ_AUTORIZACAO.md), [shell DEV-014](docs/DEV-014_SHELL_SISTEMA.md) e [auditoria DEV-015](docs/DEV-015_AUDITORIA_CENTRAL.md). A próxima tarefa é o cadastro de médicos (DEV-016). O desenvolvimento usa dados fictícios.
 
 ## Fontes oficiais
 

@@ -5,7 +5,7 @@ type Cliente = NonNullable<Awaited<ReturnType<typeof sessaoNoServidor>>>;
 export type UnidadePainel = { id: string; nome: string; perfis: Perfil[] };
 
 export async function consultarUnidades(cliente: Cliente): Promise<UnidadePainel[] | null> {
-  const { data, error } = await cliente.rpc('piloto_minhas_unidades');
+  const { data, error } = await cliente.rpc('piloto_minhas_unidades', { correlacao: crypto.randomUUID() });
   if (error || !Array.isArray(data)) return null;
 
   const unidades: UnidadePainel[] = [];
