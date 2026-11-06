@@ -99,5 +99,5 @@ Registro histórico anterior ao aceite final.
 ## Sessão de 05/11/2026 — infraestrutura DEV-011
 
 - Base Next.js adicionada com ambiente identificado no servidor e rota de saúde. O [guia técnico](DEV-011_INFRAESTRUTURA.md) registra os comandos de desenvolvimento e homologação.
-- GitHub Actions executa build, banco de teste e Playwright. A entrega de homologação em `main` verifica e inicia o pacote extraído. A prévia Vercel é isolada e sua versão consta no PR.
+- GitHub Actions executa build, banco de teste e Playwright. A entrega de homologação em `main` verifica e inicia o pacote extraído. O projeto Vercel isolado foi pausado após o primeiro envio receber o destino de produção. O [PR #10](https://github.com/faturamento1023/sturdypiloto-proj/pull/10) registra a situação.
 - Próxima ação: DEV-012.

@@ -7,9 +7,8 @@ A base Next.js usa o design system da Clínica DM e exibe o ambiente em execuç�
 | Desenvolvimento | `npm run dev` em `127.0.0.1:3000` | Iterar no código e consultar a página inicial e a rota de saúde |
 | Homologação local | Build autônomo em `127.0.0.1:3100` | Reproduzir a versão compilada e executar o Playwright |
 | Homologação no GitHub | Job **Executar artefato de homologacao** em `main` | Verificar a integridade do pacote e executar as duas rotas em um runner separado |
-| Homologação no Vercel | Preview isolado do projeto `clinica-dm-piloto-homologacao` | Conferência pelo navegador com a proteção de acesso do projeto e dados fictícios |
 
-A publicação do preview é independente do Git. O PR registra a versão e o link verificado. O GitHub Actions entrega o pacote automaticamente em `main`. A prévia usa apenas o código da base e o design system.
+O GitHub Actions entrega o pacote automaticamente em `main`. O projeto Vercel `clinica-dm-piloto-homologacao` foi pausado após a primeira publicação ser classificada como produção. A situação do reenvio está registrada no [PR #10](https://github.com/faturamento1023/sturdypiloto-proj/pull/10).
 
 ## Desenvolvimento e homologação local
 
@@ -28,7 +27,7 @@ npm run prepare:homologacao
 npm run start:homologacao
 ```
 
-O comando de preparação copia os estilos e arquivos estáticos para o build autônomo. A rota `http://127.0.0.1:3100/api/saude` responde com `{"status":"ok","ambiente":"homologacao"}`. Na prévia Vercel, o ambiente vem de `VERCEL_ENV=preview`. Na execução local, o modo padrão é desenvolvimento e o comando de homologação fixa `PILOTO_AMBIENTE=homologacao`.
+O comando de preparação copia os estilos e arquivos estáticos para o build autônomo. A rota `http://127.0.0.1:3100/api/saude` responde com `{"status":"ok","ambiente":"homologacao"}`. Na execução local, o modo padrão é desenvolvimento e o comando de homologação fixa `PILOTO_AMBIENTE=homologacao`.
 
 ## Checks e entrega
 
