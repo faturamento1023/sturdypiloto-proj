@@ -205,3 +205,12 @@ Registro histórico anterior ao aceite final.
 - **Testes desta sessão não executados nem CI confirmado**. Testes estruturais não substituem execução real da migração em PostgreSQL descartável.
 - Pendências: executar SQL em banco descartável, verificar conflitos de nomes legados, handlers autorizados e auditados, UI, testes HTTP/navegador e validação financeira V02/V05.
 - Próxima ação: validar migração em PostgreSQL descartável e implementar endpoints sem alterar produção.
+
+## Sessão de 06/11/2026 — serviço transacional DEV-019
+
+- Antes da alteração: consultados controle da branch, PR #20 aberto e Issues abertas; nenhuma etapa posterior iniciada.
+- Criado `scripts/dev019_servico.cjs` (commit `f6b2503`): contrato de revisão de preço com MFA, perfil gestão/administração, escopo de unidade, revalidação de vínculo ativo dentro da transação, trava lógica de revisão e auditoria.
+- Criados oito testes com identidades fictícias (commit `bf6f299`); **8/8 passaram em Node 22 em protótipo local equivalente**. A execução da versão enviada ao GitHub e o CI remoto ainda não foram confirmados.
+- Workflow DEV-019 atualizado para incluir o teste do serviço (commit `1ed9870`).
+- **Limitação importante:** serviço depende de adaptador `db.transaction` com bloqueio de linha, RLS e rollback real; não é um endpoint HTTP nem prova de persistência PostgreSQL. Falha de auditoria deve abortar transação no adaptador.
+- Próxima tarefa: implementar adaptador PostgreSQL descartável e executar testes reais de transação e rollback, depois HTTP e UI. DEV-019 segue aberta e sem homologação financeira.
