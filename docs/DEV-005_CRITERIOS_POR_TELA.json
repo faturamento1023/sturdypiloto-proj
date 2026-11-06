@@ -1,0 +1,2854 @@
+{
+  "project": "Projeto Piloto",
+  "task": "DEV-005",
+  "version": "proposta-1",
+  "created": "2026-11-05",
+  "approval_state": "pending_user_approval",
+  "description": "Critérios propostos, não testados. Base funcional inspirada no inventário WebUltra, sem copiar código, ativos, marcas ou dados proprietários.",
+  "source_of_truth": "docs/DEV-004_TELAS.json",
+  "total": 65,
+  "by_delivery": {
+    "MVP": 24,
+    "V1": 37,
+    "Futura": 4
+  },
+  "roles_are_proposed_not_verified": true,
+  "all_functional_tests_pending": true,
+  "screens": [
+    {
+      "id": "ADM-01",
+      "title": "Agenda",
+      "profile": "admin",
+      "module": "Agendamento",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data",
+        "agenda",
+        "horário",
+        "paciente",
+        "convênio",
+        "procedimento",
+        "status"
+      ],
+      "operations": [
+        "Selecionar agenda e dia",
+        "pesquisar",
+        "atualizar",
+        "imprimir"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Agenda configurada e dados sintéticos renderizados na data certa; lista vazia e conflito de horário tratados",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-02",
+      "title": "Configuração dos Agendamentos",
+      "profile": "admin",
+      "module": "Agendamento",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome da agenda",
+        "grade de horários",
+        "integração visível"
+      ],
+      "operations": [
+        "Listar",
+        "pesquisar",
+        "abrir cadastro de agenda"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Agenda cadastrada no sandbox reaparece na lista com horários e estado",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-03",
+      "title": "Agenda Substituta",
+      "profile": "admin",
+      "module": "Agendamento",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Agenda substituta",
+        "substituída",
+        "início e fim"
+      ],
+      "operations": [
+        "Consultar",
+        "cadastrar exceção",
+        "desativar exceção"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Período de exceção não se sobrepõe sem confirmação e aparece na consulta",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-04",
+      "title": "Feriados",
+      "profile": "admin",
+      "module": "Agendamento",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data do feriado",
+        "tipo"
+      ],
+      "operations": [
+        "Listar",
+        "incluir feriado de teste",
+        "editar"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Feriado com data válida é registrado; data inválida gera mensagem",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-05",
+      "title": "Locais",
+      "profile": "admin",
+      "module": "Agendamento",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome do local"
+      ],
+      "operations": [
+        "Pesquisar",
+        "incluir",
+        "editar local"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Local fictício é recuperado na pesquisa e associável a agenda",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-06",
+      "title": "Cotas",
+      "profile": "admin",
+      "module": "Agendamento",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Agenda",
+        "convênio",
+        "procedimento",
+        "grupo",
+        "intervalo",
+        "quantidade"
+      ],
+      "operations": [
+        "Selecionar filtros",
+        "salvar cota",
+        "listar regras"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Regra fictícia aceita limites positivos e rejeita quantidade negativa",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-07",
+      "title": "Relatório Analítico Detalhado",
+      "profile": "admin",
+      "module": "Relatórios",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data inicial/final",
+        "médico",
+        "convênios",
+        "procedimentos",
+        "grupos",
+        "solicitante",
+        "NF"
+      ],
+      "operations": [
+        "Filtrar",
+        "imprimir relatório analítico"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Com registros artificiais, exportação inclui apenas linhas do período e filtros",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-08",
+      "title": "Relatório Analítico Resumo",
+      "profile": "admin",
+      "module": "Relatórios",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data inicial/final"
+      ],
+      "operations": [
+        "Imprimir relatório resumo"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Soma e quantidades conferem com conjunto de atendimentos fictícios",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-09",
+      "title": "Relatório Faturamento",
+      "profile": "admin",
+      "module": "Relatórios",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data inicial/final",
+        "convênio"
+      ],
+      "operations": [
+        "Filtrar",
+        "imprimir faturamento"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Resultados por convênio/período são reproduzíveis e não confundem pago com cobrado",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-10",
+      "title": "Relatório Caixa (Pgtos)",
+      "profile": "admin",
+      "module": "Relatórios",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data inicial/final"
+      ],
+      "operations": [
+        "Imprimir caixa de pagamentos"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Total do caixa corresponde a pagamentos de teste autorizados",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-11",
+      "title": "Relatório Detalhado Caixa",
+      "profile": "admin",
+      "module": "Relatórios",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data inicial/final",
+        "médico"
+      ],
+      "operations": [
+        "Filtrar",
+        "imprimir caixa detalhado"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Filtra médico sem misturar registros de profissionais distintos",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-12",
+      "title": "Relatório Solicitantes",
+      "profile": "admin",
+      "module": "Relatórios",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data inicial/final"
+      ],
+      "operations": [
+        "Imprimir relatório de solicitantes"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Listagem de solicitantes refere-se ao período de teste selecionado",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-13",
+      "title": "Atendimentos",
+      "profile": "admin",
+      "module": "Atendimentos",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Período",
+        "registro",
+        "paciente",
+        "convênio",
+        "procedimentos",
+        "status",
+        "valor tabela/cobrado/pago"
+      ],
+      "operations": [
+        "Filtrar",
+        "pesquisar",
+        "atualizar",
+        "abrir prontuário",
+        "abrir novo"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Medico",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Linhas seguem status fictícios; ações sensíveis exigem permissão e auditoria",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-14",
+      "title": "Novo atendimento (formulário vazio)",
+      "profile": "admin",
+      "module": "Atendimentos",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Paciente",
+        "convênio",
+        "data",
+        "autorização",
+        "solicitante",
+        "procedimentos",
+        "médicos",
+        "valores",
+        "forma/valor do pagamento"
+      ],
+      "operations": [
+        "Escolher paciente",
+        "adicionar procedimento",
+        "adicionar pagamento",
+        "salvar atendimento"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Atendimento artificial salva sem misturar itens, totais ou profissional; campos inválidos bloqueiam",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-15",
+      "title": "Listar pacientes",
+      "profile": "admin",
+      "module": "Pacientes",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Prontuário",
+        "nome",
+        "nascimento",
+        "email",
+        "telefone"
+      ],
+      "operations": [
+        "Pesquisar",
+        "acessar cadastro",
+        "novo paciente"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Medico",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Busca de paciente fictício retorna registro correto e respeita acesso",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-16",
+      "title": "Cadastrar paciente",
+      "profile": "admin",
+      "module": "Pacientes",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome e social",
+        "CPF",
+        "nascimento",
+        "sexo",
+        "endereço",
+        "contatos",
+        "DICOM",
+        "convênio",
+        "matrícula",
+        "alerta"
+      ],
+      "operations": [
+        "Salvar paciente",
+        "validar dados",
+        "consultar alerta"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Validação de CPF fictício e campos obrigatórios; histórico auditável; sem CPF real",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-17",
+      "title": "Listar Medico",
+      "profile": "admin",
+      "module": "Médicos",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome",
+        "CPF",
+        "CRM",
+        "UF",
+        "email",
+        "certificado",
+        "receituário",
+        "ativo"
+      ],
+      "operations": [
+        "Pesquisar",
+        "visualizar",
+        "cadastrar médico"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Profissional fictício com CRM/UF aparece em lista e pode ser vinculado à agenda",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-18",
+      "title": "Cadastrar Medico",
+      "profile": "admin",
+      "module": "Médicos",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome",
+        "CRM/UF",
+        "especialidade",
+        "status",
+        "certificado",
+        "assinatura",
+        "margens"
+      ],
+      "operations": [
+        "Salvar profissional",
+        "escolher certificado teste",
+        "configurar assinatura teste"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Cadastro administrativo grava sem exigir PFX real; segredo não registrado em logs",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-19",
+      "title": "Procedimentos",
+      "profile": "admin",
+      "module": "Procedimentos",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome",
+        "código TUSS",
+        "grupo"
+      ],
+      "operations": [
+        "Pesquisar",
+        "abrir procedimento",
+        "consultar relatório"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Catálogo de teste pesquisa pelo nome e exibe códigos e grupo",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-20",
+      "title": "Grupo Procedimentos",
+      "profile": "admin",
+      "module": "Procedimentos",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome do grupo de procedimento"
+      ],
+      "operations": [
+        "Pesquisar",
+        "cadastrar/editar grupo"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Grupo criado com dado fictício relaciona-se a procedimento sem duplicar",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-21",
+      "title": "Preço Procedimentos",
+      "profile": "admin",
+      "module": "Preços",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Convênio",
+        "procedimento",
+        "data vigência",
+        "valor"
+      ],
+      "operations": [
+        "Selecionar filtros",
+        "salvar preço",
+        "listar"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Preço aplicável por data/convênio segue regra aprovada; valores negativos rejeitados",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-22",
+      "title": "Convênios",
+      "profile": "admin",
+      "module": "Convênios",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome",
+        "tabela de convênio"
+      ],
+      "operations": [
+        "Pesquisar",
+        "abrir cadastro",
+        "relatório"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Convênio fictício aparece na lista com tabela vinculada",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-23",
+      "title": "Cadastrar Convênio",
+      "profile": "admin",
+      "module": "Convênios",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "captura_ausente",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome",
+        "tabela",
+        "código externo",
+        "ativo",
+        "usuário paga",
+        "coparticipação"
+      ],
+      "operations": [
+        "Salvar convênio",
+        "habilitar controles conforme seleção"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Convênio com coparticipação válida salva; imagem original ausente, layout exige validação",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": true,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-24",
+      "title": "Lista Usuários",
+      "profile": "admin",
+      "module": "Usuários e perfis",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome",
+        "email",
+        "ativo",
+        "médico vinculado",
+        "perfil"
+      ],
+      "operations": [
+        "Pesquisar",
+        "criar/editar conta",
+        "desativar"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Administrador"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Perfil e vínculo médico aplicam bloqueios no servidor em ambiente de teste",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-25",
+      "title": "Perfil Usuário",
+      "profile": "admin",
+      "module": "Usuários e perfis",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome do perfil; permissões propostas"
+      ],
+      "operations": [
+        "Listar perfis",
+        "editar permissões aprovadas"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Administrador"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Negar acesso fora da política RBAC; perfil não concede direitos implícitos",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-26",
+      "title": "Forma Pgto",
+      "profile": "admin",
+      "module": "Formas de pagamento",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome da forma de pagamento",
+        "emitir NFSe"
+      ],
+      "operations": [
+        "Pesquisar",
+        "listar formas"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Recepcao",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Forma de teste aparece com flag fiscal sem emitir documento real",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-27",
+      "title": "Cadastrar Forma Pgto",
+      "profile": "admin",
+      "module": "Formas de pagamento",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome da forma",
+        "flag emitir NFSe"
+      ],
+      "operations": [
+        "Salvar forma",
+        "alterar flag fiscal"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Configuração persiste e emissão fiscal fica bloqueada em ambiente de teste",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-28",
+      "title": "Rel. Patológicos (Textos ou Frases Padrões)",
+      "profile": "admin",
+      "module": "Textos de laudo",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Texto padrão",
+        "procedimento associado"
+      ],
+      "operations": [
+        "Pesquisar",
+        "editar frase"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Texto fictício entra no editor apropriado sem alterar laudo de terceiros",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-29",
+      "title": "Rel. Modelos Padrões (Laudo Normal)",
+      "profile": "admin",
+      "module": "Textos de laudo",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Procedimento",
+        "título impresso",
+        "editor de conteúdo"
+      ],
+      "operations": [
+        "Carregar",
+        "salvar rascunho",
+        "limpar formatação"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Modelo fictício recarrega sem duplicar e sanitiza HTML do editor",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-30",
+      "title": "Substituir Palavras Laudo",
+      "profile": "admin",
+      "module": "Textos de laudo",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Texto base",
+        "texto substituto"
+      ],
+      "operations": [
+        "Salvar",
+        "consultar regra",
+        "simular substituição"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Pré-visualização não modifica texto assinado; substituições são previsíveis",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-31",
+      "title": "Impressões e/ou Consentimentos Pacientes",
+      "profile": "admin",
+      "module": "Documentos e consentimentos",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome do documento",
+        "tipo"
+      ],
+      "operations": [
+        "Pesquisar",
+        "listar consentimentos",
+        "abrir modelo"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Template teste pode ser selecionado para procedimento sem acesso a outro paciente",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-32",
+      "title": "Grupo Despesa",
+      "profile": "admin",
+      "module": "Financeiro",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome do grupo de despesa"
+      ],
+      "operations": [
+        "Pesquisar",
+        "cadastrar categoria"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Categoria fictícia só é usada por lançamentos de teste",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-33",
+      "title": "Grupo Receitas",
+      "profile": "admin",
+      "module": "Financeiro",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome do grupo de receita"
+      ],
+      "operations": [
+        "Pesquisar",
+        "cadastrar categoria"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Categoria fictícia aparece em filtros e não altera caixa automaticamente",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-34",
+      "title": "Despesas Recorrentes",
+      "profile": "admin",
+      "module": "Financeiro",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome",
+        "dia de referência",
+        "grupo",
+        "valor proposto"
+      ],
+      "operations": [
+        "Pesquisar",
+        "cadastrar despesa recorrente"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Próxima ocorrência é simulada; geração real depende de aprovação",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-35",
+      "title": "Financeiro",
+      "profile": "admin",
+      "module": "Financeiro",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Mês",
+        "tipo",
+        "data",
+        "nome",
+        "grupo",
+        "pago/previsão",
+        "valor"
+      ],
+      "operations": [
+        "Filtrar",
+        "registrar receita/despesa fictícia",
+        "consultar total"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Total separa previsão de pago e não contabiliza entradas duplicadas",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-36",
+      "title": "Termos de Uso",
+      "profile": "admin",
+      "module": "Institucional e configuração",
+      "delivery": "Futura",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Termos e condições do Projeto Piloto"
+      ],
+      "operations": [
+        "Visualizar termos próprios e versão vigente"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Administrador"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Texto é original e aceite, se exigido, é auditado; não copiar licença do fornecedor",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-37",
+      "title": "Configuração",
+      "profile": "admin",
+      "module": "Institucional e configuração",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Cabeçalho",
+        "marca própria",
+        "rodapé",
+        "margens",
+        "fonte",
+        "editor",
+        "tela inicial"
+      ],
+      "operations": [
+        "Pré-visualizar",
+        "salvar configuração por ambiente"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao",
+        "Administrador"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Prévia impressa corresponde à configuração de teste; abas adicionais não presumidas",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-38",
+      "title": "Cadastro de procedimento",
+      "profile": "admin",
+      "module": "Procedimentos",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "captura_ausente",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome",
+        "preparo",
+        "grupo",
+        "TUSS/AMB",
+        "tipo",
+        "consentimento",
+        "código externo",
+        "gerar DICOM"
+      ],
+      "operations": [
+        "Salvar procedimento",
+        "selecionar grupo e consentimento"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Cadastro usa regra aprovada e exibe informação clara apesar da captura ausente",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": true,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "ADM-39",
+      "title": "Cadastro de termo",
+      "profile": "admin",
+      "module": "Documentos e consentimentos",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome do termo",
+        "editor",
+        "marcadores de paciente/data"
+      ],
+      "operations": [
+        "Salvar template",
+        "pré-visualizar substituições com dados fictícios"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Modelo substitui marcadores permitidos sem trazer dados de outro paciente",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-01",
+      "title": "Atendimentos",
+      "profile": "medico",
+      "module": "Atendimento e prontuário",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data/período",
+        "paciente",
+        "convênio",
+        "procedimento",
+        "status",
+        "examinador"
+      ],
+      "operations": [
+        "Pesquisar",
+        "abrir prontuário",
+        "consultar laudos pendentes"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Médico vê somente registros autorizados; ações negadas não expõem dados",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-02",
+      "title": "Dados e Histórico do prontuário",
+      "profile": "medico",
+      "module": "Atendimento e prontuário",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Histórico",
+        "agendamentos",
+        "triagem",
+        "peso",
+        "altura",
+        "IMC",
+        "sangue",
+        "descrição"
+      ],
+      "operations": [
+        "Consultar histórico",
+        "salvar rascunho de prontuário fictício"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Dados aparecem com autoria e data; salvar não altera paciente diferente",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-03",
+      "title": "Exames Evolução",
+      "profile": "medico",
+      "module": "Atendimento e prontuário",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data",
+        "tipo",
+        "descrição",
+        "registros de evolução"
+      ],
+      "operations": [
+        "Consultar",
+        "abrir obstetrícia/ginecologia",
+        "visualizar gráfico"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Evoluções sintéticas separadas por data/tipo; ações de edição auditadas",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-04",
+      "title": "Dados obstétricos — Dados",
+      "profile": "medico",
+      "module": "Obstetrícia",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data",
+        "DUM",
+        "semanas",
+        "dias",
+        "DPP",
+        "peso",
+        "pressão"
+      ],
+      "operations": [
+        "Alternar abas",
+        "importar teste",
+        "cancelar",
+        "gravar rascunho"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Cálculo de idade gestacional fica bloqueado ou validado clinicamente antes de uso",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-05",
+      "title": "Dados obstétricos — Biometria",
+      "profile": "medico",
+      "module": "Obstetrícia",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "DBP",
+        "CC",
+        "CA",
+        "CF",
+        "peso fetal",
+        "BCF",
+        "osso nasal",
+        "ILA"
+      ],
+      "operations": [
+        "Digitar medidas sintéticas",
+        "alternar aba"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Unidades e fórmulas exigem validação clínica e testes de referência",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-06",
+      "title": "Dados obstétricos — 1º Trimestre",
+      "profile": "medico",
+      "module": "Obstetrícia",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Saco gestacional 1/2/3",
+        "média",
+        "CCN",
+        "TN"
+      ],
+      "operations": [
+        "Preencher teste",
+        "alternar aba"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Faixas, unidades e fórmulas validadas com especialista antes de habilitar cálculo",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-07",
+      "title": "Dados obstétricos — Doppler",
+      "profile": "medico",
+      "module": "Obstetrícia",
+      "delivery": "Futura",
+      "evidence": {
+        "documented": true,
+        "visual": "captura_ausente",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "IP uterinas",
+        "média/percentis",
+        "AU",
+        "ACM",
+        "pico sistólico",
+        "RCP"
+      ],
+      "operations": [
+        "Exibir aba",
+        "registrar medidas sintéticas após validação"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Sem captura própria: interface e cálculos precisam de homologação obstétrica",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": true,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-08",
+      "title": "Dados ginecológicos — Dados",
+      "profile": "medico",
+      "module": "Ginecologia",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Código externo",
+        "importar",
+        "data ginecológica"
+      ],
+      "operations": [
+        "Exibir formulário",
+        "alternar abas",
+        "cancelar"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Registro sintético não é salvo por engano ao cancelar",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-09",
+      "title": "Dados ginecológicos — Medidas",
+      "profile": "medico",
+      "module": "Ginecologia",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Dimensões e volumes do útero",
+        "ovários direito/esquerdo"
+      ],
+      "operations": [
+        "Informar medidas",
+        "visualizar volumes"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Cálculo de volume validado e tolerância definida antes de uso clínico",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-10",
+      "title": "Dados ginecológicos — Miomas",
+      "profile": "medico",
+      "module": "Ginecologia",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Tipo",
+        "identificação",
+        "três medidas de mioma"
+      ],
+      "operations": [
+        "Adicionar item",
+        "listar",
+        "excluir item fictício"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Múltiplos miomas registrados sem sobrescrita e com identificação",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-11",
+      "title": "Dados ginecológicos — Massas Anexiais",
+      "profile": "medico",
+      "module": "Ginecologia",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "CA-125",
+        "lado",
+        "lóculos",
+        "projeções",
+        "sombra",
+        "dimensões"
+      ],
+      "operations": [
+        "Adicionar massa de teste",
+        "listar achados"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Sem inferir escore IOTA; dados estruturados separados da avaliação clínica",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-12",
+      "title": "Dados ginecológicos — Folículos",
+      "profile": "medico",
+      "module": "Ginecologia",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Contagens foliculares 2–5 mm e 6–9 mm por lado"
+      ],
+      "operations": [
+        "Preencher",
+        "visualizar soma"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Somas por ovário conferem com contagens fictícias",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-13",
+      "title": "Análises/Gráfico",
+      "profile": "medico",
+      "module": "Gráficos",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Tipo de métrica",
+        "eixo temporal",
+        "medidas"
+      ],
+      "operations": [
+        "Filtrar série",
+        "visualizar gráfico"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Curva corresponde aos dados sintéticos, sem alegar referência clínica validada",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-14",
+      "title": "Consulta Texto",
+      "profile": "medico",
+      "module": "Consulta",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Editor de consulta livre",
+        "data",
+        "modelos",
+        "histórico"
+      ],
+      "operations": [
+        "Editar rascunho",
+        "visualizar histórico",
+        "salvar teste"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Salvamento com autoria, auditoria, controle de conflito e texto sanitizado",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-15",
+      "title": "Consulta Planilhada",
+      "profile": "medico",
+      "module": "Consulta",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Queixa",
+        "HDA",
+        "antecedentes",
+        "hábitos e outros"
+      ],
+      "operations": [
+        "Preencher formulário",
+        "salvar consulta estruturada"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Valores mantêm tipos e histórico sem misturar texto livre com planilhado",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-16",
+      "title": "Receituário",
+      "profile": "medico",
+      "module": "Receituário",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Receita",
+        "modelos",
+        "alertas e itens da prescrição"
+      ],
+      "operations": [
+        "Criar rascunho",
+        "adicionar item",
+        "gerar PDF fictício"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Prescrição não é liberada ou assinada sem credencial/validação autorizada",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-17",
+      "title": "Upload no prontuário",
+      "profile": "medico",
+      "module": "Anexos e impressão",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Arquivo",
+        "descrição",
+        "tipo",
+        "vínculo do prontuário"
+      ],
+      "operations": [
+        "Selecionar arquivo inofensivo",
+        "upload",
+        "consultar"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Bloqueia arquivo indevido, acesso de outro paciente e arquivo grande",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-18",
+      "title": "Impressão",
+      "profile": "medico",
+      "module": "Anexos e impressão",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Modelo de impressão",
+        "campos e marcadores",
+        "editor"
+      ],
+      "operations": [
+        "Pré-visualizar atestado teste",
+        "gerar PDF sem assinatura"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Documento fictício sinalizado TESTE; assinatura real depende de homologação",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-19",
+      "title": "Calculadoras",
+      "profile": "medico",
+      "module": "Calculadoras",
+      "delivery": "Futura",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Lista: IMC",
+        "gestacional",
+        "risco fratura",
+        "IOTA",
+        "Kupperman",
+        "CHA2DS2-VASc"
+      ],
+      "operations": [
+        "Escolher calculadora e explicar origem do cálculo"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Nenhum cálculo de risco clínico liberado sem revisão de fórmula, versão e referência",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-20",
+      "title": "Laudos Pendentes",
+      "profile": "medico",
+      "module": "Laudos",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Período",
+        "médico",
+        "paciente",
+        "registro",
+        "procedimento",
+        "status"
+      ],
+      "operations": [
+        "Filtrar fila",
+        "abrir editor de rascunho de laudo"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Somente médico autorizado acessa laudo; publicação/assinatura separadas de rascunho",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-21",
+      "title": "Agenda",
+      "profile": "medico",
+      "module": "Agenda",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data",
+        "agenda",
+        "paciente",
+        "horário",
+        "convênio",
+        "status"
+      ],
+      "operations": [
+        "Selecionar agenda/dia",
+        "pesquisar",
+        "consultar"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "A agenda médica respeita profissional logado e não expõe agendas proibidas",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-22",
+      "title": "Lista de pacientes",
+      "profile": "medico",
+      "module": "Pacientes",
+      "delivery": "MVP",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome do paciente",
+        "prontuário",
+        "nascimento e contato"
+      ],
+      "operations": [
+        "Pesquisar",
+        "consultar pacientes vinculados"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Médico só vê pacientes permitidos, sem endpoint público irrestrito",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-23",
+      "title": "Relatório Analítico Detalhado",
+      "profile": "medico",
+      "module": "Relatórios",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "captura_ausente",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Data inicial/final",
+        "filtros do relatório analítico"
+      ],
+      "operations": [
+        "Filtrar relatório autorizado"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Sem print próprio: layout precisa de aprovação e escopo de dados limitado",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": true,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-24",
+      "title": "Lista de médicos",
+      "profile": "medico",
+      "module": "Médicos",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Nome profissional",
+        "CRM/UF",
+        "status"
+      ],
+      "operations": [
+        "Consultar lista de médicos autorizada"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Lista sem dados de credencial ou acesso à edição administrativa",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-25",
+      "title": "Configuração — Cabeçalho",
+      "profile": "medico",
+      "module": "Configuração",
+      "delivery": "V1",
+      "evidence": {
+        "documented": true,
+        "visual": "inspecionada",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Logotipo",
+        "cabeçalho",
+        "rodapé e margens de laudo"
+      ],
+      "operations": [
+        "Pré-visualizar cabeçalho conforme permissão"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico",
+        "Gestao"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Não permitir configuração global por perfil médico sem política aprovada",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": false,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    },
+    {
+      "id": "MED-26",
+      "title": "Configurações Consultas",
+      "profile": "medico",
+      "module": "Configuração",
+      "delivery": "Futura",
+      "evidence": {
+        "documented": true,
+        "visual": "captura_ausente",
+        "functional": "nao_testado",
+        "approved": false,
+        "reference": "docs/DEV-002_MATRIZ_VISUAL.md"
+      },
+      "display_data": [
+        "Questionário Médico",
+        "Planilhas Consultas"
+      ],
+      "operations": [
+        "Exibir opções sujeitas a permissão",
+        "bloquear sem direito"
+      ],
+      "navigation": "Menu do módulo + ação de retorno; navegação contextual e breadcrumbs planejados; vínculo entre telas sujeito aos fluxos DEV-004.",
+      "allowed_roles_proposed": [
+        "Medico"
+      ],
+      "roles_status": "proposta_nao_validada",
+      "common_states": [
+        "carregando",
+        "vazio",
+        "erro_validacao",
+        "erro_servidor",
+        "sem_permissao"
+      ],
+      "desktop_mobile": "1440 px e 375 px; teclado e foco funcionais; layout sem sobreposição; tabelas com scroll controlado no mobile",
+      "test_data": "Somente dados totalmente fictícios em homologação",
+      "acceptance": "Ausência de captura e acesso negado prévios; não prometer recurso sem autorização",
+      "dependencies": "Consultar mapa funcional DEV-004; não presumir comportamentos do WebUltra",
+      "not_captured": true,
+      "implementation_status": "nao_iniciado",
+      "decision_status": "aguardando_aprovacao_do_escopo"
+    }
+  ]
+}
