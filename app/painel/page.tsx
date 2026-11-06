@@ -8,6 +8,8 @@ import { CadastroMedicos } from './medicos/cadastro';
 import { CadastroUsuarios } from './usuarios/cadastro';
 import { CadastroCatalogo } from './catalogo/cadastro';
 import { CadastroConvenios } from './convenios/cadastro';
+import { HistoricoAtendimentos } from './atendimentos/historico';
+import { perfisDaOperacao } from '../../src/autorizacao/politica';
 import './painel.css';
 
 export const dynamic = 'force-dynamic';
@@ -69,7 +71,7 @@ function UnidadeAtual({ unidade, unidades }: { unidade: UnidadePainel; unidades:
 
 type Parametros = Promise<{
   unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
-  filtroMedico?: string; filtroCatalogo?: string; filtroConvenios?: string; referencia?: string; pagina?: string; estado?: string;
+  filtroMedico?: string; filtroCatalogo?: string; filtroConvenios?: string; filtroHistorico?: string; referencia?: string; pagina?: string; estado?: string;
 }>;
 
 export default async function PaginaPainel({ searchParams }: { searchParams: Parametros }) {
@@ -106,6 +108,7 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
 
   const busca = typeof parametros.busca === 'string' ? parametros.busca.trim().slice(0, 80) : '';
   const resultados = busca ? buscarModulos(modulos, busca) : modulos;
+  const historicoPermitido = perfisDaOperacao('item', 'ler').some(perfil => unidade.perfis.includes(perfil));
   const inicio = urlPainel(unidade.id);
   const titulo = busca ? 'Resultados da busca' : atual?.nome ?? 'Painel da unidade';
 
@@ -163,7 +166,11 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
           </header>
-          {atual?.id === 'convenios' && !busca ? (
+          {atual?.id === 'atendimentos' && !busca && historicoPermitido ? (
+            <HistoricoAtendimentos cliente={cliente} unidade={unidade.id}
+              filtro={typeof parametros.filtroHistorico === 'string' ? parametros.filtroHistorico.trim().slice(0, 80) : ''}
+              pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0} />
+          ) : atual?.id === 'convenios' && !busca ? (
             <CadastroConvenios cliente={cliente} unidade={unidade.id}
               filtro={typeof parametros.filtroConvenios === 'string' ? parametros.filtroConvenios.trim().slice(0, 80) : ''}
               referencia={typeof parametros.referencia === 'string' ? parametros.referencia : ''}

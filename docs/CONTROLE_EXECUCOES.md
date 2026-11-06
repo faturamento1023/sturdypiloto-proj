@@ -42,6 +42,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-019 — Cadastro de convênios e preços | **Concluída em ambiente descartável** | [Convênios, tabelas por procedimento, vigências e coparticipação](DEV-019_CONVENIOS_PRECOS.md). | DEV-020 — Testar impacto cadastral. |
 
+| 2026-11-06 | DEV-020 — Testar impacto cadastral | **Concluída em ambiente descartável** | [Histórico de itens, inativação e testes de integração](DEV-020_IMPACTO_CADASTROS.md). | DEV-021 — Desenhar grade de agenda. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -54,8 +56,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **04 — Cadastros mestres** (cadastros mestres iniciados pelo cadastro de médicos).
-- Tarefas concluídas: **DEV-001 a DEV-019**.
-- Próxima tarefa: **DEV-020 — Testar impacto cadastral**.
+- Tarefas concluídas: **DEV-001 a DEV-020**.
+- Próxima tarefa: **DEV-021 — Desenhar grade de agenda**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -179,3 +181,9 @@ Registro histórico anterior ao aceite final.
 - O PR #20 consolidou o trabalho inicial da automação e integrou cadastro, consulta por data, revisão e inativação.
 - O banco impede sobreposição de preços ativos, mantém os preços anteriores e registra auditoria. Coparticipação é registrada como valor fixo por preço nesta etapa.
 - Os testes usam dados fictícios. A próxima etapa é a DEV-020, impacto dos cadastros nas demais telas e nos registros históricos.
+
+## Sessão de 06/11/2026 — impacto cadastral DEV-020
+
+- O PR #21 aproveitou a projeção inicial da automação e conectou o histórico de itens ao painel de atendimentos, com acesso auditado.
+- A regressão cobre bloqueio de novas referências a cadastros inativos, preservação do histórico e do saldo, isolamento e MFA. A inativação também é exercitada no navegador.
+- Os testes usam dados fictícios. A próxima etapa é a DEV-021, grade de agenda.
