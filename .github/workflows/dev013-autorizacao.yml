@@ -13,5 +13,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Testar politica isolada com dados ficticios
-        run: node --test src/autorizacao/politica.test.ts
+      - name: Testar politica e adaptador com dados ficticios
+        run: node --test src/autorizacao/politica.test.ts src/autorizacao/servidor.test.ts
