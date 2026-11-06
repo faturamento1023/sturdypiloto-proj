@@ -16,3 +16,11 @@
 5. Datas civis e fuso São Paulo; mudanças de horário e exceções em intervalos atravessando a meia-noite.
 
 **Próximo passo:** projetar esquema e handlers transacionais com bloqueio e isolamento por unidade, integrar à grade DEV-021/022, validar em PostgreSQL descartável e navegador, obter revisão operacional. Não concluir DEV-023 sem esses itens.
+
+## Leitura SQL incremental — 06/11/2026
+
+- A migração `database/dev023_excecoes_feriados.sql` agora expõe `public.piloto_ler_excecoes_agenda(unidade, profissional, de, ate, correlacao)`, limitada a 31 dias, com autenticação e trilha de leitura reaproveitadas de DEV-021.
+- O retorno JSON contém apenas feriados e intervalos de exceção; não contém nomes ou documentos de pacientes.
+- A política RLS foi ampliada para permitir que médicos vinculados vejam bloqueios gerais da própria unidade, sem permissão de escrita. Médicos continuam limitados às exceções de seus profissionais e bloqueios gerais; recepção e gestão podem consultar a unidade conforme autorização.
+- A função **não altera a disponibilidade da grade** e **não salva exceções**: integração ao cálculo da grade, testes reais de RLS e serviço transacional de escrita permanecem pendentes.
+- Quatro verificações estáticas adicionais foram escritas, mas não foram executadas nesta sessão. A precedência de feriados permanece proposta não homologada.
