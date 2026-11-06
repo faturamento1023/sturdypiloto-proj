@@ -1,6 +1,6 @@
 # DEV-006 — Checklist de validação por perfil (v0.1)
 
-Data: 05/11/2026. Documento preparatório, **sem aprovação operacional ou clínica**. Base: DEV-005 v1.0, DEV-006 jornadas v0.2, revisão documental e cronograma. Não contém pacientes, imagens proprietárias ou credenciais.
+Data: 05/11/2026. **Aceite do responsável pelo projeto registrado em 05/11/2026 para o checklist e prosseguimento da revisão documental; não representa resposta individual às 12 questões nem homologação clínica/funcional.** Base: DEV-005 v1.0, DEV-006 jornadas v0.2, revisão documental e cronograma. Não contém pacientes, imagens proprietárias ou credenciais.
 
 Para cada item, registrar: **Confirmado / Corrigir / Indeterminado**, regra exata, papel do revisor, data e evidência não sensível. A visualização de controles no WebUltra não prova que a ação funciona.
 
@@ -23,7 +23,7 @@ Para cada item, registrar: **Confirmado / Corrigir / Indeterminado**, regra exat
 
 | ID | Decisão validada | Papel responsável | Data | Evidência permitida | Passos afetados |
 |---|---|---|---|---|---|
-| — | Nenhuma decisão validada nesta versão | — | — | — | — |
+| ACEITE-01 | Responsável pelo projeto declarou «Validado» em conversa, após apresentação do checklist e do CI; aceite do documento para prosseguir, sem respostas técnicas específicas | Responsável pelo projeto | 05/11/2026 | Registro textual de aceite, sem dados clínicos | Documento DEV-006; V01–V12 permanecem pendentes de confirmação detalhada |
 
 ## Critério de saída DEV-006
 
