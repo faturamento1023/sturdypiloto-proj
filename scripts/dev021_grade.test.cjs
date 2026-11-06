@@ -1,0 +1,13 @@
+'use strict';
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const {projectGrid,windowBounds,overlaps}=require('./dev021_grade.cjs');
+const win={unitId:'unidade-ficticia',start:'2026-11-09T08:00:00-03:00',end:'2026-11-09T12:00:00-03:00'};
+const row=(id,start,end,status='reservado',unitId=win.unitId)=>({id,unitId,professionalId:'medico-ficticio',start,end,status});
+test('adjacencia nao equivale a sobreposicao',()=>{assert.equal(overlaps(1,2,2,3),false);assert.equal(overlaps(1,3,2,4),true)});
+test('janela maior que 31 dias rejeitada',()=>assert.throws(()=>windowBounds('2026-01-01T00:00:00Z','2026-02-02T00:00:00Z'),RangeError));
+test('sem fuso rejeitado',()=>assert.throws(()=>windowBounds('2026-11-09T08:00','2026-11-09T09:00'),TypeError));
+test('limites inicio inclusivo e fim exclusivo',()=>{const rows=[row('a','2026-11-09T07:00:00-03:00',win.start),row('b',win.start,'2026-11-09T08:30:00-03:00'),row('c',win.end,'2026-11-09T13:00:00-03:00')];assert.deepEqual(projectGrid(rows,win).map(x=>x.id),['b'])});
+test('filtra unidade e profissional',()=>{const rows=[row('a',win.start,win.end),row('b',win.start,win.end,'reservado','outra-unidade'),{...row('c',win.start,win.end),professionalId:'outro'}];assert.deepEqual(projectGrid(rows,{...win,professionalId:'medico-ficticio'}).map(x=>x.id),['a'])});
+test('ordem cronologica deterministica',()=>{const rows=[row('b','2026-11-09T10:00:00-03:00',win.end),row('a',win.start,'2026-11-09T09:00:00-03:00')];assert.deepEqual(projectGrid(rows,win).map(x=>x.id),['a','b'])});
+test('projecao nao contem identificador do paciente',()=>{const result=projectGrid([{...row('a',win.start,win.end),patientId:'dado-privado'}],win);assert.equal(JSON.stringify(result).includes('patientId'),false)});
+test('cancelamento mantido visivel para historico',()=>assert.equal(projectGrid([row('a',win.start,win.end,'cancelado')],win)[0].status,'cancelado'));
