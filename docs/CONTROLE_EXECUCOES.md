@@ -26,6 +26,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-011 — Preparar infraestrutura e CI/CD | **Concluída** | [Base Next.js, CI e homologação](DEV-011_INFRAESTRUTURA.md). Build autônomo, checks de banco e navegador e pacote validado por checksum. | DEV-012 — Implementar login, redefinição e sessão. |
 
+| 2026-11-06 | DEV-012 — Implementar autenticação | **Concluída em ambiente simulado** | [Login, recuperação, sessão e MFA TOTP](DEV-012_AUTENTICACAO.md). Conta protegida por AAL2 no servidor, com fluxo testável em desktop e celular. | DEV-013 — Autorizar perfis e vínculos por unidade. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -37,9 +39,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **03 — Infraestrutura e permissões** (base e homologação da DEV-011).
-- Tarefas concluídas: **DEV-001 a DEV-011**.
-- Próxima tarefa: **DEV-012 — Implementar autenticação**.
+- Fase do cronograma: **03 — Infraestrutura e permissões** (base DEV-011 e autenticação DEV-012).
+- Tarefas concluídas: **DEV-001 a DEV-012**.
+- Próxima tarefa: **DEV-013 — Implementar autorização**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -101,3 +103,10 @@ Registro histórico anterior ao aceite final.
 - Base Next.js adicionada com ambiente identificado no servidor e rota de saúde. O [guia técnico](DEV-011_INFRAESTRUTURA.md) registra os comandos de desenvolvimento e homologação.
 - GitHub Actions executa build, banco de teste e Playwright. A entrega de homologação em `main` verifica e inicia o pacote extraído. O projeto Vercel isolado foi pausado após o primeiro envio receber o destino de produção. O [PR #10](https://github.com/faturamento1023/sturdypiloto-proj/pull/10) registra a situação.
 - Próxima ação: DEV-012.
+
+## Sessão de 06/11/2026 — autenticação DEV-012
+
+- Implementados login, recuperação por código de e-mail, renovação e saída da sessão. O [guia técnico](DEV-012_AUTENTICACAO.md) registra a configuração do provedor.
+- A conta exige MFA TOTP. Para evitar acesso só com senha antes da DEV-013, o piloto aplica essa exigência a todos os usuários. A recuperação preserva o segundo fator nas contas que já o têm.
+- Testes automatizados usam um provedor simulado em loopback e contas fictícias. A entrega de e-mail e a configuração de um projeto Supabase isolado ficam pendentes de homologação operacional.
+- Próxima ação: DEV-013.
