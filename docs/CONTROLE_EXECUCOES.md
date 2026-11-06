@@ -270,3 +270,11 @@ Registro histórico anterior ao aceite final.
 - Quatro testes estáticos adicionados (commit `43974ba`) e documentação atualizada (commit `1deb325`).
 - **Sem execução confirmada:** testes Node, migração PostgreSQL, CI e navegador. Git local ainda não acessa GitHub por falha DNS; alterações realizadas pela integração GitHub. Não marcar DEV-023 concluída.
 - **Próxima tarefa:** operação transacional SQL de gravação com checagem concorrente de reservas, integração efetiva ao cálculo da grade, testes de RLS/HTTP/UX em ambiente descartável, validação operacional da precedência. Nenhum dado real ou produção alterados.
+
+## Sessão de 06/11/2026 — correção de sintaxe da migração DEV-023
+
+- Antes de escrever: conferidos controle `main` e branch ativa, PR #24 aberto, Issues abertas (nenhuma), critérios DEV-005 v1.0, cronograma XLSM original do Drive (abas Painel, Cronograma e Backlog 70 Tarefas) e metadados da pasta Web Ultra. A planilha continua com status original de planejamento, não reflete automaticamente os commits e não foi modificada.
+- Detectado defeito concreto em `database/dev023_excecoes_feriados.sql`: a função `public.piloto_ler_excecoes_agenda` usava delimitador PL/pgSQL `$` em vez de `$$`, impedindo execução da migração. Corrigido na branch (commit `944705a`; tentativa anterior `13edaf3` foi substituída).
+- Adicionado teste estático de regressão para abertura e fechamento dos delimitadores (commit `493c930`).
+- **Validação pendente:** sem execução de migração PostgreSQL ou teste Node nesta sessão; acesso git local continua bloqueado por DNS e consulta de workflow do commit retornou lista vazia. Os testes estruturais não equivalem a validação real do banco.
+- DEV-023 permanece em andamento. Próximo: executar migração em banco descartável, conferir RLS/RPC, implementar gravação transacional com bloqueio concorrente e integração da grade; validar regra proposta de feriados com responsáveis.
