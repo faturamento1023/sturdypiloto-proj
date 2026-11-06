@@ -67,3 +67,11 @@
 - Integrar guardas aos handlers somente após revisão. O acesso à produção, autenticação real e autorização clínica seguem fora de escopo nesta entrega.
 
 **Verificação desta entrega:** documento de desenho criado; nenhum teste de autorização executado nesta sessão. **Próximo passo:** implementação e testes de integração da DEV-013, após conferir o estado do PR DEV-012.
+
+
+## Incremento de 06/11/2026 — avaliador puro de política
+
+- Adicionado `src/autorizacao/politica.ts`: verificação determinística de AAL2, unidade ativa, vínculos ativos por identidade, permissões explícitas, isolamento entre unidades e atribuição clínica. Operações sem regra são negadas; recebimento, estorno, gestão de vínculos e auditoria permanecem bloqueados.
+- Adicionado `src/autorizacao/politica.test.ts`: testes unitários para ausência de sessão, AAL1, vínculo revogado, outra unidade, médico sem atribuição, perfis não clínicos e operações bloqueadas.
+- **Limitação importante:** o avaliador recebe um retrato dos vínculos, e **não** consulta PostgreSQL nem Supabase. Não deve ser usado diretamente com parâmetros enviados pelo cliente; os handlers deverão obter identidade e vínculos por consulta privilegiada e fresca, dentro de transações adequadas. Não substitui RLS nem auditoria. As projeções por papel ainda não foram implementadas; nenhuma rota clínica foi habilitada.
+- **Verificação:** código e testes adicionados ao PR, sem execução local/CI confirmada nesta sessão. AUTHZ-16 (auditoria) e testes integrados com revogação/concorrência ainda pendentes. A matriz continua proposta, não homologada.
