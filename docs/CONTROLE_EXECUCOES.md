@@ -14,7 +14,7 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-005 — Definir critérios de paridade | **Concluída (escopo aprovado pelo responsável em 05/11/2026)** | `docs/DEV-005_CRITERIOS_PARIDADE.md` e `docs/DEV-005_CRITERIOS_POR_TELA.json` com 65 critérios (MVP 24, V1 37, futura 4), validação estrutural e status sem testes | DEV-006 — Mapear jornadas completas |
 
-| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento — PR #5 em revisão** | 7 jornadas/53 passos; revisão cruzada de fontes, wireflows e checklist de 12 questões por perfil (`docs/DEV-006_CHECKLIST_VALIDACAO.md`); CI do commit `27ccf7d` passou (run `42138890004`, job `verify-ux-journeys`) | Revisão operacional conjunta administrativa/médica e aceite documental antes de merge/DEV-007 |
+| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento — PR #5 em revisão** | 7 jornadas/53 passos; revisão cruzada de fontes, wireflows, checklist de 12 questões e contratos CF-01–CF-04 com 19 cenários QA propostos (não executados) (`docs/DEV-006_CHECKLIST_VALIDACAO.md`); CI do commit `27ccf7d` passou (run `42138890004`, job `verify-ux-journeys`) | Revisar detalhes técnicos dos contratos, executar QA quando houver implementação e obter validações clínica/operacional pertinentes antes de merge/DEV-007 |
 
 ## Regras para próximas execuções
 
