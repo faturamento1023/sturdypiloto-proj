@@ -29,7 +29,9 @@ export function avaliarAutorizacao(p: Pedido): Resultado {
   if (!p.identidade?.usuarioId) return deny(401,'sessao_ausente');
   if (p.identidade.aal !== 'aal2') return deny(403,'mfa_pendente');
   if (!p.unidadeId || !p.unidadeAtiva) return deny(403,'unidade_invalida');
-  // Falhar fechado também diante de respostas inesperadas do adaptador de dados.\n  if (!Array.isArray(p.vinculos)) return deny(403,'vinculos_invalidos');\n  const perfis = new Set(p.vinculos.filter(v => v && typeof v === 'object' && v.ativo === true && v.usuarioId === p.identidade!.usuarioId && v.unidadeId === p.unidadeId && PERFIS.includes(v.perfil)).map(v => v.perfil));
+  // Falhar fechado também diante de respostas inesperadas do adaptador de dados.
+  if (!Array.isArray(p.vinculos)) return deny(403,'vinculos_invalidos');
+  const perfis = new Set(p.vinculos.filter(v => v && typeof v === 'object' && v.ativo === true && v.usuarioId === p.identidade!.usuarioId && v.unidadeId === p.unidadeId && PERFIS.includes(v.perfil)).map(v => v.perfil));
   if (perfis.size === 0) return deny(403,'sem_vinculo_ativo');
   if (p.objeto && p.objeto.unidadeId !== p.unidadeId) return deny(404,'objeto_nao_encontrado');
   // Defesa em profundidade: entradas HTTP não são protegidas pelos tipos TypeScript.
