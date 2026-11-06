@@ -24,6 +24,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-010 — Definir API e limites | **Concluída** | [OpenAPI e contrato de API](DEV-010_CONTRATOS_API.md) com 24 operações, paginação, filtros, escopo por perfil, idempotência e revisão por ETag. | DEV-011 — Preparar infraestrutura, checks e ambientes. |
 
+| 2026-11-05 | DEV-011 — Preparar infraestrutura e CI/CD | **Concluída** | [Base Next.js, CI e homologação](DEV-011_INFRAESTRUTURA.md). Build autônomo, checks de banco e navegador e pacote validado por checksum. | DEV-012 — Implementar login, redefinição e sessão. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -35,11 +37,11 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **02 — UX e arquitetura** (contratos da DEV-010 entregues).
-- Tarefas concluídas: **DEV-001 a DEV-010**.
-- Próxima tarefa: **DEV-011 — Preparar infraestrutura, checks e ambientes**.
-- Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
-- Aplicação web de produção ainda não iniciada. O PR inclui demonstração HTML de recepção e funções de domínio em memória, com dados fictícios.
+- Fase do cronograma: **03 — Infraestrutura e permissões** (base e homologação da DEV-011).
+- Tarefas concluídas: **DEV-001 a DEV-011**.
+- Próxima tarefa: **DEV-012 — Implementar autenticação**.
+- Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
+- Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
 - A planilha Excel de cronograma no Drive ainda contém texto inicial que afirmava ausência dos JPG médicos; o documento `docs/DEV-002_MATRIZ_VISUAL.md` prevalece até a atualização controlada da planilha.
 
@@ -93,3 +95,9 @@ Registro histórico anterior ao aceite final.
 - Especificação OpenAPI adicionada ao PR #9, com 24 operações e exemplos sintéticos. O [contrato](DEV-010_CONTRATOS_API.md) registra as permissões e as dependências das etapas de implementação.
 - Lint do OpenAPI, 45 exemplos e 15 entradas indevidas verificados. Foi adicionado um check de PR específico para o contrato.
 - Próxima ação: DEV-011.
+
+## Sessão de 05/11/2026 — infraestrutura DEV-011
+
+- Base Next.js adicionada com ambiente identificado no servidor e rota de saúde. O [guia técnico](DEV-011_INFRAESTRUTURA.md) registra os comandos de desenvolvimento e homologação.
+- GitHub Actions executa build, banco de teste e Playwright. A entrega de homologação em `main` verifica e inicia o pacote extraído. A prévia Vercel é isolada e sua versão consta no PR.
+- Próxima ação: DEV-012.
