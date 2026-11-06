@@ -147,3 +147,12 @@ Registro histórico anterior ao aceite final.
 - Testes escritos, **não executados nesta sessão**; CI não confirmado. Não há evidência de homologação ou integração a PostgreSQL/Supabase.
 - Bloqueios: execução dos testes, integração com sessão e consulta fresca ao banco, auditoria, AUTHZ-01–16 integrados e decisões clínicas/operacionais V01/V05/V07/V09. DEV-013 continua **em andamento**.
 - Próxima ação: validar no CI os novos testes e iniciar integração de autorização nos handlers de homologação, preservando isolamento de unidade e RLS.
+
+## Sessão de 06/11/2026 — DEV-013: correção de sintaxe e CI
+
+- Conferidos o controle na branch, PR #14 (único PR aberto retornado), Issues abertas (nenhuma), cronograma XLSX e pasta Web Ultra no Drive em leitura. O cronograma original mantém estados iniciais; a execução real está registrada no GitHub.
+- Identificado defeito concreto em `src/autorizacao/politica.ts`: dois escapes literais `\\n` haviam sido inseridos no meio de instruções TypeScript, tornando o arquivo inválido. Substituídos por quebras de linha reais no commit `3ac96d5` da branch existente.
+- Evidência de CI: workflow DEV-013 do commit `3ac96d5`, run [42180884421](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42180884421), estava **queued** na consulta. Não afirmar testes aprovados antes do resultado.
+- Não foram executados testes locais nesta sessão; a correção foi inspecionada no texto do arquivo. Não houve alteração do WebUltra, dados reais ou produção.
+- Bloqueios: confirmar CI, integrar sessão e vínculos frescos do PostgreSQL, auditar transações e executar AUTHZ-01–16 integrados. DEV-013 continua em andamento; não mesclar PR #14 sem essas evidências.
+- Próxima tarefa: consultar conclusão do run, corrigir eventuais falhas e implementar adaptador de autorização server-side com banco descartável.
