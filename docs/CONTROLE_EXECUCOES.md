@@ -14,7 +14,7 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-005 — Definir critérios de paridade | **Concluída (escopo aprovado pelo responsável em 05/11/2026)** | `docs/DEV-005_CRITERIOS_PARIDADE.md` e `docs/DEV-005_CRITERIOS_POR_TELA.json` com 65 critérios (MVP 24, V1 37, futura 4), validação estrutural e status sem testes | DEV-006 — Mapear jornadas completas |
 
-| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento** | Fluxos detalhados de recepção, médico, laudos e financeiro em preparação; issue a abrir | Revisão de início/fim, estados e exceções |
+| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento — PR #5 em revisão** | 7 jornadas/53 passos; docs `DEV-006_JORNADAS.json` e `DEV-006_WIREFLOWS.md` em branch, validador e Actions; PR #5 aberto em rascunho | Revisão administrativa/médica, CI e validação final antes de mesclar |
 
 ## Regras para próximas execuções
 
