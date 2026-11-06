@@ -16,7 +16,10 @@ export default function Home() {
           <span className="rotulo">INFRAESTRUTURA · DEV-011</span>
           <h1 id="titulo">Projeto Piloto</h1>
           <p>Base web para testar a aplicação da clínica com dados fictícios.</p>
-          <a className="botao" href="/api/saude">Verificar status técnico <span aria-hidden="true">↗</span></a>
+          <div className="acoes-inicio">
+            <a className="botao" href="/entrar">Entrar no piloto</a>
+            <a className="acesso-link" href="/api/saude">Verificar status técnico <span aria-hidden="true">↗</span></a>
+          </div>
         </div>
         <dl className="estado">
           <div>
