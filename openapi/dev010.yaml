@@ -96,7 +96,8 @@ paths:
         Retorna a grade completa da janela no escopo da sessão, sem dados de paciente.
         Médico recebe a própria agenda. Compromissos são recortados nas fronteiras,
         ordenados por início e ID e incluem cancelamentos. Horários livres vêm de
-        janelas explícitas, descontando compromissos que não foram cancelados.
+        janelas explícitas e disponibilidades semanais, descontando compromissos que não foram cancelados.
+        A disponibilidade semanal inclui o nome do local.
         Se a capacidade for excedida, reduza a janela ou filtre por profissional.
       x-perfis:
       - recepcao
@@ -132,6 +133,7 @@ paths:
                 - profissional_id: 00000000-0000-4000-8000-000000000021
                   inicio: '2026-11-05T08:30:00-03:00'
                   fim: '2026-11-05T09:00:00-03:00'
+                  local_nome: Sala fictícia
         '400':
           $ref: '#/components/responses/EntradaInvalida'
         '401':
@@ -2463,6 +2465,11 @@ components:
           items:
             allOf:
             - $ref: '#/components/schemas/IntervaloGradeAgenda'
+            - type: object
+              properties:
+                local_nome:
+                  type: string
+                  maxLength: 80
             unevaluatedProperties: false
     PaginaPacienteResumo:
       type: object

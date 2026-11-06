@@ -9,9 +9,9 @@ const hora = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', h
 const diaPorExtenso = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full', timeZone: 'America/Sao_Paulo' });
 const buscarNome = (valor: string) => valor.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('pt-BR');
 
-export async function GradeAgenda({ cliente, unidade, data, profissional, busca }: {
+export async function GradeAgenda({ cliente, unidade, data, profissional, busca, configuraAgenda }: {
   cliente: NonNullable<Awaited<ReturnType<typeof sessaoNoServidor>>>;
-  unidade: string; data: string; profissional: string; busca: string;
+  unidade: string; data: string; profissional: string; busca: string; configuraAgenda: boolean;
 }) {
   const hoje = dataAgenda(new Date());
   const dataConsulta = dataValida(data) && data >= primeiraData && data <= ultimaData ? data : hoje;
@@ -48,6 +48,9 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca 
           {dataConsulta < ultimaData && <Link href={url(deslocarDia(dataConsulta, 1))} prefetch={false}>Próximo dia</Link>}
         </nav>
       </header>
+      {configuraAgenda && <Link className="agenda-config-link"
+        href={'/painel?' + new URLSearchParams({ unidade, modulo: 'agenda', configuracaoAgenda: '1' })}
+        prefetch={false}>Configurar disponibilidade</Link>}
       <form action="/painel" method="get" className="agenda-filtros" aria-label="Filtros da agenda" key={dataConsulta + profissional + busca}>
         <input type="hidden" name="unidade" value={unidade} />
         <input type="hidden" name="modulo" value="agenda" />
@@ -81,7 +84,7 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca 
                 const ate = new Date(item.fim);
                 return <li key={item.id} data-estado={item.estado}>
                   <span><time dateTime={de.toISOString()}>{hora.format(de)}</time> a <time dateTime={ate.toISOString()}>{hora.format(ate)}</time></span>
-                  <span className="agenda-estado">{livre ? 'Livre' : rotulosAgenda[item.estado]}</span>
+                  <span className="agenda-estado">{livre ? ['Livre', item.local_nome].filter(Boolean).join(' · ') : rotulosAgenda[item.estado]}</span>
                 </li>;
               })}
             </ul>}

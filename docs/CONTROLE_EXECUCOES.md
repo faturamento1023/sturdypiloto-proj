@@ -46,6 +46,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-021 — Desenhar grade de agenda | **Concluída em ambiente descartável** | [Grade por dia e profissional, consulta auditada e intervalos livres](DEV-021_GRADE_AGENDA.md). | DEV-022 — Configurar disponibilidade regular. |
 
+| 2026-11-06 | DEV-022 — Configurar disponibilidade regular | **Concluída em ambiente descartável** | [Janelas semanais por profissional e sala](DEV-022_DISPONIBILIDADE_REGULAR.md). | DEV-023 — Criar exceções e feriados. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -58,8 +60,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **05 — Agendamento** (grade de agenda integrada).
-- Tarefas concluídas: **DEV-001 a DEV-021**.
-- Próxima tarefa: **DEV-022 — Configurar disponibilidade regular**.
+- Tarefas concluídas: **DEV-001 a DEV-022**.
+- Próxima tarefa: **DEV-023 — Criar exceções e feriados**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -211,3 +213,8 @@ Registro histórico anterior ao aceite final.
 - Continuidade no [PR #22](https://github.com/faturamento1023/sturdypiloto-proj/pull/22) após a DEV-020. Os protótipos Node do rascunho foram substituídos pela implementação integrada e pelos testes no CI principal.
 - Entregue grade diária com filtros, intervalos livres calculados a partir de janelas explícitas, compromissos e cancelamentos. A leitura SQL respeita RLS e registra a decisão de acesso.
 - Cobertura de MFA, isolamento por unidade e profissional, virada de dia, cancelamento e proteção de dados de paciente. PostgreSQL e navegador usam dados fictícios. A próxima etapa é a DEV-022.
+
+## Sessão de 06/11/2026 — disponibilidade regular DEV-022
+
+- Entregue cadastro de salas e regras semanais com vigência, encerramento e proteção contra sobreposição por profissional ou sala. A grade mostra a disponibilidade calculada e o nome da sala.
+- Os testes cobrem autorização, isolamento, vigência, colisões e integração da configuração com a grade. Banco e navegador usam dados fictícios. A próxima etapa é DEV-023.
