@@ -1,6 +1,6 @@
 # DEV-006 — Contratos funcionais propostos e cenários de QA
 
-Data: 05/11/2026. Base: quatro decisões do responsável registradas em DEV-006_CHECKLIST_VALIDACAO.md. **Especificação de comportamento do Projeto Piloto, não evidência de comportamento no WebUltra e não homologação clínica.** Usar somente dados fictícios. Testes descritos abaixo **não foram executados**.
+Data: 05/11/2026. Base: quatro decisões do responsável registradas em DEV-006_CHECKLIST_VALIDACAO.md. **Especificação de comportamento do Projeto Piloto, não evidência de comportamento no WebUltra e não homologação clínica.** Usar somente dados fictícios. Os cenários abaixo especificam o QA de ponta a ponta. A [cobertura dos testes locais](DEV-006_COBERTURA_TESTES.md) registra o que foi verificado de forma isolada.
 
 ## CF-01 — Agendamento separado de atendimento
 - Entidades: `agendamento` e `atendimento` possuem IDs e ciclos de vida distintos; ligação opcional `atendimento.agendamento_id`.
@@ -35,5 +35,5 @@ Data: 05/11/2026. Base: quatro decisões do responsável registradas em DEV-006_
 
 ## Status
 - Requisitos CF-01 a CF-04: **aprovados conceitualmente pelo responsável**, detalhamento técnico acima **proposto e pendente de revisão**.
-- QA-01 a QA-19: **cenários especificados, não executados**.
+- QA-01 a QA-19: **cenários especificados**. A execução de ponta a ponta depende da implementação e do ambiente de testes.
 - DEV-006 permanece em revisão; PR #5 não deve ser mesclado nem DEV-007 declarada iniciada até os critérios de aceite aplicáveis.

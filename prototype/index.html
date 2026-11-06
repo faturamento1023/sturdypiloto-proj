@@ -8,7 +8,7 @@
 <main><header class="top"><div><div class="eyebrow">Módulo de recepção · demonstração</div><h2>Agenda de atendimentos</h2><div class="muted">Agendamentos e abertura de atendimento são ações separadas.</div></div><button class="primary" id="new">+ Novo agendamento</button></header>
 <section class="stats" aria-label="Resumo"><div class="card"><div class="muted">Agendados</div><div class="stat" id="count-booked">0</div></div><div class="card"><div class="muted">Atendimentos abertos</div><div class="stat" id="count-open">0</div></div><div class="card"><div class="muted">Cancelados</div><div class="stat" id="count-cancel">0</div></div></section>
 <section class="card"><div class="toolbar"><div><h3>Agenda do dia</h3><span class="muted">Dados fictícios; alterações ficam somente nesta página.</span></div><div class="filters"><label class="sr-only" for="search">Pesquisar paciente</label><input id="search" placeholder="Pesquisar paciente"><label class="sr-only" for="filter">Filtrar situação</label><select id="filter"><option value="todos">Todas as situações</option><option value="reservado">Reservados</option><option value="cancelado">Cancelados</option><option value="aberto">Atendimento aberto</option></select></div></div><div class="table-wrap"><table><thead><tr><th>Horário</th><th>Paciente</th><th>Profissional</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="rows"></tbody></table></div><p class="notice" role="status" id="feedback">Protótipo isolado: não salva informações em banco de dados e não acessa pacientes reais.</p></section></main></div>
-<div id="modal" class="overlay" hidden><form id="form" class="dialog"><h3>Novo agendamento</h3><div class="fields"><label class="field full">Paciente fictício<input id="patient" maxlength="90" required placeholder="Ex.: Paciente Demonstração"></label><label class="field">Profissional<select id="doctor" required><option value="Dra. Marina">Dra. Marina</option><option value="Dr. Rafael">Dr. Rafael</option></select></label><label class="field">Horário<input id="time" type="time" value="09:00" required></label></div><div class="dialog-footer"><button class="secondary" type="button" id="close">Cancelar</button><button class="primary" type="submit">Salvar agendamento</button></div></form></div>
+<div id="modal" class="overlay" hidden><form id="form" class="dialog" role="dialog" aria-modal="true" aria-labelledby="form-title"><h3 id="form-title">Novo agendamento</h3><div class="fields"><label class="field full">Paciente fictício<input id="patient" maxlength="90" required placeholder="Ex.: Paciente Demonstração"></label><label class="field">Profissional<select id="doctor" required><option value="Dra. Marina">Dra. Marina</option><option value="Dr. Rafael">Dr. Rafael</option></select></label><label class="field">Horário<input id="time" type="time" value="09:00" required></label></div><p class="notice" id="form-feedback" role="alert" hidden></p><div class="dialog-footer"><button class="secondary" type="button" id="close">Cancelar</button><button class="primary" type="submit">Salvar agendamento</button></div></form></div>
 <script>
 "use strict";
 const demo=[{id:1,time:"08:00",patient:"Paciente Exemplo A",doctor:"Dra. Marina",status:"reservado",encounter:null},{id:2,time:"08:30",patient:"Paciente Exemplo B",doctor:"Dr. Rafael",status:"reservado",encounter:null},{id:3,time:"09:00",patient:"Paciente Exemplo C",doctor:"Dra. Marina",status:"reservado",encounter:null}];
@@ -25,6 +25,56 @@ function render(){
  if(!filtered.length){const tr=el("tr","");const td=el("td","Nenhum agendamento encontrado.","empty");td.colSpan=5;tr.append(td);$("rows").append(tr);return}
  for(const a of filtered){const tr=document.createElement("tr");for(const val of [a.time,a.patient,a.doctor])tr.append(el("td",val));const status=el("td","");status.append(el("span",a.encounter?"Atendimento aberto":a.status==="cancelado"?"Cancelado":"Reservado","pill "+(a.encounter?"done":a.status==="cancelado"?"cancel":"")));tr.append(status);const actions=el("td","","actions");if(!a.encounter&&a.status==="reservado"){const open=el("button","Abrir atendimento","primary");open.type="button";open.addEventListener("click",()=>{a.encounter="AT-"+String(a.id).padStart(4,"0");announce("Atendimento "+a.encounter+" aberto explicitamente para "+a.patient+".");render()});const cancel=el("button","Cancelar","danger");cancel.type="button";cancel.addEventListener("click",()=>{a.status="cancelado";announce("Agendamento cancelado.");render()});actions.append(open,cancel)}else{actions.append(el("span",a.encounter?a.encounter:"—","muted"))}tr.append(actions);$("rows").append(tr)}
 }
-$("new").addEventListener("click",()=>{$("modal").hidden=false;$("patient").focus()});$("close").addEventListener("click",()=>{$("modal").hidden=true});$("modal").addEventListener("click",e=>{if(e.target===$("modal"))$("modal").hidden=true});$("search").addEventListener("input",render);$("filter").addEventListener("change",render);
-$("form").addEventListener("submit",e=>{e.preventDefault();const patient=$("patient").value.trim(),doctor=$("doctor").value,time=$("time").value;if(!patient||!time)return;if(agenda.some(a=>a.doctor===doctor&&a.time===time&&a.status==="reservado")){announce("Conflito: esse profissional já tem agendamento no horário.");$("modal").hidden=true;return}agenda.push({id:nextId++,patient,doctor,time,status:"reservado",encounter:null});$("modal").hidden=true;$("form").reset();announce("Agendamento criado. Nenhum atendimento foi aberto automaticamente.");render()});render();
+const modal = $("modal");
+const form = $("form");
+const formFeedback = $("form-feedback");
+
+function clearFormFeedback() {
+ formFeedback.textContent = "";
+ formFeedback.hidden = true;
+}
+
+function closeForm() {
+ modal.hidden = true;
+ $("new").focus();
+}
+
+$("new").addEventListener("click", () => {
+ clearFormFeedback();
+ modal.hidden = false;
+ $("patient").focus();
+});
+$("close").addEventListener("click", closeForm);
+modal.addEventListener("click", event => {
+ if (event.target === modal) closeForm();
+});
+modal.addEventListener("keydown", event => {
+ if (event.key === "Escape") closeForm();
+});
+form.addEventListener("input", clearFormFeedback);
+$("search").addEventListener("input", render);
+$("filter").addEventListener("change", render);
+
+form.addEventListener("submit", event => {
+ event.preventDefault();
+ const patient = $("patient").value.trim();
+ const doctor = $("doctor").value;
+ const time = $("time").value;
+ if (!patient || !time) return;
+
+ const occupied = agenda.some(booking => booking.doctor === doctor && booking.time === time && booking.status !== "cancelado");
+ if (occupied) {
+  formFeedback.hidden = false;
+  formFeedback.textContent = "Conflito: esse profissional já tem agendamento no horário.";
+  $("time").focus();
+  return;
+ }
+
+ agenda.push({id: nextId++, patient, doctor, time, status: "reservado", encounter: null});
+ form.reset();
+ closeForm();
+ announce("Agendamento criado. Nenhum atendimento foi aberto automaticamente.");
+ render();
+});
+render();
 </script></body></html>

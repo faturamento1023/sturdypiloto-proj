@@ -12,15 +12,20 @@ Data: 05/11/2026. Branch `dev-006-jornadas-ux`. Escopo isolado, sem paciente, se
 | QA-06 | Parcial: edição de rascunho autorizada | Não testa salvar/reabrir em banco |
 | QA-07 | Unitária: bloqueio de edição por autor divergente | Falta controle de rota e escopo da unidade |
 | QA-08 | Unitária: rejeita versão obsoleta | Falta transação persistente |
-| QA-09 | Parcial: bloqueia edição de finalizada | Não testa apresentação de assinatura |
+| QA-09 | Indireta: bloqueia edição de finalizada | A exibição de assinatura de rascunho continua sem teste |
 | QA-10 | Unitária: impede liberação antes da revisão | Falta endpoint de publicação |
 | QA-11 | Parcial: transição devolvido→rascunho | Não testa motivo persistido |
 | QA-12–13 | Não implementados | Exigem identidade de revisor/assinante e autorização |
-| QA-14 | Parcial: laudo liberado não muda de estado | Não testa substituição de versão |
+| QA-14 | Indireta: laudo liberado não muda de estado | A rejeição de publicação de versão substituída continua sem teste |
 | QA-15–17 | Unitária: cálculos em centavos | Não testa lançamentos/caixa |
 | QA-18 | Unitária: autorização de desconto por papel | Falta auditoria e política operacional |
 | QA-19 | Não implementado | Exige relatório consolidado |
 
-**Importante:** arquivos de teste presentes não significam testes executados. O GitHub Actions foi configurado, mas a consulta ao commit `b449163` não retornou workflow associado. A CI deve ser conferida antes de qualquer merge. Os testes de unidade são necessários, mas insuficientes para segurança clínica ou financeira.
+## Execução local em 05/11/2026
 
-Próximas entregas: executar CI; criar serviço de teste com persistência sintética, controle de permissões e auditoria; expandir QA-05, QA-12, QA-13 e QA-19. DEV-006 permanece em revisão e DEV-007 não foi declarada iniciada.
+- `node scripts/validate-ux.mjs` passou com 65 referências de tela, 7 jornadas, 53 passos e 17 passos propostos.
+- `node --test prototype/contracts/domain.test.ts` passou com 20 testes unitários. A tabela distingue cobertura unitária, parcial, indireta e pendente. O domínio usa dados sintéticos e funções em memória.
+- Exercício local do JavaScript da recepção em DOM simulado. A versão anterior fechava o formulário ao detectar conflito. Na versão corrigida, foram verificados abertura e fechamento do formulário, preservação dos campos, reserva separada, abertura explícita, cancelamento, reutilização de horário cancelado, pesquisa e filtros. Layout e renderização ainda requerem verificação em navegador.
+- QA operacional dos perfis, persistência, autorização HTTP, assinatura, auditoria, relatórios e integração financeira permanecem como escopos de teste posteriores. A conferência do GitHub Actions deve usar o commit atualizado do PR.
+
+A DEV-006 aguarda a revisão conjunta dos perfis administrativo e médico. A [matriz de validação](DEV-006_CHECKLIST_VALIDACAO.md) separa as decisões técnicas de protótipo das questões operacionais abertas.

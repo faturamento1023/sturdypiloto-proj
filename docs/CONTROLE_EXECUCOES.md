@@ -14,7 +14,7 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-005 — Definir critérios de paridade | **Concluída (escopo aprovado pelo responsável em 05/11/2026)** | `docs/DEV-005_CRITERIOS_PARIDADE.md` e `docs/DEV-005_CRITERIOS_POR_TELA.json` com 65 critérios (MVP 24, V1 37, futura 4), validação estrutural e status sem testes | DEV-006 — Mapear jornadas completas |
 
-| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Em andamento — PR #5 em revisão** | 7 jornadas/53 passos; revisão cruzada de fontes, wireflows, checklist de 12 questões e contratos CF-01–CF-04 com 19 cenários QA propostos (não executados) (`docs/DEV-006_CHECKLIST_VALIDACAO.md`); CI do commit `27ccf7d` passou (run `42138890004`, job `verify-ux-journeys`) | Revisar detalhes técnicos dos contratos, executar QA quando houver implementação e obter validações clínica/operacional pertinentes antes de merge/DEV-007 |
+| 2026-11-05 | DEV-006 — Mapear jornadas completas | **Revisão técnica concluída. Aguarda revisão conjunta no PR #5** | 7 jornadas e 53 passos, comparação com os dois manuais, 4 requisitos de produto aceitos, checklist V01–V12 revisado e 20 testes unitários locais do domínio sintético. CI estrutural anterior: runs `42136139775` e `42138890004`. | Registrar revisão com os perfis administrativo e médico, conferir CI do PR atualizado e registrar aceite final antes de mesclar e iniciar DEV-007. |
 
 ## Regras para próximas execuções
 
@@ -27,10 +27,10 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **02 — UX e arquitetura** (DEV-006 em revisão).
+- Fase do cronograma: **02 — UX e arquitetura** (DEV-006 aguarda revisão conjunta, DEV-005 aprovada).
 - Tarefas concluídas: **DEV-001, DEV-002, DEV-003, DEV-004 e DEV-005** (a DEV-005 recebeu aprovação expressa do escopo v1.0; sem implementação funcional).
-- Tarefa atual: **DEV-006 — Mapear jornadas completas** (iniciada após aprovação da DEV-005).
+- Tarefa atual: **DEV-006 — Mapear jornadas completas**. A revisão técnica está documentada e a revisão conjunta segue pendente.
 - Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
-- Aplicação web: ainda não iniciada; não há link de homologação.
+- Aplicação web de produção ainda não iniciada. O PR inclui demonstração HTML de recepção e funções de domínio em memória, com dados fictícios.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
 - A planilha Excel de cronograma no Drive ainda contém texto inicial que afirmava ausência dos JPG médicos; o documento `docs/DEV-002_MATRIZ_VISUAL.md` prevalece até a atualização controlada da planilha.

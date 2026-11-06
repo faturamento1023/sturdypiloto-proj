@@ -12,7 +12,7 @@ Data: 05/11/2026. Revisão documental interna, sem acesso a produção. As decis
 ## Resultado da revisão documental
 
 - **Cobertura:** os quatro requisitos confirmados possuem jornadas e cenários de teste associados; não há requisito aprovado sem mapeamento.
-- **Sem execução funcional:** QA-01 a QA-19 são casos de teste propostos, não resultados de testes. O validador de jornadas verifica estrutura, não operação de agenda, prontuário, laudos ou caixa.
+- **Testes realizados:** a estrutura das jornadas e 20 testes unitários do domínio sintético passaram localmente. A [matriz de cobertura](DEV-006_COBERTURA_TESTES.md) separa os resultados unitários dos cenários de ponta a ponta ainda pendentes.
 - **Lacunas conhecidas:** ADM-23, ADM-38 e MED-07 não possuem evidência visual individual validada; isso não deve ser convertido em funcionalidade observada.
 - **Sem decisões clínicas inferidas:** cálculos obstétricos, assinatura de laudos, acesso ao prontuário e responsabilidade profissional seguem sob revisão especializada.
 
@@ -25,4 +25,4 @@ Data: 05/11/2026. Revisão documental interna, sem acesso a produção. As decis
 
 ## Próxima ação executável
 
-Detalhar contratos de API, estados de interface e modelo de permissões **como propostas** para implementação independente, mantendo a distinção entre requisitos de produto, observação documental e testes efetivamente executados. Conferir CI da cabeça do PR antes de qualquer merge.
+Revisar os fluxos com os perfis administrativo e médico usando o [checklist V01–V12](DEV-006_CHECKLIST_VALIDACAO.md). Registrar decisões, discordâncias e dependências. Conferir CI do commit atualizado do PR antes do aceite documental.

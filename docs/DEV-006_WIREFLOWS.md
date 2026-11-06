@@ -142,7 +142,7 @@ flowchart TD
 
 **Caminhos alternativos / exceções:**
 - Paciente já existe: não abrir cadastro novamente.
-- Horário indisponível: voltar à grade sem criar atendimento.
+- Horário indisponível: preservar os campos e permitir escolher outro horário.
 - Cancelamento antes da confirmação: nenhuma gravação.
 - Conexão perdida: consultar estado antes de repetir envio.
 
@@ -167,8 +167,8 @@ flowchart TD
 | C2 | ADM-15, ADM-16 | Seleciona paciente existente ou cadastra paciente fictício | **O** | Vínculo com prontuário sintético | Paciente não existe; duplicidade de cadastro. |
 | C3 | ADM-14, ADM-22 | Seleciona convênio, data, autorização e médico solicitante quando aplicável | **O** | Cabeçalho do atendimento preenchido | Convênio inativo, guia incompleta ou data inválida. |
 | C4 | ADM-19, ADM-21, ADM-14 | Adiciona procedimento e médico, incidência e indicação clínica | **O** | Tabela de itens calculada para revisão | Procedimento ausente ou preço inválido; apresentar aviso. |
-| C5 | ADM-21, ADM-14 | Revisa valor de tabela e valor cobrado, registrando origem/ajuste | **P** | Totais sem arredondamentos ocultos | Não presumir mesmo valor para pago, cobrado e faturado. |
-| C6 | ADM-26, ADM-27, ADM-14 | Se houver pagamento, escolhe forma e informa valor de teste | **O** | Pagamento ligado ao atendimento | Pagamento parcial e saldo aberto devem permanecer distintos. |
+| C5 | ADM-21, ADM-14 | Revisa valor de tabela e valor cobrado, registrando origem e ajuste | **P** | Totais sem arredondamentos ocultos | Não presumir mesmo valor para pago, cobrado e faturado. |
+| C6 | ADM-26, ADM-27, ADM-14 | Se houver pagamento, escolhe forma e informa valor de teste | **O** | Pagamento ligado ao atendimento | Cobrados, recebidos e pendentes são exibidos separadamente, inclusive em pagamento parcial. |
 | C7 | ADM-14 | Confere dados, informações e conclui Salvar em sandbox | **D** | Registro de atendimento com identificador auditável | Falha de validação mantém dados no formulário sem duplicar. |
 | C8 | ADM-13 | Consulta listagem por data/status e confere dados do registro | **O** | Atendimento encontrado na grade | Falta de permissão deve bloquear detalhes/edição. |
 
@@ -181,10 +181,10 @@ flowchart TD
 **Dependências e regras de controle:**
 - Transação coerente entre itens e atendimento
 - Idempotência para duplo clique em salvar
-- Diferenciar valor_tabela, valor_cobrado e valor_pago
+- Diferenciar preço de tabela, valor cobrado, recebido e saldo pendente
 
 **Não presumir do sistema de origem:**
-- Vínculo automático agendamento→atendimento não foi comprovado; origem direta e por agenda são caminhos propostos.
+- No Projeto Piloto, reservar e abrir atendimento são ações separadas. O vínculo exige abertura explícita. Atendimento direto depende de política operacional.
 - Autopreenchimento do preço é pendência histórica; não implementar como regra comprovada.
 
 ### UX-04 — Médico — prontuário e evolução de consulta
@@ -200,7 +200,7 @@ flowchart TD
 | D3 | MED-02 | Revisa anotação de triagem, sinais e histórico com campos disponíveis | **O** | Contexto clínico do atendimento | Dados ausentes exibidos como não informados, sem valor padrão fictício. |
 | D4 | MED-14, MED-15 | Escolhe entre Consulta Texto e Consulta Planilhada | **O** | Editor específico ativo | Alternar sem salvar deve alertar sobre alterações. |
 | D5 | MED-14, MED-15 | Preenche evolução fictícia e valida campos/conteúdo | **O** | Rascunho coerente com tipo escolhido | Campos obrigatórios e texto vazio sinalizados. |
-| D6 | MED-14, MED-15 | Salva rascunho em ambiente de homologação com autoria e versão | **P** | Versão gravada com timestamp e autor | Concorrência na edição: não sobrescrever silenciosamente. |
+| D6 | MED-14, MED-15 | Salva e retoma a evolução como rascunho no ambiente de teste, com autoria e versão | **P** | Versão gravada com timestamp e autor | Concorrência na edição: não sobrescrever silenciosamente. |
 | D7 | MED-16, MED-18 | Acessa receituário/atestado apenas em pré-visualização de teste | **O** | Documento fictício sem validade clínica | Não gerar assinatura médica real sem autorização. |
 | D8 | MED-02 | Retorna ao prontuário e confirma histórico da consulta fictícia | **P** | Registro localizável e auditável | Falha ao sincronizar: apresentar erro e opção segura de nova tentativa. |
 
@@ -263,7 +263,7 @@ flowchart TD
 | F4 | MED-20 | Redige laudo fictício e faz prévia sem assinatura | **P** | Texto e título revisáveis | HTML do editor sanitizado; evitar execução de script. |
 | F5 | MED-20 | Salva versão do rascunho com autoria e horário | **P** | Rascunho vinculado ao exame | Conflito de edição e travamento de versão expostos ao usuário. |
 | F6 | ADM-37, MED-25 | Pré-visualiza cabeçalho próprio e campos de impressão no sandbox | **P** | Prévia identificada como DOCUMENTO DE TESTE | Falha no modelo: salvar rascunho sem criar PDF inválido. |
-| F7 | MED-20 | Solicita revisão opcional; assinatura/publicação permanecem indisponíveis no MVP | **P** | Rascunho ou revisão pendente; não publicado | Botões reais bloqueados até segurança, certificado e homologação. |
+| F7 | MED-20 | Encaminha o rascunho para revisão simulada. Revisão é obrigatória antes de assinatura e liberação | **P** | Revisão simulada pendente, sem assinatura ou publicação real | Botões reais bloqueados até segurança, certificado e homologação. |
 | F8 | MED-20 | Retorna à fila e confirma estado atual do laudo | **P** | Fim com status persistido e auditável | Não alterar status sem registro do evento. |
 
 **Caminhos alternativos / exceções:**
@@ -273,13 +273,13 @@ flowchart TD
 - Troca de médico: exigir autorização; não compartilhar texto entre perfis.
 
 **Dependências e regras de controle:**
-- Proibir publicação/assinatura em homologação até homologação específica
+- Manter assinatura e publicação reais desabilitadas no ambiente de teste
 - Versionamento de texto e autoria
 - Validação do editor de laudos ainda pendente de captura real
 
 **Não presumir do sistema de origem:**
 - Filtro e atalho de laudo pendente foram observados; editor específico e publicação NÃO foram inspecionados.
-- O fluxo rascunho→revisão→assinado→publicado é PROPOSTO, sujeito à autorização e validação.
+- A revisão prévia foi aprovada para o Piloto. Revisor, assinante e demais permissões operacionais exigem validação.
 
 ### UX-07 — Gestão — conciliação financeira, caixa e faturamento
 
@@ -335,7 +335,7 @@ flowchart TD
 | Agendamento | disponível → selecionado → confirmado / cancelado | Confirmar com checagem de conflito | Reserva dupla e cota/feriado segundo regra aprovada |
 | Atendimento | novo → rascunho → registrado → em andamento → concluído | Salvar itens e paciente como unidade de trabalho | Não salvar duplicado em repetição de clique |
 | Consulta | aberta → rascunho → gravada → adendo / retificação | Registrar versões, não sobrescrever conteúdo clínico sem trilha | Profissional sem vínculo |
-| Laudo | pendente → rascunho → em revisão → assinado → publicado | **No MVP só até rascunho**; demais após homologação | Sem assinatura/certificado autorizado |
+| Laudo | pendente → rascunho → em revisão → aprovado para assinatura → assinado → liberado | O protótipo simula somente o rascunho e a revisão. Assinatura e liberação reais dependem de homologação | Sem assinatura/certificado autorizado |
 | Caixa | valor previsto → cobrado → parcialmente pago / pago → estornado | Conciliar múltiplos pagamentos com histórico | Jamais igualar cobrado a recebido automaticamente |
 
 ## 7. Wireframe de referência para a DEV-007
@@ -400,7 +400,7 @@ flowchart TD
 | UX-QA-08 | Perfis e fluxos médicos/fiscais não alegam testes nem assinatura/nota reais | Revisão de risco |
 | UX-QA-09 | Comparar menus, hierarquia, campos e estados com perfis administrativo e médico antes de fechar a tarefa | **Revisão conjunta ainda pendente** |
 
-**Status da DEV-006:** documentação inicial pronta na branch; a revisão conjunta e a transferência para o Figma ainda são pendências. **Não finalizar DEV-006 apenas porque este Markdown existe.**
+**Status da DEV-006:** documentação e revisão técnica concluídas na branch. A revisão conjunta dos perfis é o critério de saída antes de iniciar a DEV-007.
 
 ## 9. Entrega para a próxima etapa
 

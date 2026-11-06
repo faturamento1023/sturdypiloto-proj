@@ -1,7 +1,7 @@
 {
   "project": "Projeto Piloto",
   "task": "DEV-006",
-  "version": "0.2",
+  "version": "0.3",
   "date": "2026-11-05",
   "stage": "UX e arquitetura",
   "status": "em_andamento_proposta_para_revisao",
@@ -504,7 +504,7 @@
         "status"
       ],
       "assumptions": [
-        "Vínculo automático agendamento→atendimento não foi comprovado; origem direta e por agenda são caminhos propostos.",
+        "No Projeto Piloto, reservar e abrir atendimento são ações separadas. O vínculo exige abertura explícita. Atendimento direto depende de política operacional.",
         "Autopreenchimento do preço é pendência histórica; não implementar como regra comprovada."
       ],
       "steps": [
@@ -627,7 +627,7 @@
             "ADM-21",
             "ADM-14"
           ],
-          "action": "Revisa valor de tabela e valor cobrado, registrando origem/ajuste",
+          "action": "Revisa valor de tabela e valor cobrado, registrando origem e ajuste",
           "inputs": "precos",
           "output": "Totais sem arredondamentos ocultos",
           "evidence": "proposto",
@@ -659,7 +659,7 @@
           "inputs": "pagamento",
           "output": "Pagamento ligado ao atendimento",
           "evidence": "observado",
-          "error": "Pagamento parcial e saldo aberto devem permanecer distintos.",
+          "error": "Cobrados, recebidos e pendentes são exibidos separadamente, inclusive em pagamento parcial.",
           "functional_tested": false,
           "clinically_approved": false,
           "source_scope": "interface_ou_descricao_do_manual_sem_execucao_de_gravacao",
@@ -903,7 +903,7 @@
             "MED-14",
             "MED-15"
           ],
-          "action": "Salva rascunho em ambiente de homologação com autoria e versão",
+          "action": "Salva e retoma a evolução como rascunho no ambiente de teste, com autoria e versão",
           "inputs": "rascunho",
           "output": "Versão gravada com timestamp e autor",
           "evidence": "proposto",
@@ -1266,7 +1266,7 @@
       ],
       "assumptions": [
         "Filtro e atalho de laudo pendente foram observados; editor específico e publicação NÃO foram inspecionados.",
-        "O fluxo rascunho→revisão→assinado→publicado é PROPOSTO, sujeito à autorização e validação."
+        "A revisão prévia foi aprovada para o Piloto. Revisor, assinante e demais permissões operacionais exigem validação."
       ],
       "steps": [
         {
@@ -1416,9 +1416,9 @@
           "screen_refs": [
             "MED-20"
           ],
-          "action": "Solicita revisão opcional; assinatura/publicação permanecem indisponíveis no MVP",
+          "action": "Encaminha o rascunho para revisão simulada. Revisão é obrigatória antes de assinatura e liberação",
           "inputs": "estado_laudo",
-          "output": "Rascunho ou revisão pendente; não publicado",
+          "output": "Revisão simulada pendente, sem assinatura ou publicação real",
           "evidence": "proposto",
           "error": "Botões reais bloqueados até segurança, certificado e homologação.",
           "functional_tested": false,
