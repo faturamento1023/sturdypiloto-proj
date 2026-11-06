@@ -14,6 +14,7 @@ const journeyIds = new Set();
 const stepIds = new Set();
 let steps = 0;
 let proposals = 0;
+let sourceMapped = 0;
 
 assert.equal(inventory.screens.length, 65, 'Inventario de 65 telas exigido');
 assert.equal(new Set(inventory.screens.map((screen) => screen.id)).size, 65, 'IDs de tela duplicados');
@@ -42,6 +43,23 @@ for (const journey of ux.journeys) {
     for (const reference of step.screen_refs) {
       assert.ok(ids.has(reference), `Tela inexistente: ${key}/${reference}`);
     }
+    assert.equal(step.functional_tested, false, `Teste funcional nao comprovado: ${key}`);
+    assert.equal(step.action_is_proven, false, `Execucao da acao nao comprovada: ${key}`);
+    assert.equal(step.clinically_approved, false, `Homologacao clinica nao comprovada: ${key}`);
+    assert.equal(step.source_manual_sections?.length, step.screen_refs.length,
+      `Fonte por tela ausente: ${key}`);
+    const missing = inventory.not_captured.filter((id) => step.screen_refs.includes(id));
+    assert.deepEqual([...step.source_visual_missing].sort(), missing.sort(),
+      `Capturas ausentes nao sinalizadas: ${key}`);
+    for (let n = 0; n < step.screen_refs.length; n++) {
+      const ref = step.screen_refs[n];
+      const source = step.source_manual_sections[n];
+      assert.equal(source.section, Number(ref.split('-')[1]), `Secao errada: ${key}`);
+      assert.equal(source.manual, ref.startsWith('ADM-')
+        ? 'Manual_Visual_Webultra.txt'
+        : 'Manual_Visual_Perfil_Medico.txt', `Manual errado: ${key}`);
+    }
+    sourceMapped++;
     if (step.evidence === 'proposto') proposals++;
     steps++;
   }
@@ -51,6 +69,10 @@ for (const domain of expectedDomains) {
   assert.ok(domains.has(domain), `Dominio ausente: ${domain}`);
 }
 assert.ok(proposals > 0, 'As inferencias/propostas precisam permanecer identificadas');
+assert.equal(sourceMapped, steps, 'Todos os passos precisam de proveniencia');
+assert.equal(ux.review_summary.steps_reviewed, steps, 'Resumo de revisao divergente');
+assert.equal(ux.review_summary.steps_functionally_tested, 0, 'Nao alegar testes do WebUltra');
+assert.equal(ux.review_summary.steps_clinically_approved, 0, 'Nao alegar homologacao clinica');
 assert.ok(ux.status?.includes('andamento'), 'DEV-006 nao deve ser fechada sem revisao dos perfis');
 
-console.log(`OK: ${inventory.screens.length} telas, ${journeyIds.size} jornadas, ${steps} etapas, ${proposals} propostas identificadas e ${domains.size} dominios cobertos.`);
+console.log(`OK: ${inventory.screens.length} telas, ${journeyIds.size} jornadas, ${steps} etapas com fonte e estado de teste, ${proposals} propostas e ${domains.size} dominios cobertos.`);
