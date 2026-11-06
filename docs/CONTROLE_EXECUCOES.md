@@ -22,6 +22,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-05 | DEV-009 — Modelar banco de dados | **Concluída** | [Modelo PostgreSQL executável](DEV-009_MODELO_DADOS.md) com 14 tabelas, vínculos por unidade, versões, movimentações, políticas de leitura e trilha de mutações. Cinco grupos de cenários passaram em banco descartável. | DEV-010 — Definir endpoints, filtros, paginação e contratos de API. |
 
+| 2026-11-05 | DEV-010 — Definir API e limites | **Concluída** | [OpenAPI e contrato de API](DEV-010_CONTRATOS_API.md) com 24 operações, paginação, filtros, escopo por perfil, idempotência e revisão por ETag. | DEV-011 — Preparar infraestrutura, checks e ambientes. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -33,9 +35,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **02 — UX e arquitetura** (modelo de dados da DEV-009 entregue).
-- Tarefas concluídas: **DEV-001 a DEV-009**.
-- Próxima tarefa: **DEV-010 — Definir API e limites**.
+- Fase do cronograma: **02 — UX e arquitetura** (contratos da DEV-010 entregues).
+- Tarefas concluídas: **DEV-001 a DEV-010**.
+- Próxima tarefa: **DEV-011 — Preparar infraestrutura, checks e ambientes**.
 - Etapa 02 — UX e arquitetura: iniciada com DEV-006; etapas 03–14 não iniciadas.
 - Aplicação web de produção ainda não iniciada. O PR inclui demonstração HTML de recepção e funções de domínio em memória, com dados fictícios.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -85,3 +87,9 @@ Registro histórico anterior ao aceite final.
 - Entrega: proposta de 15 rotas para agenda, pacientes, atendimentos, catálogo, documentos e financeiro, com RBAC, limites, paginação, erros, idempotência e bloqueios explícitos.
 - Testes: **não executados nesta sessão**; documento técnico não é endpoint implementado. Nenhum dado real, credencial ou código proprietário foi publicado.
 - Bloqueios: decisões V01–V12, especificação OpenAPI formal, testes automatizados de contrato e autorização; DEV-010 permanece em andamento. Próxima ação: criar OpenAPI validado e cenários negativos.
+
+## Sessão de 05/11/2026 — conclusão DEV-010
+
+- Especificação OpenAPI adicionada ao PR #9, com 24 operações e exemplos sintéticos. O [contrato](DEV-010_CONTRATOS_API.md) registra as permissões e as dependências das etapas de implementação.
+- Lint do OpenAPI, 45 exemplos e 15 entradas indevidas verificados. Foi adicionado um check de PR específico para o contrato.
+- Próxima ação: DEV-011.
