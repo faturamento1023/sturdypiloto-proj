@@ -1,0 +1,18 @@
+name: DEV-023 excecoes e feriados
+on:
+  pull_request:
+    paths:
+      - 'scripts/dev023_excecoes.cjs'
+      - 'scripts/dev023_excecoes.test.cjs'
+      - '.github/workflows/dev023-exceptions.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Testar regras de excecoes com dados ficticios
+        run: node --test scripts/dev023_excecoes.test.cjs
