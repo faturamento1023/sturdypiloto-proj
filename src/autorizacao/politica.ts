@@ -32,7 +32,13 @@ export function avaliarAutorizacao(p: Pedido): Resultado {
   const perfis = new Set(p.vinculos.filter(v => v.ativo && v.usuarioId === p.identidade!.usuarioId && v.unidadeId === p.unidadeId && PERFIS.includes(v.perfil)).map(v => v.perfil));
   if (perfis.size === 0) return deny(403,'sem_vinculo_ativo');
   if (p.objeto && p.objeto.unidadeId !== p.unidadeId) return deny(404,'objeto_nao_encontrado');
-  const permitidos = regra[p.recurso]?.[p.acao] ?? [];
+  // Defesa em profundidade: entradas HTTP não são protegidas pelos tipos TypeScript.
+  // Não consultar propriedades herdadas (ex.: __proto__, constructor) como políticas.
+  if (!Object.prototype.hasOwnProperty.call(regra, p.recurso)) return deny(403,'permissao_negada');
+  const regrasRecurso = regra[p.recurso];
+  if (!Object.prototype.hasOwnProperty.call(regrasRecurso, p.acao)) return deny(403,'permissao_negada');
+  const permitidos = regrasRecurso[p.acao];
+  if (!Array.isArray(permitidos)) return deny(403,'permissao_negada');
   const validos = [...perfis].filter(perfil => permitidos.includes(perfil));
   if (validos.length === 0) return deny(403,'permissao_negada');
   // Sem atribuição comprovada, o médico não herda acesso clínico nem acesso a dados de outro médico.
