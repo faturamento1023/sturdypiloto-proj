@@ -55,3 +55,17 @@ test('permissão não atravessa unidades nem habilita recebimentos',async()=>{
   f.vinculosAtuais=async(usuarioId,unidadeId)=>[{usuarioId,unidadeId,perfil:'financeiro',ativo:true}];
   assert.equal((await autorizarNoServidor(f,{...req,recurso:'recebimento',acao:'receber'})).status,403);
 });
+
+test('entrada HTTP adulterada é negada antes de consultar objeto ou vínculos',async()=>{
+  const f=fonte();let leituras=0;
+  f.objetoNaUnidade=async()=>{leituras++;return {unidadeId:'a'}};
+  f.vinculosAtuais=async()=>{leituras++;return []};
+  for(const recurso of ['__proto__','constructor','recurso-inexistente']) {
+    const resposta=await autorizarNoServidor(f,{...req,recurso:recurso as typeof req.recurso,objetoId:'id-ficticio'});
+    assert.equal(resposta.status,403);
+    assert.equal(resposta.motivo,'permissao_negada');
+  }
+  const resposta=await autorizarNoServidor(f,{...req,acao:'toString' as typeof req.acao,objetoId:'id-ficticio'});
+  assert.equal(resposta.status,403);
+  assert.equal(leituras,0);
+});
