@@ -75,3 +75,11 @@
 - Adicionado `src/autorizacao/politica.test.ts`: testes unitários para ausência de sessão, AAL1, vínculo revogado, outra unidade, médico sem atribuição, perfis não clínicos e operações bloqueadas.
 - **Limitação importante:** o avaliador recebe um retrato dos vínculos, e **não** consulta PostgreSQL nem Supabase. Não deve ser usado diretamente com parâmetros enviados pelo cliente; os handlers deverão obter identidade e vínculos por consulta privilegiada e fresca, dentro de transações adequadas. Não substitui RLS nem auditoria. As projeções por papel ainda não foram implementadas; nenhuma rota clínica foi habilitada.
 - **Verificação:** código e testes adicionados ao PR, sem execução local/CI confirmada nesta sessão. AUTHZ-16 (auditoria) e testes integrados com revogação/concorrência ainda pendentes. A matriz continua proposta, não homologada.
+
+## Revisão de segurança de 06/11/2026 — chaves de política em runtime
+
+- Identificado risco de acesso a propriedades herdadas do objeto de regras quando um recurso/ação é construído a partir de entrada HTTP não validada. Os tipos TypeScript não validam valores em runtime; a consulta anterior poderia resultar em exceção em vez de negação controlada.
+- Corrigido `src/autorizacao/politica.ts` com verificação de propriedades próprias e confirmação de lista de perfis, mantendo negação por padrão.
+- Acrescentados testes sintéticos de chaves `__proto__`, `constructor`, `toString`, ações desconhecidas, identidade divergente e dupla função com conteúdo clínico de terceiro.
+- **Testes:** novos cenários escritos, mas sem execução local confirmada nesta sessão; a consulta de workflows do SHA anterior retornou lista vazia. Não confundir com CI aprovado.
+- **Bloqueios mantidos:** integração ao banco, consulta fresca de vínculos, auditoria transacional, testes integrados AUTHZ-01–16, homologação das regras V01/V05/V07/V09 e reconciliação da dependência PR #13. Nenhuma rota real habilitada.
