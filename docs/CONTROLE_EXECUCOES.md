@@ -196,3 +196,10 @@ Registro histórico anterior ao aceite final.
 - Oito testes unitários sintéticos escritos em `scripts/dev021_grade.test.cjs` (commit `64debbe`), workflow Node 22 (commit `a1f6442`) e documentação de evidência versus proposta (commit `ec49fd2`).
 - **Testes não executados nesta sessão:** tentativa de baixar branch para execução local falhou por resolução DNS de `raw.githubusercontent.com`. CI remoto ainda não confirmado. Não afirmar que DEV-021 está concluída.
 - Próxima tarefa: implementar consulta HTTP com MFA, vínculo ativo e auditoria, grade responsiva, integração PostgreSQL descartável e testes de navegador; revisar regras de agenda com responsáveis. Nenhum dado real, WebUltra original ou produção alterados.
+
+## Sessão de 06/11/2026 — DEV-021 leitura autorizada da grade
+
+- Antes de alterar: consultados `main` e controle (até DEV-020 concluída), PRs abertos (PR #22), Issues abertas (nenhuma), critérios DEV-005 e metadados do cronograma XLSM e pasta Web Ultra no Drive. O conteúdo da planilha não foi reprocessado nesta sessão.
+- Na branch `dev-021-grade-agenda`, adicionados contrato de leitura autorizada `scripts/dev021_leitura.cjs` (commit `cc384bd`), oito testes sintéticos de perfil, MFA e escopo (commit `e4fe15f`), inclusão no CI (commit `dc0360a`) e documentação (commit `2b5c93a`).
+- **Testes novos escritos, mas não executados/confirmados no CI**. Nenhuma migração ou consulta PostgreSQL real foi executada. Não houve acesso a pacientes, edição do WebUltra ou publicação em produção.
+- DEV-021 permanece aberta. Próxima tarefa: repositório SQL com RLS e teste de isolamento em PostgreSQL descartável, HTTP e UI responsiva; conferir regras operacionais inferidas antes de homologar.
