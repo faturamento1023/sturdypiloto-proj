@@ -1,14 +1,19 @@
 import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
+import { criarBancoTeste } from '../database/ambiente-teste.cjs';
 
 // Substituto HTTP para testar a integração do SDK em loopback, sem contas ou e-mail reais.
 const porta = 54329;
 const chaveTeste = 'sb_publishable_piloto_teste';
 const senhaInicial = 'Piloto-ficticio-123';
 const codigoTeste = '081426';
+const unidadeA = '00000000-0000-4000-8000-000000000001';
+const unidadeB = '00000000-0000-4000-8000-000000000002';
+const db = await criarBancoTeste();
 const usuarios = new Map();
 const acessos = new Map();
 const renovacoes = new Map();
+const reusos = new Map();
 const codigos = new Set();
 const desafios = new Map();
 
@@ -32,6 +37,15 @@ for (const projeto of ['desktop', 'celular']) {
       },
     });
   }
+}
+
+await db.query('insert into piloto.unidades (id, nome) values ($1, $2), ($3, $4)',
+  [unidadeA, 'Unidade fictícia A', unidadeB, 'Unidade fictícia B']);
+for (const projeto of ['desktop', 'celular']) {
+  const { user } = usuarios.get('login-' + projeto + '@example.com');
+  await db.query('insert into auth.users (id) values ($1)', [user.id]);
+  await db.query('insert into piloto_privado.vinculos (unidade_id, usuario_id, perfil) values ($1, $2, $3)',
+    [unidadeA, user.id, 'recepcao']);
 }
 
 const base64url = valor => Buffer.from(JSON.stringify(valor)).toString('base64url');
@@ -94,22 +108,33 @@ async function atender(req, res) {
         return json(res, 400, { code: 'mfa_verification_failed', msg: 'Invalid authenticator code' });
       }
       fator.status = 'verified';
-      return json(res, 200, sessao(acesso.conta, { aal: 'aal2' }));
+      return json(res, 200, sessao(acesso.conta, {
+        aal: 'aal2',
+        expirada: acesso.conta.user.email.startsWith('renovar-'),
+      }));
     }
   }
 
   switch (rota) {
     case 'POST /auth/v1/token': {
       if (url.searchParams.get('grant_type') === 'refresh_token') {
+        const reutilizada = reusos.get(dados.refresh_token);
+        if (reutilizada && reutilizada.ate > Date.now() && renovacoes.has(reutilizada.sessao.refresh_token)) {
+          return json(res, 200, reutilizada.sessao);
+        }
+
         const titular = renovacoes.get(dados.refresh_token);
         if (!titular) return json(res, 400, { code: 'refresh_token_not_found', msg: 'Invalid refresh token' });
         renovacoes.delete(dados.refresh_token);
-        return json(res, 200, sessao(titular.conta, { aal: titular.aal }));
+        const nova = sessao(titular.conta, { aal: titular.aal });
+        // Requisições concorrentes podem trocar o mesmo token durante a janela de 10 segundos do provedor.
+        reusos.set(dados.refresh_token, { sessao: nova, ate: Date.now() + 10000 });
+        return json(res, 200, nova);
       }
       if (!conta || conta.senha !== dados.password) {
         return json(res, 400, { code: 'invalid_credentials', msg: 'Invalid login credentials' });
       }
-      return json(res, 200, sessao(conta, { expirada: dados.email.startsWith('renovar-') }));
+      return json(res, 200, sessao(conta));
     }
     case 'POST /auth/v1/recover':
       if (!conta) return json(res, 404, { code: 'user_not_found', msg: 'User not found' });
@@ -123,6 +148,17 @@ async function atender(req, res) {
         return json(res, 200, sessao(conta));
       }
       return json(res, 403, { code: 'otp_expired', msg: 'Invalid or expired code' });
+    case 'POST /rest/v1/rpc/piloto_meus_perfis': {
+      if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
+      const { rows } = await db.transaction(async tx => {
+        await tx.exec('set local role authenticated');
+        await tx.query("select set_config('request.jwt.claims', $1, true)", [
+          JSON.stringify({ sub: acesso.conta.user.id, aal: acesso.aal, is_anonymous: false }),
+        ]);
+        return tx.query('select * from public.piloto_meus_perfis($1)', [dados.unidade]);
+      });
+      return json(res, 200, rows);
+    }
     case 'GET /auth/v1/user':
       return acessoAtivo ? json(res, 200, acesso.conta.user) : json(res, 401, { code: 'bad_jwt', msg: 'Invalid access token' });
     case 'POST /auth/v1/factors': {

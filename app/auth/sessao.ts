@@ -16,3 +16,15 @@ export async function sessaoNoServidor(gravarCookies = false) {
     },
   });
 }
+
+export async function verificarIdentidade(cliente: NonNullable<Awaited<ReturnType<typeof sessaoNoServidor>>>) {
+  const { data, error } = await cliente.auth.getUser();
+  const usuario = data.user;
+  if (error || !usuario || usuario.is_anonymous) return null;
+
+  const { data: identidade } = await cliente.auth.getClaims();
+  const temAutenticador = usuario.factors?.some(fator => fator.status === 'verified' && fator.factor_type === 'totp');
+  const aal = temAutenticador && identidade?.claims.sub === usuario.id && identidade.claims.aal === 'aal2'
+    ? 'aal2' : 'aal1';
+  return { usuario, aal };
+}

@@ -1,14 +1,16 @@
 openapi: 3.1.0
 info:
   title: Projeto Piloto · API Clínica DM
-  version: 0.2.0
-  description: Contrato da DEV-010 para implementação posterior. Exemplos inteiramente fictícios.
+  version: 0.3.0
+  description: Contratos da DEV-010 e consulta de acesso da DEV-013. Exemplos inteiramente fictícios.
 servers:
 - url: /api/v1
   description: Prefixo relativo ao ambiente autorizado.
 security:
 - SessaoBearer: []
 tags:
+- name: Acesso
+  description: Perfis ativos da própria sessão por unidade.
 - name: Agenda
   description: Reservas de horário e remarcações.
 - name: Pacientes
@@ -22,6 +24,64 @@ tags:
 - name: Financeiro
   description: Saldo, recebimentos e estornos registrados.
 paths:
+  /unidades/{unidadeId}/acesso:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    get:
+      operationId: consultarMeuAcesso
+      tags: [Acesso]
+      summary: Consultar os próprios perfis ativos na unidade
+      description: Requer sessão com MFA e retorna somente vínculos ativos da conta em uma unidade ativa.
+      security:
+      - SessaoCookie: []
+      x-perfis: [recepcao, medico, financeiro, gestao, administrador]
+      responses:
+        '200':
+          description: Perfis ativos da sessão para a unidade.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcessoUnidade'
+              example:
+                unidadeId: 00000000-0000-4000-8000-000000000001
+                perfis: [recepcao]
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          description: Sessão por cookie ausente ou inválida.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problema'
+              example:
+                type: about:blank
+                title: Autenticação necessária
+                status: 401
+                codigo: SESSAO_INVALIDA
+                correlacaoId: 00000000-0000-4000-8000-000000000099
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '503':
+          description: Provedor de autorização temporariamente indisponível.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problema'
+              example:
+                type: about:blank
+                title: Autorização temporariamente indisponível
+                status: 503
+                codigo: AUTORIZACAO_INDISPONIVEL
+                correlacaoId: 00000000-0000-4000-8000-000000000099
   /unidades/{unidadeId}/agenda:
     parameters:
     - $ref: '#/components/parameters/UnidadeId'
@@ -1361,6 +1421,11 @@ paths:
           $ref: '#/components/responses/ErroInterno'
 components:
   securitySchemes:
+    SessaoCookie:
+      type: apiKey
+      in: cookie
+      name: dm-piloto-sessao
+      description: Cookie protegido da sessão web. O SDK pode dividi-lo em partes com sufixos numéricos.
     SessaoBearer:
       type: http
       scheme: bearer
@@ -1667,6 +1732,20 @@ components:
             codigo: ERRO_INTERNO
             correlacaoId: 00000000-0000-4000-8000-000000000099
   schemas:
+    AcessoUnidade:
+      type: object
+      additionalProperties: false
+      required: [unidadeId, perfis]
+      properties:
+        unidadeId:
+          $ref: '#/components/schemas/Identificador'
+        perfis:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            enum: [recepcao, medico, financeiro, gestao, administrador]
     Identificador:
       type: string
       format: uuid

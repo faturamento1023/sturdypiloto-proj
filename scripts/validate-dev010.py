@@ -77,7 +77,8 @@ for path, path_item in spec["paths"].items():
                     check_example(content)
                     tested_examples.add(key)
 
-assert len(operations) == 24
+assert len(operations) == 25
+assert operations["consultarMeuAcesso"]["security"] == [{"SessaoCookie": []}]
 assert spec["security"] == [{"SessaoBearer": []}]
 assert operations["listarItensClinicos"]["x-perfis"] == ["medico"]
 assert operations["listarItensClinicos"]["x-requer-habilitacao"]

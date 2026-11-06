@@ -69,3 +69,10 @@ test('entrada HTTP adulterada é negada antes de consultar objeto ou vínculos',
   assert.equal(resposta.status,403);
   assert.equal(leituras,0);
 });
+
+test('perfil sem permissão recebe 403 antes da consulta de qualquer objeto', async () => {
+  const f = fonte();
+  f.objetoNaUnidade = async () => { assert.fail('o objeto clínico não pode ser consultado'); };
+  const resposta = await autorizarNoServidor(f, { ...req, recurso: 'clinico', objetoId: 'registro' });
+  assert.deepEqual(resposta, { autorizado: false, status: 403, motivo: 'permissao_negada' });
+});

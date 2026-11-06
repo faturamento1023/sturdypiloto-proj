@@ -28,6 +28,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-012 — Implementar autenticação | **Concluída em ambiente simulado** | [Login, recuperação, sessão e MFA TOTP](DEV-012_AUTENTICACAO.md). Conta protegida por AAL2 no servidor, com fluxo testável em desktop e celular. | DEV-013 — Autorizar perfis e vínculos por unidade. |
 
+| 2026-11-06 | DEV-013 — Implementar autorização | **Concluída em ambiente descartável** | [Matriz, RLS, consulta HTTP de acesso e projeção médica](DEV-013_MATRIZ_AUTORIZACAO.md). | DEV-014 — Desenhar o shell do sistema. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -39,9 +41,9 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 ## Estado geral
 
-- Fase do cronograma: **03 — Infraestrutura e permissões** (base DEV-011 e autenticação DEV-012).
-- Tarefas concluídas: **DEV-001 a DEV-012**.
-- Próxima tarefa: **DEV-013 — Implementar autorização**.
+- Fase do cronograma: **03 — Infraestrutura e permissões** (base DEV-011, autenticação DEV-012 e autorização DEV-013).
+- Tarefas concluídas: **DEV-001 a DEV-013**.
+- Próxima tarefa: **DEV-014 — Desenhar o shell do sistema**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -111,65 +113,10 @@ Registro histórico anterior ao aceite final.
 - Testes automatizados usam um provedor simulado em loopback e contas fictícias. A entrega de e-mail e a configuração de um projeto Supabase isolado ficam pendentes de homologação operacional.
 - Próxima ação: DEV-013.
 
-## Sessão de 06/11/2026 — início DEV-013 (matriz de autorização)
+## Sessão de 06/11/2026 — autorização DEV-013
 
-- Conferidos controle em `main` e na branch `dev-012-autenticacao`, PR aberto #13, ausência de Issues abertas, requisitos DEV-005, contrato DEV-010 e modelo DEV-009. Cronograma XLSX e pasta Web Ultra confirmados no Drive por metadados, sem alteração das fontes.
-- A branch `dev-012-autenticacao` registra DEV-012 concluída em ambiente simulado, mas PR #13 ainda aberto; para evitar conflito, DEV-013 parte dessa branch e **não** altera DEV-012.
-- Criados [matriz DEV-013](DEV-013_MATRIZ_AUTORIZACAO.md) e [PR #14](https://github.com/faturamento1023/sturdypiloto-proj/pull/14), rascunho com base na branch DEV-012. Commit inicial `8cf1ca0`.
-- Entrega: proposta de permissões por unidade e perfil, guardas de servidor, segregação clínica e 16 cenários de QA. **Não há handlers nem testes de autorização executados nesta sessão.**
-- Bloqueios: integração com a sessão DEV-012, revisão das decisões V01/V05/V07/V09, implementação de guardas, RLS e testes em PostgreSQL descartável. DEV-013 permanece **em andamento**; não mesclar ou publicar produção.
-- Próxima ação: implementar guardas e testes negativos, reconciliar PR #13 antes de mesclar PR #14.
-
-
-## Sessão de 06/11/2026 — DEV-013, política isolada
-
-- Estado consultado antes da escrita: `main` registra DEV-001–DEV-012 concluídas; PR #13 (autenticação) e PR #14 (autorização) existentes; cronograma XLSX e pasta Web Ultra consultados somente em leitura. Nenhuma alteração na origem.
-- Na branch `dev-013-autorizacao-matriz`, criados `src/autorizacao/politica.ts`, `src/autorizacao/politica.test.ts` e `.github/workflows/dev013-autorizacao.yml`; ampliado `docs/DEV-013_MATRIZ_AUTORIZACAO.md`.
-- Commits: `fc350996`, `9c1e0565`, `464b947e`, `13bb9ca6`. PR: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
-- Testes unitários escritos, **execução do novo workflow ainda não confirmada**. Não há endpoint integrado, acesso real ao banco ou homologação clínica. Não mesclar PR #14 antes de reconciliar a base do PR #13.
-- Próxima ação: verificar CI e corrigir falhas; implementar consulta fresca de vínculos no servidor, escopo de objeto, projeções por papel e auditoria transacional; executar testes de integração AUTHZ-01–16. DEV-013 **em andamento**.
-
-## Sessão de 06/11/2026 — DEV-013, endurecimento do avaliador
-
-- Antes da alteração, conferidos controle em `main` e branch, PRs #13/#14, Issue #4, cronograma XLSX e pasta Web Ultra no Drive (somente leitura). DEV-006 já está encerrada no histórico; a tarefa corrente é DEV-013.
-- Detectado que a indexação dinâmica da matriz TypeScript podia alcançar propriedades herdadas de objeto quando valores de recurso/ação chegassem de HTTP sem validação. Corrigido para negar chaves não próprias e políticas sem lista de perfis.
-- Adicionados cenários unitários sintéticos para chaves herdadas, ação desconhecida, vínculo de outra identidade e médico com segundo perfil tentando acessar conteúdo clínico alheio.
-- Commits: `cf718f9` (correção), `9e566a7` (testes), `665cb11` (documentação). PR existente: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
-- **Testes não executados nesta sessão.** Consulta de workflow do commit anterior retornou vazio; CI do commit atual ainda não confirmada. Não há integração a handlers ou banco real.
-- Bloqueios: PR #13 aberto como dependência, consulta fresca de vínculos, escopo por objeto, auditoria transacional, testes integrados e homologação operacional. **DEV-013 continua em andamento.**
-- Próxima ação: confirmar CI do novo commit, corrigir falhas e integrar a política à autenticação e ao PostgreSQL descartável antes de qualquer merge.
-
-## Sessão de 06/11/2026 — DEV-013: defesa contra vínculos malformados
-
-- Antes das alterações, conferidos controle na `main`, PRs/Issues, cronograma XLSX no Drive e conteúdo da pasta Web Ultra (somente leitura). A planilha ainda tem status inicial de planejamento; o controle GitHub registra DEV-001 a DEV-012 concluídas e DEV-013 em andamento. PR #14 é o único PR aberto na consulta.
-- Revisados `src/autorizacao/politica.ts`, seus testes e a matriz DEV-013 na branch existente `dev-013-autorizacao-matriz`.
-- Commits: `7a8d0aa` (falha fechada em lista de vínculos inválida), `e1920bb` (casos sintéticos de entradas malformadas), `2052990` (documentação). Nenhuma nova branch ou PR criado.
-- Testes escritos, **não executados nesta sessão**; CI não confirmado. Não há evidência de homologação ou integração a PostgreSQL/Supabase.
-- Bloqueios: execução dos testes, integração com sessão e consulta fresca ao banco, auditoria, AUTHZ-01–16 integrados e decisões clínicas/operacionais V01/V05/V07/V09. DEV-013 continua **em andamento**.
-- Próxima ação: validar no CI os novos testes e iniciar integração de autorização nos handlers de homologação, preservando isolamento de unidade e RLS.
-
-## Sessão de 06/11/2026 — DEV-013: correção de sintaxe e CI
-
-- Conferidos o controle na branch, PR #14 (único PR aberto retornado), Issues abertas (nenhuma), cronograma XLSX e pasta Web Ultra no Drive em leitura. O cronograma original mantém estados iniciais; a execução real está registrada no GitHub.
-- Identificado defeito concreto em `src/autorizacao/politica.ts`: dois escapes literais `\\n` haviam sido inseridos no meio de instruções TypeScript, tornando o arquivo inválido. Substituídos por quebras de linha reais no commit `3ac96d5` da branch existente.
-- Evidência de CI: workflow DEV-013 do commit `3ac96d5`, run [42180884421](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42180884421), estava **queued** na consulta. Não afirmar testes aprovados antes do resultado.
-- Não foram executados testes locais nesta sessão; a correção foi inspecionada no texto do arquivo. Não houve alteração do WebUltra, dados reais ou produção.
-- Bloqueios: confirmar CI, integrar sessão e vínculos frescos do PostgreSQL, auditar transações e executar AUTHZ-01–16 integrados. DEV-013 continua em andamento; não mesclar PR #14 sem essas evidências.
-- Próxima tarefa: consultar conclusão do run, corrigir eventuais falhas e implementar adaptador de autorização server-side com banco descartável.
-
-## Sessão de 06/11/2026 — DEV-013: adaptador server-side e testes sintéticos
-
-- Antes de escrever, consultados controle da branch, PRs/Issues do repositório, cronograma XLSX no Drive e pasta Web Ultra (somente leitura). DEV-006 está concluída conforme histórico; DEV-013 segue em andamento. PR #14 preservado.
-- Criado `src/autorizacao/servidor.ts` com fonte injetável de identidade, AAL2, unidade ativa, vínculos consultados por requisição e escopo de objeto; falhas da fonte negam acesso sem expor mensagens internas. Criado `src/autorizacao/servidor.test.ts` com 6 cenários sintéticos. Workflow de autorização atualizado para ambos os arquivos de teste.
-- Commits: `2d1c663`, `2352dd2`, `fba1299`, `2766f04`, `9dc2755`. PR: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
-- **Testes:** não executados localmente; consulta de runs para o commit intermediário não retornou execuções. O CI do último commit permanece sem resultado confirmado. Não declarar aprovação.
-- **Limites:** não há integração real com PostgreSQL/Supabase, handlers, RLS nem auditoria transacional; dados apenas fictícios. Sem mudança no WebUltra ou produção.
-- **Próxima tarefa:** conferir CI do último commit, corrigir falhas e conectar o adaptador a fonte PostgreSQL descartável com testes AUTHZ-01–16. DEV-013 permanece em andamento.
-
-## Sessão de 06/11/2026 — DEV-013: validação de entradas antes de leitura
-
-- Consultados antes da escrita o controle atualizado na branch DEV-013, PRs/Issues, cronograma XLSX e pasta Web Ultra no Drive; fontes originais preservadas. O controle indica DEV-001–DEV-012 concluídas e DEV-013 em andamento.
-- Identificado risco de executar `objetoNaUnidade` com `recurso`/ `acao` adulterados em runtime, pois TypeScript não valida valores recebidos por HTTP. Adicionada lista explícita de recursos e ações válidos em `src/autorizacao/servidor.ts`, com negação 403 antes da consulta a vínculos/objetos. **Esta validação não substitui a matriz de permissão.**
-- Teste sintético adicionado em `src/autorizacao/servidor.test.ts`: `__proto__`, `constructor`, recurso inexistente e ação `toString` devem ser negados sem consultas de dados. Commits: `2614884` e `7ba50b4`. PR existente: https://github.com/faturamento1023/sturdypiloto-proj/pull/14.
-- **Testes não executados localmente**; consulta de workflow do commit anterior não retornou execuções. CI deste incremento ainda não confirmado. Nenhuma integração real a PostgreSQL/Supabase, nenhuma alteração em WebUltra ou produção.
-- Bloqueios: confirmar CI, integrar fonte com banco descartável, RLS e auditoria, validar AUTHZ-01–16, resolver regras operacionais pendentes. DEV-013 permanece em andamento. Próxima tarefa: executar testes e corrigir falhas antes da integração.
+- Retomado o PR #14 da execução agendada e reconciliado com a autenticação da `main`.
+- Integrados sessão AAL2, consulta HTTP dos próprios perfis por unidade, vínculos atualizados no PostgreSQL e RLS. A projeção médica do próprio atendimento usa uma função privada com três campos sem valores.
+- Testes cobrem negação por padrão, revogação durante a sessão, isolamento entre unidades, tentativas de acesso clínico indevido e integração da consulta HTTP com o banco descartável.
+- A aplicação dos SQLs em Supabase hospedado e o envio real de e-mails continuam pendentes de homologação operacional. Operações clínicas e financeiras do OpenAPI serão implementadas nos módulos correspondentes.
+- Próxima ação: DEV-014.

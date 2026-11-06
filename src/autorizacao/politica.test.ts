@@ -41,3 +41,11 @@ test('Respostas malformadas do adaptador de vínculos falham fechadas',()=>{
   assert.equal(resultado.status,403);
   assert.equal(avaliarAutorizacao({...base,vinculos:[null,v('recepcao')] as typeof base.vinculos}).status,200);
 });
+
+test('médico lê a projeção clínica própria e a tabela de valores exige perfil operacional', () => {
+  const pedido = { ...base, vinculos: [v('medico')], objeto: { unidadeId: 'a', profissionalUsuarioId: 'u1' } };
+  assert.equal(avaliarAutorizacao({ ...pedido, recurso: 'itemClinico' }).status, 200);
+  assert.equal(avaliarAutorizacao({ ...pedido, recurso: 'item' }).status, 403);
+  assert.equal(avaliarAutorizacao({ ...pedido, recurso: 'itemClinico', objeto: { ...pedido.objeto, profissionalUsuarioId: 'u2' } }).status, 404);
+  assert.equal(avaliarAutorizacao({ ...base, vinculos: [v('gestao')], recurso: 'paciente' }).status, 403);
+});
