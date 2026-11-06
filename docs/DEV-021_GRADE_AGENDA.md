@@ -23,3 +23,11 @@
 5. Registrar decisão operacional de validação sem declarar homologação clínica ou publicação.
 
 **Próxima tarefa:** integração segura da leitura da grade com dados fictícios em ambiente descartável.
+
+## Leitura autorizada incremental — 06/11/2026
+
+- Adicionado `scripts/dev021_leitura.cjs`: contrato de leitura com validação da janela, MFA, perfil ativo, unidade vinculada e revalidação do vínculo via repositório antes de consultar dados. Médico só consulta seu próprio `professionalId`; recepção/gestão podem consultar agenda da unidade vinculada.
+- A projeção exclui `patientId` e outros campos não permitidos. A consulta real ao PostgreSQL ainda deverá aplicar RLS e escopo de profissional no próprio SQL, não apenas na aplicação.
+- Adicionados oito testes sintéticos em `scripts/dev021_leitura.test.cjs`, incluídos no workflow. **Execução dos novos testes e CI ainda não confirmadas.**
+- Trata-se de serviço agnóstico de banco, não endpoint HTTP nem autorização clínica homologada. Não usa dados reais.
+- Próxima tarefa: implementar repositório PostgreSQL seguro e testes de isolamento no banco descartável, depois endpoint HTTP e interface responsiva.
