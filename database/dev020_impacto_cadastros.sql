@@ -79,7 +79,8 @@ create function piloto_privado.listar_historico_itens(unidade uuid, busca text, 
 returns jsonb language sql volatile security definer set search_path = ''
 as $$
   with escopo as materialized (
-    select piloto_privado.tem_perfil(unidade, array['recepcao','financeiro','gestao','administrador']) as permitido
+    select piloto_privado.tem_perfil(unidade, array['recepcao','financeiro','gestao','administrador']) as permitido,
+      piloto_privado.tem_perfil(unidade, array['recepcao','gestao','administrador']) as ve_profissional
   ), trilha as (
     insert into piloto_privado.auditoria (unidade_id, entidade, operacao, ator_id, resultado, correlacao_id)
     select case when e.permitido then unidade end, 'itens_atendimento', 'SELECT', ator.id,
@@ -91,11 +92,13 @@ as $$
     select jsonb_agg(to_jsonb(h) order by h.aberto_em desc, h.item_id)
     from (
       select i.item_id, i.aberto_em, i.procedimento_codigo_atual, i.procedimento_descricao_atual,
-        i.procedimento_ativo_atual, i.profissional_nome_atual, i.profissional_ativo_atual, i.quantidade,
+        i.procedimento_ativo_atual,
+        case when e.ve_profissional then i.profissional_nome_atual end as profissional_nome_atual,
+        case when e.ve_profissional then i.profissional_ativo_atual end as profissional_ativo_atual, i.quantidade,
         i.valor_historico_centavos, i.cobrado_historico_centavos::text as cobrado_historico_centavos
       from piloto.impacto_cadastros_itens i
       where i.unidade_id = unidade and strpos(lower(concat_ws(' ', i.procedimento_codigo_atual,
-        i.procedimento_descricao_atual, i.profissional_nome_atual)), lower(left(coalesce(busca, ''), 80))) > 0
+        i.procedimento_descricao_atual, case when e.ve_profissional then i.profissional_nome_atual end)), lower(left(coalesce(busca, ''), 80))) > 0
       order by i.aberto_em desc, i.item_id limit 21 offset (greatest(0, coalesce(pagina, 0))::bigint * 20)
     ) h
   ), '[]'::jsonb) end from escopo e

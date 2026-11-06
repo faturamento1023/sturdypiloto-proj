@@ -72,7 +72,9 @@ test('DEV-020 — inativação no cadastro e efeitos em agenda, prontuário, ate
 
     const dados = (await como(financeiro, historico)).rows[0].dados[0];
     assert.equal(dados.item_id, item);
-    assert.equal(dados.profissional_ativo_atual, false);
+    assert.equal(dados.profissional_nome_atual, null);
+    assert.equal(dados.profissional_ativo_atual, null);
+    assert.equal((await como(recepcao, historico)).rows[0].dados[0].profissional_ativo_atual, false);
     assert.equal(dados.procedimento_ativo_atual, false);
     assert.equal(dados.valor_historico_centavos, 12500);
     assert.equal(dados.cobrado_historico_centavos, '25000');

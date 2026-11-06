@@ -1,6 +1,6 @@
 # DEV-020 — Impacto dos cadastros
 
-Em **Atendimentos → Histórico de itens**, os perfis de recepção, financeiro, gestão e administração com MFA consultam os itens da própria unidade. A tela mostra o valor unitário e o total gravados, além do nome e da situação atuais do procedimento e do profissional. A data usa o fuso de São Paulo. A consulta tem paginação, pesquisa e registro de auditoria. O conteúdo do prontuário e a identidade do paciente ficam fora da projeção.
+Em **Atendimentos → Histórico de itens**, os perfis de recepção, financeiro, gestão e administração com MFA consultam os itens da própria unidade. A tela mostra o valor unitário e o total gravados, além do nome e da situação atuais do procedimento. Nome e situação do profissional aparecem para recepção, gestão e administração. A data usa o fuso de São Paulo. A consulta tem paginação, pesquisa e registro de auditoria. O conteúdo do prontuário e a identidade do paciente ficam fora da projeção.
 
 ## Efeitos verificados
 

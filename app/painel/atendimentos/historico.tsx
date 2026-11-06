@@ -3,7 +3,7 @@ import type { sessaoNoServidor } from '../../auth/sessao';
 
 type ItemHistorico = {
   item_id: string; aberto_em: string; procedimento_codigo_atual: string; procedimento_descricao_atual: string;
-  procedimento_ativo_atual: boolean; profissional_nome_atual: string; profissional_ativo_atual: boolean;
+  procedimento_ativo_atual: boolean; profissional_nome_atual: string | null; profissional_ativo_atual: boolean | null;
   quantidade: number; valor_historico_centavos: number; cobrado_historico_centavos: string;
 };
 
@@ -56,7 +56,9 @@ export async function HistoricoAtendimentos({ cliente, unidade, filtro, pagina }
             <dl className="painel-dados-catalogo">
               <dt>Abertura do atendimento</dt><dd>{dataAtendimento(item.aberto_em)}</dd>
               <dt>Procedimento no cadastro</dt><dd>{item.procedimento_ativo_atual ? 'Ativo' : 'Inativo'}</dd>
-              <dt>Profissional no cadastro</dt><dd>{item.profissional_nome_atual} · {item.profissional_ativo_atual ? 'Ativo' : 'Inativo'}</dd>
+              {item.profissional_nome_atual !== null && (
+                <><dt>Profissional no cadastro</dt><dd>{item.profissional_nome_atual} · {item.profissional_ativo_atual ? 'Ativo' : 'Inativo'}</dd></>
+              )}
               <dt>Quantidade</dt><dd>{item.quantidade}</dd>
               <dt>Valor unitário registrado</dt><dd>{moeda(item.valor_historico_centavos)}</dd>
               <dt>Total registrado</dt><dd>{moeda(item.cobrado_historico_centavos)}</dd>
