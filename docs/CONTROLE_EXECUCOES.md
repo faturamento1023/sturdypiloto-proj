@@ -138,3 +138,11 @@ Registro histórico anterior ao aceite final.
 - Testados a leitura clínica no banco, a proteção dos eventos contra reescrita e o vínculo transacional entre auditoria e alteração.
 - Base legal, retenção, responsáveis pela consulta da trilha e homologação com Supabase hospedado permanecem pendentes de validação institucional.
 - A próxima etapa é a DEV-016, cadastro de médicos.
+
+## Sessão de 06/11/2026 — início DEV-016 (cadastro de médicos)
+
+- Conferidos controle da `main`, PRs/Issues, cronograma XLSX do Drive e manual administrativo da pasta Web Ultra. A `main` registra DEV-001 a DEV-015 concluídas; a próxima etapa é DEV-016. Não foi reutilizada a branch antiga DEV-013, que está defasada.
+- Branch `dev-016-cadastro-medicos`: validador de cadastro sintético, cinco grupos de testes, workflow específico e [documentação](DEV-016_CADASTRO_MEDICOS.md).
+- A fonte original documenta telas 17/18, mas não comprova persistência nem validação do conselho. Não há upload de certificado, assinatura ou dados clínicos.
+- Testes: adicionados ao CI, **resultado ainda não confirmado**. Não afirmar conclusão de DEV-016.
+- Próxima tarefa: executar CI, revisar os testes, criar migração incremental e handlers com autorização/auditoria, construir telas e testar no PostgreSQL descartável e no navegador.
