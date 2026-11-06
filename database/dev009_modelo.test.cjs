@@ -405,11 +405,76 @@ test('Modelo, RLS e auditoria em PostgreSQL descartável', async t => {
     assert.equal(JSON.stringify(trilha).includes('@example.com'), false);
   });
 
+  await t.test('catálogo preserva legado e histórico, isola grupos e audita o cadastro', async () => {
+    const grupoB = uuid(601);
+    const correlacao = uuid(602);
+    const grupoSql = 'select public.piloto_salvar_grupo_procedimento($1,$2,$3,$4,$5,$6) as id';
+    const procedimentoSql = 'select public.piloto_salvar_procedimento($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) as id';
+    const listar = (unidade = a, busca = '') => q('select public.piloto_listar_catalogo($1,$2,0,$3) as dados', [unidade, busca, uuid(603)]);
+    const grupoArgs = (id = null, revisao = null, ativo = true, nome = 'Grupo sintético') => [a, id, revisao, nome, ativo, correlacao];
+    const procArgs = (grupo, id = null, revisao = null, ativo = true, tuss = '09990001') =>
+      [a, id, revisao, grupo, 'FICT-018', 'Procedimento fictício', tuss, 'exame', 'Preparo sintético', true, ativo, correlacao];
+    await q("insert into piloto.grupos_procedimentos (unidade_id,id,nome) values ($1,$2,'Grupo da unidade B')", [b, grupoB]);
+
+    await as(doctor, async () => {
+      const legado = (await listar()).rows[0].dados.procedimentos.find(item => item.id === procedure);
+      assert.equal(legado.codigo_tuss, null);
+      assert.equal(legado.tipo, 'procedimento');
+      await deny(grupoSql, grupoArgs(), '42501');
+      await deny(procedimentoSql, procArgs(null), '42501');
+    });
+    await as(admin, async () => {
+      assert.equal((await listar(b)).rows[0].dados, null);
+      await deny(grupoSql, grupoArgs(), '42501');
+    }, { aal: 'aal1' });
+
+    let grupo, procedimento;
+    await as(admin, async () => {
+      grupo = (await q(grupoSql, grupoArgs())).rows[0].id;
+      await deny(grupoSql, grupoArgs(null, null, true, 'grupo sintético'), '23505');
+      await deny(procedimentoSql, procArgs(grupoB), '22023');
+      await deny(procedimentoSql, procArgs(grupo, null, null, true, 'inválido'), '23514');
+      procedimento = (await q(procedimentoSql, procArgs(grupo))).rows[0].id;
+      await deny(procedimentoSql, procArgs(grupo), '23505');
+      await deny(grupoSql, grupoArgs(grupo, 0, false), 'P0001');
+    });
+    await as(otherDoctor, async () => {
+      const dados = (await listar(a, '09990001')).rows[0].dados;
+      assert.equal(dados.gestor, false);
+      assert.deepEqual(dados.grupos.map(g => g.id), [grupo]);
+      assert.equal(dados.procedimentos[0].exige_consentimento, true);
+      assert.equal(dados.procedimentos[0].preparo, 'Preparo sintético');
+    });
+    await q('insert into piloto.itens_atendimento (unidade_id,atendimento_id,procedimento_id,quantidade,valor_unitario_centavos) values ($1,$2,$3,1,0)',
+      [a, encounter, procedimento]);
+    await as(admin, async () => {
+      await q(procedimentoSql, procArgs(grupo, procedimento, 0, false));
+      await deny(procedimentoSql, procArgs(grupo, procedimento, 0, false), '40001');
+      await q(grupoSql, grupoArgs(grupo, 0, false));
+      await deny(procedimentoSql, procArgs(grupo, procedimento, 1), '22023');
+      const dados = (await listar(a, 'FICT-018')).rows[0].dados;
+      assert.equal(dados.procedimentos[0].ativo, false);
+      assert.equal(dados.grupos.find(g => g.id === grupo).ativo, false);
+    });
+    await as(recep, async () => {
+      const dados = (await listar(a, 'FICT-018')).rows[0].dados;
+      assert.deepEqual(dados.procedimentos, []);
+      assert.deepEqual(dados.grupos, []);
+    });
+    assert.equal((await q('select count(*)::int total from piloto.itens_atendimento where procedimento_id=$1', [procedimento])).rows[0].total, 1);
+    const trilha = (await q('select * from piloto_privado.auditoria where correlacao_id=$1 order by id', [correlacao])).rows;
+    assert.deepEqual(trilha.map(e => [e.entidade, e.operacao, e.ator_id]), [
+      ['grupos_procedimentos', 'INSERT', admin], ['procedimentos', 'INSERT', admin],
+      ['procedimentos', 'UPDATE', admin], ['grupos_procedimentos', 'UPDATE', admin],
+    ]);
+    assert.equal(JSON.stringify(trilha).includes('Preparo sintético'), false);
+  });
+
   await t.test('RLS em todas as tabelas e auditoria sem conteúdo clínico', async () => {
     const { rows } = await q(`select count(*)::int total, bool_and(c.relrowsecurity) protegidas
       from pg_class c join pg_namespace n on n.oid=c.relnamespace
       where n.nspname in ('piloto','piloto_privado') and c.relkind='r'`);
-    assert.deepEqual(rows, [{ total: 15, protegidas: true }]);
+    assert.deepEqual(rows, [{ total: 16, protegidas: true }]);
     await q("select set_config('request.jwt.claims', $1, false)", [JSON.stringify({ sub: recep })]);
     await q("update piloto.agendamentos set estado='confirmado' where id=$1", [booking]);
     await q("select set_config('request.jwt.claims', '{}', false)");
