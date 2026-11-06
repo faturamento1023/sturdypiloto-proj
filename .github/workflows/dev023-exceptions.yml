@@ -4,6 +4,8 @@ on:
     paths:
       - 'scripts/dev023_excecoes.cjs'
       - 'scripts/dev023_excecoes.test.cjs'
+      - 'scripts/dev023_comandos.cjs'
+      - 'scripts/dev023_comandos.test.cjs'
       - '.github/workflows/dev023-exceptions.yml'
   workflow_dispatch:
 jobs:
@@ -15,4 +17,4 @@ jobs:
         with:
           node-version: '24'
       - name: Testar regras de excecoes com dados ficticios
-        run: node --test scripts/dev023_excecoes.test.cjs
+        run: node --test scripts/dev023_excecoes.test.cjs scripts/dev023_comandos.test.cjs
