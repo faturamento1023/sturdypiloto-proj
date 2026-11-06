@@ -1,0 +1,2438 @@
+openapi: 3.1.0
+info:
+  title: Projeto Piloto · API Clínica DM
+  version: 0.2.0
+  description: Contrato da DEV-010 para implementação posterior. Exemplos inteiramente fictícios.
+servers:
+- url: /api/v1
+  description: Prefixo relativo ao ambiente autorizado.
+security:
+- SessaoBearer: []
+tags:
+- name: Agenda
+  description: Reservas de horário e remarcações.
+- name: Pacientes
+  description: Identificação e busca de pacientes por unidade.
+- name: Atendimentos
+  description: Abertura de atendimento e registro de itens.
+- name: Catálogo
+  description: Consulta de procedimentos e vigências de preços.
+- name: Prontuário e laudos
+  description: Rascunhos e versões no escopo médico.
+- name: Financeiro
+  description: Saldo, recebimentos e estornos registrados.
+paths:
+  /unidades/{unidadeId}/agenda:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    get:
+      operationId: listarAgenda
+      tags:
+      - Agenda
+      summary: Listar agenda
+      description: Retorna reservas cujo intervalo cruza a janela. Médico recebe a própria agenda. Ordenação por início
+        e ID crescentes.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - medico
+      parameters:
+      - $ref: '#/components/parameters/Inicio'
+      - $ref: '#/components/parameters/Fim'
+      - $ref: '#/components/parameters/ProfissionalFiltro'
+      - name: estado
+        in: query
+        required: false
+        description: Estado do agendamento.
+        schema:
+          $ref: '#/components/schemas/EstadoAgendamento'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaAgendamento'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000031
+                  pacienteId: 00000000-0000-4000-8000-000000000011
+                  profissionalId: 00000000-0000-4000-8000-000000000021
+                  inicio: '2026-11-05T08:00:00-03:00'
+                  fim: '2026-11-05T08:30:00-03:00'
+                  estado: reservado
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/agendamentos:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    post:
+      operationId: criarAgendamento
+      tags:
+      - Agenda
+      summary: Reservar horário
+      description: Cria uma reserva sem abrir atendimento. Sobreposição retorna 409 AGENDA_CONFLITO. Encaixe exige regra
+        posterior.
+      x-perfis:
+      - recepcao
+      - gestao
+      parameters:
+      - $ref: '#/components/parameters/Idempotencia'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarAgendamento'
+            example:
+              pacienteId: 00000000-0000-4000-8000-000000000011
+              profissionalId: 00000000-0000-4000-8000-000000000021
+              inicio: '2026-11-05T08:00:00-03:00'
+              fim: '2026-11-05T08:30:00-03:00'
+      responses:
+        '201':
+          description: Reserva criada.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agendamento'
+              example:
+                id: 00000000-0000-4000-8000-000000000031
+                pacienteId: 00000000-0000-4000-8000-000000000011
+                profissionalId: 00000000-0000-4000-8000-000000000021
+                inicio: '2026-11-05T08:00:00-03:00'
+                fim: '2026-11-05T08:30:00-03:00'
+                estado: reservado
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/agendamentos/{agendamentoId}:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/AgendamentoId'
+    get:
+      operationId: consultarAgendamento
+      tags:
+      - Agenda
+      summary: Consultar agendamento
+      description: Devolve os dados do agendamento e a revisão atual. Médico recebe somente agendamentos próprios.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - medico
+      responses:
+        '200':
+          description: Agendamento encontrado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agendamento'
+              example:
+                id: 00000000-0000-4000-8000-000000000031
+                pacienteId: 00000000-0000-4000-8000-000000000011
+                profissionalId: 00000000-0000-4000-8000-000000000021
+                inicio: '2026-11-05T08:00:00-03:00'
+                fim: '2026-11-05T08:30:00-03:00'
+                estado: reservado
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+    patch:
+      operationId: alterarAgendamento
+      tags:
+      - Agenda
+      summary: Alterar agendamento
+      description: Remarca, confirma ou cancela um agendamento. Alteração de horário ou cancelamento com atendimento
+        já aberto fica bloqueada até definição operacional.
+      x-perfis:
+      - recepcao
+      - gestao
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlterarAgendamento'
+            example:
+              acao: confirmar
+      responses:
+        '200':
+          description: Agendamento alterado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agendamento'
+              example:
+                id: 00000000-0000-4000-8000-000000000031
+                pacienteId: 00000000-0000-4000-8000-000000000011
+                profissionalId: 00000000-0000-4000-8000-000000000021
+                inicio: '2026-11-05T08:00:00-03:00'
+                fim: '2026-11-05T08:30:00-03:00'
+                estado: confirmado
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '412':
+          $ref: '#/components/responses/VersaoDesatualizada'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '428':
+          $ref: '#/components/responses/VersaoObrigatoria'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/pacientes:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    get:
+      operationId: buscarPacientes
+      tags:
+      - Pacientes
+      summary: Buscar pacientes
+      description: Busca obrigatória com 2 a 80 caracteres. Médico só recebe pacientes vinculados à sua agenda ou atendimento
+        no escopo autorizado. Ordenação por nome normalizado e ID crescentes.
+      x-perfis:
+      - recepcao
+      - medico
+      parameters:
+      - name: q
+        in: query
+        required: true
+        description: Parte do nome, após remoção de espaços nas pontas.
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 80
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaPacienteResumo'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000011
+                  nome: Paciente Exemplo A
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+    post:
+      operationId: criarPaciente
+      tags:
+      - Pacientes
+      summary: Cadastrar paciente
+      description: Registra os dados mínimos do paciente na unidade. A verificação de duplicidade será aplicada na implementação.
+      x-perfis:
+      - recepcao
+      parameters:
+      - $ref: '#/components/parameters/Idempotencia'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarPaciente'
+            example:
+              nome: Paciente Exemplo A
+              nascimento: '1991-02-03'
+      responses:
+        '201':
+          description: Paciente cadastrado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PacienteDetalhe'
+              example:
+                id: 00000000-0000-4000-8000-000000000011
+                nome: Paciente Exemplo A
+                nascimento: '1991-02-03'
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/pacientes/{pacienteId}:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/PacienteId'
+    get:
+      operationId: consultarPaciente
+      tags:
+      - Pacientes
+      summary: Consultar cadastro mínimo do paciente
+      description: Recepção vê o cadastro da unidade. Médico vê o cadastro vinculado ao próprio escopo.
+      x-perfis:
+      - recepcao
+      - medico
+      responses:
+        '200':
+          description: Cadastro encontrado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PacienteDetalhe'
+              example:
+                id: 00000000-0000-4000-8000-000000000011
+                nome: Paciente Exemplo A
+                nascimento: '1991-02-03'
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/atendimentos:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    get:
+      operationId: listarAtendimentos
+      tags:
+      - Atendimentos
+      summary: Listar atendimentos
+      description: Filtra pela abertura do atendimento. Ordenação por data de abertura e ID decrescentes. Médico recebe
+        os próprios atendimentos.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - financeiro
+      - medico
+      parameters:
+      - $ref: '#/components/parameters/Inicio'
+      - $ref: '#/components/parameters/Fim'
+      - $ref: '#/components/parameters/ProfissionalFiltro'
+      - name: estado
+        in: query
+        required: false
+        description: Estado do atendimento.
+        schema:
+          $ref: '#/components/schemas/EstadoAtendimento'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaAtendimento'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000041
+                  pacienteId: 00000000-0000-4000-8000-000000000011
+                  profissionalId: 00000000-0000-4000-8000-000000000021
+                  agendamentoId: 00000000-0000-4000-8000-000000000031
+                  estado: aberto
+                  abertoEm: '2026-11-05T08:00:00-03:00'
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+    post:
+      operationId: abrirAtendimento
+      tags:
+      - Atendimentos
+      summary: Abrir atendimento
+      description: Abre atendimento direto ou vinculado a uma reserva. Reserva, paciente e profissional devem pertencer
+        à mesma unidade. A mesma reserva só pode abrir um atendimento.
+      x-perfis:
+      - recepcao
+      - gestao
+      parameters:
+      - $ref: '#/components/parameters/Idempotencia'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AbrirAtendimento'
+            example:
+              pacienteId: 00000000-0000-4000-8000-000000000011
+              profissionalId: 00000000-0000-4000-8000-000000000021
+              agendamentoId: 00000000-0000-4000-8000-000000000031
+      responses:
+        '201':
+          description: Atendimento aberto.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Atendimento'
+              example:
+                id: 00000000-0000-4000-8000-000000000041
+                pacienteId: 00000000-0000-4000-8000-000000000011
+                profissionalId: 00000000-0000-4000-8000-000000000021
+                agendamentoId: 00000000-0000-4000-8000-000000000031
+                estado: aberto
+                abertoEm: '2026-11-05T08:00:00-03:00'
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/atendimentos/{atendimentoId}:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/AtendimentoId'
+    get:
+      operationId: consultarAtendimento
+      tags:
+      - Atendimentos
+      summary: Consultar atendimento
+      description: Retorna o resumo operacional. Conteúdo clínico e saldo têm operações próprias.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - financeiro
+      - medico
+      responses:
+        '200':
+          description: Atendimento encontrado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Atendimento'
+              example:
+                id: 00000000-0000-4000-8000-000000000041
+                pacienteId: 00000000-0000-4000-8000-000000000011
+                profissionalId: 00000000-0000-4000-8000-000000000021
+                agendamentoId: 00000000-0000-4000-8000-000000000031
+                estado: aberto
+                abertoEm: '2026-11-05T08:00:00-03:00'
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/atendimentos/{atendimentoId}/itens:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/AtendimentoId'
+    get:
+      operationId: listarItensAtendimento
+      tags:
+      - Atendimentos
+      summary: Listar itens cobrados do atendimento
+      description: Retorna itens com o preço cobrado. Ordenação por ID crescente.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - financeiro
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaItemAtendimento'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000061
+                  atendimentoId: 00000000-0000-4000-8000-000000000041
+                  procedimentoId: 00000000-0000-4000-8000-000000000051
+                  quantidade: 2
+                  valorUnitarioCentavos: 10000
+                  cobradoCentavos: 20000
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+    post:
+      operationId: adicionarItem
+      tags:
+      - Atendimentos
+      summary: Adicionar procedimento ao atendimento
+      description: O servidor valida o convênio e resolve o preço pela data local de abertura do atendimento, dentro
+        da transação. O item armazena o valor cobrado. A definição de seleção e trilha do convênio é dependência da implementação.
+      x-perfis:
+      - recepcao
+      - gestao
+      parameters:
+      - $ref: '#/components/parameters/Idempotencia'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdicionarItem'
+            example:
+              procedimentoId: 00000000-0000-4000-8000-000000000051
+              convenioId: 00000000-0000-4000-8000-000000000052
+              quantidade: 2
+      responses:
+        '201':
+          description: Item adicionado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemAtendimento'
+              example:
+                id: 00000000-0000-4000-8000-000000000061
+                atendimentoId: 00000000-0000-4000-8000-000000000041
+                procedimentoId: 00000000-0000-4000-8000-000000000051
+                quantidade: 2
+                valorUnitarioCentavos: 10000
+                cobradoCentavos: 20000
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/atendimentos/{atendimentoId}/itens-clinicos:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/AtendimentoId'
+    get:
+      operationId: listarItensClinicos
+      tags:
+      - Prontuário e laudos
+      summary: Listar itens no escopo médico
+      description: Fornece o ID do item para laudos do próprio atendimento. Requer projeção clínica autorizada na DEV-013.
+        Preços e valores cobrados ficam fora da resposta. Ordenação por ID crescente.
+      x-perfis:
+      - medico
+      x-requer-habilitacao: true
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaItemClinico'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000061
+                  atendimentoId: 00000000-0000-4000-8000-000000000041
+                  procedimentoId: 00000000-0000-4000-8000-000000000051
+                  quantidade: 2
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/profissionais:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    get:
+      operationId: listarProfissionais
+      tags:
+      - Agenda
+      summary: Listar profissionais para a agenda
+      description: Médico recebe somente seu cadastro profissional. Ordenação por nome normalizado e ID crescentes.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - medico
+      parameters:
+      - name: ativo
+        in: query
+        required: false
+        description: Filtra profissionais ativos ou inativos.
+        schema:
+          type: boolean
+          default: true
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaProfissionalResumo'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000021
+                  nome: Profissional Exemplo
+                  ativo: true
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/convenios:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    get:
+      operationId: listarConvenios
+      tags:
+      - Catálogo
+      summary: Listar convênios
+      description: Inclui Particular como cadastro local. Ordenação por nome normalizado e ID crescentes.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - financeiro
+      parameters:
+      - name: ativo
+        in: query
+        required: false
+        description: Filtra convênios ativos ou inativos.
+        schema:
+          type: boolean
+          default: true
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaConvenio'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000052
+                  nome: Particular
+                  ativo: true
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/procedimentos:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    get:
+      operationId: listarProcedimentos
+      tags:
+      - Catálogo
+      summary: Listar procedimentos
+      description: Ordenação por descrição normalizada e ID crescentes. Inclui procedimentos ativos por padrão.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - financeiro
+      - medico
+      parameters:
+      - name: q
+        in: query
+        required: false
+        description: Parte do código ou da descrição.
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 80
+      - name: ativo
+        in: query
+        required: false
+        description: Filtra procedimentos ativos ou inativos.
+        schema:
+          type: boolean
+          default: true
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaProcedimento'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000051
+                  codigo: EX01
+                  descricao: Procedimento de demonstração
+                  ativo: true
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/precos:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    get:
+      operationId: consultarPreco
+      tags:
+      - Catálogo
+      summary: Consultar preço vigente
+      description: Consulta o valor aplicável na data informada. Sem preço vigente, retorna 404 PRECO_NAO_ENCONTRADO.
+      x-perfis:
+      - recepcao
+      - gestao
+      - administrador
+      - financeiro
+      parameters:
+      - name: procedimentoId
+        in: query
+        required: true
+        description: Procedimento na unidade.
+        schema:
+          $ref: '#/components/schemas/Identificador'
+      - name: convenioId
+        in: query
+        required: true
+        description: Convênio na unidade, incluindo Particular.
+        schema:
+          $ref: '#/components/schemas/Identificador'
+      - name: data
+        in: query
+        required: true
+        description: Data civil da vigência.
+        schema:
+          $ref: '#/components/schemas/Data'
+      responses:
+        '200':
+          description: Preço encontrado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrecoProcedimento'
+              example:
+                procedimentoId: 00000000-0000-4000-8000-000000000051
+                convenioId: 00000000-0000-4000-8000-000000000052
+                vigenciaInicio: '2026-11-01'
+                vigenciaFimExclusivo: null
+                valorCentavos: 10000
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/atendimentos/{atendimentoId}/documentos:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/AtendimentoId'
+    get:
+      operationId: listarDocumentos
+      tags:
+      - Prontuário e laudos
+      summary: Listar documentos clínicos
+      description: Lista apenas metadados no atendimento sob responsabilidade do médico. Ordenação por ID crescente.
+      x-perfis:
+      - medico
+      parameters:
+      - name: tipo
+        in: query
+        required: false
+        description: Tipo de documento.
+        schema:
+          $ref: '#/components/schemas/TipoDocumento'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limite'
+      responses:
+        '200':
+          description: Página de resultados no escopo da sessão.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginaDocumentoResumo'
+              example:
+                dados:
+                - id: 00000000-0000-4000-8000-000000000071
+                  atendimentoId: 00000000-0000-4000-8000-000000000041
+                  tipo: evolucao_texto
+                  itemId: null
+                  estado: rascunho
+                  versaoAtual: 1
+                paginacao:
+                  proximoCursor: null
+                  limite: 25
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+    post:
+      operationId: criarDocumento
+      tags:
+      - Prontuário e laudos
+      summary: Criar rascunho clínico
+      description: Cria o documento e a primeira versão em rascunho na mesma transação. Laudo exige item do próprio atendimento.
+      x-perfis:
+      - medico
+      parameters:
+      - $ref: '#/components/parameters/Idempotencia'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarDocumento'
+            example:
+              tipo: evolucao_texto
+              conteudo:
+                texto: Evolução de teste, sem informação clínica real.
+      responses:
+        '201':
+          description: Rascunho criado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentoAtual'
+              example:
+                id: 00000000-0000-4000-8000-000000000071
+                atendimentoId: 00000000-0000-4000-8000-000000000041
+                tipo: evolucao_texto
+                itemId: null
+                estado: rascunho
+                versaoAtual: 1
+                conteudo:
+                  texto: Evolução de teste, sem informação clínica real.
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/documentos/{documentoId}:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/DocumentoId'
+    get:
+      operationId: consultarDocumento
+      tags:
+      - Prontuário e laudos
+      summary: Consultar versão atual de documento
+      description: Retorna a versão atual, incluindo conteúdo, no escopo do médico responsável.
+      x-perfis:
+      - medico
+      responses:
+        '200':
+          description: Documento encontrado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentoAtual'
+              example:
+                id: 00000000-0000-4000-8000-000000000071
+                atendimentoId: 00000000-0000-4000-8000-000000000041
+                tipo: evolucao_texto
+                itemId: null
+                estado: rascunho
+                versaoAtual: 1
+                conteudo:
+                  texto: Evolução de teste, sem informação clínica real.
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/documentos/{documentoId}/versoes:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/DocumentoId'
+    post:
+      operationId: salvarRascunho
+      tags:
+      - Prontuário e laudos
+      summary: Salvar nova versão do rascunho
+      description: Acrescenta uma versão em rascunho do tipo do documento. Atualização exige ETag atual. Versão finalizada,
+        aprovação, assinatura e liberação ficam fora deste contrato de escrita.
+      x-perfis:
+      - medico
+      parameters:
+      - $ref: '#/components/parameters/Idempotencia'
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CriarVersaoRascunho'
+            example:
+              conteudo:
+                texto: Evolução de teste, sem informação clínica real.
+      responses:
+        '201':
+          description: Versão criada.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentoAtual'
+              example:
+                id: 00000000-0000-4000-8000-000000000071
+                atendimentoId: 00000000-0000-4000-8000-000000000041
+                tipo: evolucao_texto
+                itemId: null
+                estado: rascunho
+                versaoAtual: 2
+                conteudo:
+                  texto: Evolução de teste, sem informação clínica real.
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '412':
+          $ref: '#/components/responses/VersaoDesatualizada'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '428':
+          $ref: '#/components/responses/VersaoObrigatoria'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/atendimentos/{atendimentoId}/saldo:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/AtendimentoId'
+    get:
+      operationId: consultarSaldo
+      tags:
+      - Financeiro
+      summary: Consultar saldo do atendimento
+      description: Cobrado e recebido líquido são separados. Saldo pode ser negativo e pendente é o maior entre saldo
+        e zero.
+      x-perfis:
+      - financeiro
+      - gestao
+      - administrador
+      responses:
+        '200':
+          description: Saldo calculado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaldoAtendimento'
+              example:
+                atendimentoId: 00000000-0000-4000-8000-000000000041
+                cobradoCentavos: 20000
+                recebidoLiquidoCentavos: 8000
+                saldoCentavos: 12000
+                pendenteCentavos: 12000
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/atendimentos/{atendimentoId}/recebimentos:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/AtendimentoId'
+    post:
+      operationId: registrarRecebimento
+      tags:
+      - Financeiro
+      summary: Registrar recebimento
+      description: Lançamento demonstrativo. Somente habilitar após implementar autorização e limite por saldo, ambos
+        na transação. Recebimentos parciais são permitidos. Esta rota não processa pagamentos externos.
+      x-perfis:
+      - financeiro
+      x-requer-habilitacao: true
+      parameters:
+      - $ref: '#/components/parameters/Idempotencia'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receber'
+            example:
+              valorCentavos: 8000
+      responses:
+        '201':
+          description: Recebimento lançado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recebimento'
+              example:
+                id: 00000000-0000-4000-8000-000000000081
+                atendimentoId: 00000000-0000-4000-8000-000000000041
+                tipo: recebimento
+                valorCentavos: 8000
+                ocorridoEm: '2026-11-05T08:30:00-03:00'
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+  /unidades/{unidadeId}/atendimentos/{atendimentoId}/estornos:
+    parameters:
+    - $ref: '#/components/parameters/UnidadeId'
+    - $ref: '#/components/parameters/AtendimentoId'
+    post:
+      operationId: registrarEstorno
+      tags:
+      - Financeiro
+      summary: Registrar estorno integral
+      description: Deriva o valor do recebimento de origem. Permite um estorno integral por recebimento do mesmo atendimento.
+        Requer habilitação e política de aprovação financeira.
+      x-perfis:
+      - financeiro
+      x-requer-habilitacao: true
+      parameters:
+      - $ref: '#/components/parameters/Idempotencia'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estornar'
+            example:
+              movimentoOrigemId: 00000000-0000-4000-8000-000000000081
+      responses:
+        '201':
+          description: Estorno lançado.
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estorno'
+              example:
+                id: 00000000-0000-4000-8000-000000000082
+                atendimentoId: 00000000-0000-4000-8000-000000000041
+                tipo: estorno
+                valorCentavos: 8000
+                ocorridoEm: '2026-11-05T08:30:00-03:00'
+                movimentoOrigemId: 00000000-0000-4000-8000-000000000081
+        '400':
+          $ref: '#/components/responses/EntradaInvalida'
+        '401':
+          $ref: '#/components/responses/AutenticacaoNecessaria'
+        '403':
+          $ref: '#/components/responses/AcessoNegado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/Conflito'
+        '413':
+          $ref: '#/components/responses/CorpoMuitoGrande'
+        '415':
+          $ref: '#/components/responses/FormatoIncompativel'
+        '422':
+          $ref: '#/components/responses/RegraNegocio'
+        '429':
+          $ref: '#/components/responses/LimiteExcedido'
+        '500':
+          $ref: '#/components/responses/ErroInterno'
+components:
+  securitySchemes:
+    SessaoBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token da sessão validado no servidor. A autorização por unidade e objeto é reavaliada a cada operação.
+  parameters:
+    UnidadeId:
+      name: unidadeId
+      in: path
+      required: true
+      description: Identificador da unidade no escopo do vínculo ativo.
+      schema:
+        $ref: '#/components/schemas/Identificador'
+    AgendamentoId:
+      name: agendamentoId
+      in: path
+      required: true
+      description: Identificador do agendamento.
+      schema:
+        $ref: '#/components/schemas/Identificador'
+    PacienteId:
+      name: pacienteId
+      in: path
+      required: true
+      description: Identificador do paciente.
+      schema:
+        $ref: '#/components/schemas/Identificador'
+    AtendimentoId:
+      name: atendimentoId
+      in: path
+      required: true
+      description: Identificador do atendimento.
+      schema:
+        $ref: '#/components/schemas/Identificador'
+    DocumentoId:
+      name: documentoId
+      in: path
+      required: true
+      description: Identificador do documento.
+      schema:
+        $ref: '#/components/schemas/Identificador'
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Cursor opaco recebido da página anterior.
+      schema:
+        $ref: '#/components/schemas/Cursor'
+    Limite:
+      name: limit
+      in: query
+      required: false
+      description: Número máximo de itens da página.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    Inicio:
+      name: inicio
+      in: query
+      required: true
+      description: Limite inicial inclusivo.
+      schema:
+        $ref: '#/components/schemas/Instante'
+    Fim:
+      name: fim
+      in: query
+      required: true
+      description: Limite final exclusivo. A janela deve ser positiva e de até 31 dias.
+      schema:
+        $ref: '#/components/schemas/Instante'
+    ProfissionalFiltro:
+      name: profissionalId
+      in: query
+      required: false
+      description: Filtra profissional dentro do escopo de leitura.
+      schema:
+        $ref: '#/components/schemas/Identificador'
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      description: ETag forte e único retornado para o recurso.
+      schema:
+        $ref: '#/components/schemas/ETagForte'
+    Idempotencia:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: UUID novo para cada intenção de gravação. Reutilizar apenas para tentar a mesma operação.
+      schema:
+        $ref: '#/components/schemas/Identificador'
+  headers:
+    CorrelationId:
+      description: Identificador opaco da requisição para suporte.
+      required: true
+      schema:
+        $ref: '#/components/schemas/Identificador'
+    ETag:
+      description: ETag forte da revisão devolvida.
+      required: true
+      schema:
+        $ref: '#/components/schemas/ETagForte'
+    Location:
+      description: URI relativa do recurso principal criado.
+      required: true
+      schema:
+        type: string
+        format: uri-reference
+    RetryAfter:
+      description: Tempo em segundos antes de tentar novamente.
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+  responses:
+    EntradaInvalida:
+      description: Entrada inválida
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:entrada-invalida
+            title: Entrada inválida
+            status: 400
+            codigo: ENTRADA_INVALIDA
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    AutenticacaoNecessaria:
+      description: Autenticação necessária
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+        WWW-Authenticate:
+          description: Esquema de autenticação exigido.
+          required: true
+          schema:
+            type: string
+          example: Bearer
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:sessao-invalida
+            title: Autenticação necessária
+            status: 401
+            codigo: SESSAO_INVALIDA
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    AcessoNegado:
+      description: Operação proibida
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:acesso-negado
+            title: Operação proibida
+            status: 403
+            codigo: ACESSO_NEGADO
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    NaoEncontrado:
+      description: Recurso não encontrado
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:recurso-nao-encontrado
+            title: Recurso não encontrado
+            status: 404
+            codigo: RECURSO_NAO_ENCONTRADO
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    Conflito:
+      description: Conflito na operação
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:conflito-de-estado
+            title: Conflito na operação
+            status: 409
+            codigo: CONFLITO_DE_ESTADO
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    VersaoDesatualizada:
+      description: Versão desatualizada
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:versao-desatualizada
+            title: Versão desatualizada
+            status: 412
+            codigo: VERSAO_DESATUALIZADA
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    CorpoMuitoGrande:
+      description: Corpo muito grande
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:corpo-muito-grande
+            title: Corpo muito grande
+            status: 413
+            codigo: CORPO_MUITO_GRANDE
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    FormatoIncompativel:
+      description: Formato de corpo incompatível
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:formato-incompativel
+            title: Formato de corpo incompatível
+            status: 415
+            codigo: FORMATO_INCOMPATIVEL
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    RegraNegocio:
+      description: Regra de negócio não atendida
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:regra-negocio
+            title: Regra de negócio não atendida
+            status: 422
+            codigo: REGRA_NEGOCIO
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    VersaoObrigatoria:
+      description: Precondição obrigatória
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:versao-obrigatoria
+            title: Precondição obrigatória
+            status: 428
+            codigo: VERSAO_OBRIGATORIA
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    LimiteExcedido:
+      description: Limite de requisições excedido
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+        Retry-After:
+          $ref: '#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:limite-excedido
+            title: Limite de requisições excedido
+            status: 429
+            codigo: LIMITE_EXCEDIDO
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+    ErroInterno:
+      description: Erro interno
+      headers:
+        X-Correlation-Id:
+          $ref: '#/components/headers/CorrelationId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problema'
+          example:
+            type: urn:clinica-dm:problema:erro-interno
+            title: Erro interno
+            status: 500
+            codigo: ERRO_INTERNO
+            correlacaoId: 00000000-0000-4000-8000-000000000099
+  schemas:
+    Identificador:
+      type: string
+      format: uuid
+    Instante:
+      type: string
+      format: date-time
+      pattern: (Z|[+-][0-9]{2}:[0-9]{2})$
+      description: Data e hora com deslocamento UTC ou Z.
+    Data:
+      type: string
+      format: date
+    Centavos:
+      type: integer
+      minimum: 0
+      maximum: 9007199254740991
+    CentavosLancamento:
+      type: integer
+      minimum: 1
+      maximum: 2147483647
+    SaldoCentavos:
+      type: integer
+      minimum: -9007199254740991
+      maximum: 9007199254740991
+    ETagForte:
+      type: string
+      pattern: ^"[A-Za-z0-9_-]{1,120}"$
+    Cursor:
+      type: string
+      minLength: 1
+      maxLength: 1024
+    Limite:
+      type: integer
+      minimum: 1
+      maximum: 100
+    Paginacao:
+      type: object
+      additionalProperties: false
+      required:
+      - proximoCursor
+      - limite
+      properties:
+        proximoCursor:
+          anyOf:
+          - $ref: '#/components/schemas/Cursor'
+          - type: 'null'
+        limite:
+          $ref: '#/components/schemas/Limite'
+    EstadoAgendamento:
+      type: string
+      enum:
+      - reservado
+      - confirmado
+      - remarcado
+      - cancelado
+      - realizado
+    EstadoAtendimento:
+      type: string
+      enum:
+      - aberto
+      - encerrado
+      - cancelado
+    TipoDocumento:
+      type: string
+      enum:
+      - evolucao_texto
+      - evolucao_estruturada
+      - evolucao_exames
+      - laudo
+    EstadoDocumento:
+      type: string
+      enum:
+      - rascunho
+      - finalizada
+      - em_revisao
+      - devolvido_para_correcao
+      - aprovado_para_assinatura
+      - assinado
+      - liberado
+    Problema:
+      type: object
+      additionalProperties: false
+      required:
+      - type
+      - title
+      - status
+      - codigo
+      - correlacaoId
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+          minLength: 1
+          maxLength: 120
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        codigo:
+          type: string
+          pattern: ^[A-Z][A-Z_]{1,63}$
+        correlacaoId:
+          $ref: '#/components/schemas/Identificador'
+        detail:
+          type: string
+          minLength: 1
+          maxLength: 300
+        campos:
+          type: array
+          maxItems: 20
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - campo
+            - codigo
+            properties:
+              campo:
+                type: string
+                minLength: 1
+                maxLength: 120
+              codigo:
+                type: string
+                minLength: 1
+                maxLength: 64
+    CriarAgendamento:
+      type: object
+      additionalProperties: false
+      required:
+      - pacienteId
+      - profissionalId
+      - inicio
+      - fim
+      properties:
+        pacienteId:
+          $ref: '#/components/schemas/Identificador'
+        profissionalId:
+          $ref: '#/components/schemas/Identificador'
+        inicio:
+          $ref: '#/components/schemas/Instante'
+        fim:
+          $ref: '#/components/schemas/Instante'
+    Agendamento:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - pacienteId
+      - profissionalId
+      - inicio
+      - fim
+      - estado
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        pacienteId:
+          $ref: '#/components/schemas/Identificador'
+        profissionalId:
+          $ref: '#/components/schemas/Identificador'
+        inicio:
+          $ref: '#/components/schemas/Instante'
+        fim:
+          $ref: '#/components/schemas/Instante'
+        estado:
+          $ref: '#/components/schemas/EstadoAgendamento'
+    AlterarAgendamento:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - acao
+        - inicio
+        - fim
+        properties:
+          acao:
+            type: string
+            const: remarcar
+          inicio:
+            $ref: '#/components/schemas/Instante'
+          fim:
+            $ref: '#/components/schemas/Instante'
+      - type: object
+        additionalProperties: false
+        required:
+        - acao
+        properties:
+          acao:
+            type: string
+            const: confirmar
+      - type: object
+        additionalProperties: false
+        required:
+        - acao
+        properties:
+          acao:
+            type: string
+            const: cancelar
+    CriarPaciente:
+      type: object
+      additionalProperties: false
+      required:
+      - nome
+      properties:
+        nome:
+          type: string
+          minLength: 2
+          maxLength: 160
+        nascimento:
+          $ref: '#/components/schemas/Data'
+    PacienteResumo:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - nome
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        nome:
+          type: string
+          minLength: 2
+          maxLength: 160
+    PacienteDetalhe:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - nome
+      - nascimento
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        nome:
+          type: string
+          minLength: 2
+          maxLength: 160
+        nascimento:
+          anyOf:
+          - $ref: '#/components/schemas/Data'
+          - type: 'null'
+    AbrirAtendimento:
+      type: object
+      additionalProperties: false
+      required:
+      - pacienteId
+      - profissionalId
+      properties:
+        pacienteId:
+          $ref: '#/components/schemas/Identificador'
+        profissionalId:
+          $ref: '#/components/schemas/Identificador'
+        agendamentoId:
+          $ref: '#/components/schemas/Identificador'
+    Atendimento:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - pacienteId
+      - profissionalId
+      - agendamentoId
+      - estado
+      - abertoEm
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        pacienteId:
+          $ref: '#/components/schemas/Identificador'
+        profissionalId:
+          $ref: '#/components/schemas/Identificador'
+        agendamentoId:
+          anyOf:
+          - $ref: '#/components/schemas/Identificador'
+          - type: 'null'
+        estado:
+          $ref: '#/components/schemas/EstadoAtendimento'
+        abertoEm:
+          $ref: '#/components/schemas/Instante'
+    ProfissionalResumo:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - nome
+      - ativo
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        nome:
+          type: string
+          minLength: 2
+          maxLength: 160
+        ativo:
+          type: boolean
+    Convenio:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - nome
+      - ativo
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        nome:
+          type: string
+          minLength: 2
+          maxLength: 160
+        ativo:
+          type: boolean
+    Procedimento:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - codigo
+      - descricao
+      - ativo
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        codigo:
+          type: string
+          minLength: 1
+          maxLength: 80
+        descricao:
+          type: string
+          minLength: 1
+          maxLength: 240
+        ativo:
+          type: boolean
+    PrecoProcedimento:
+      type: object
+      additionalProperties: false
+      required:
+      - procedimentoId
+      - convenioId
+      - vigenciaInicio
+      - vigenciaFimExclusivo
+      - valorCentavos
+      properties:
+        procedimentoId:
+          $ref: '#/components/schemas/Identificador'
+        convenioId:
+          $ref: '#/components/schemas/Identificador'
+        vigenciaInicio:
+          $ref: '#/components/schemas/Data'
+        vigenciaFimExclusivo:
+          anyOf:
+          - $ref: '#/components/schemas/Data'
+          - type: 'null'
+        valorCentavos:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+    AdicionarItem:
+      type: object
+      additionalProperties: false
+      required:
+      - procedimentoId
+      - convenioId
+      - quantidade
+      properties:
+        procedimentoId:
+          $ref: '#/components/schemas/Identificador'
+        convenioId:
+          $ref: '#/components/schemas/Identificador'
+        quantidade:
+          type: integer
+          minimum: 1
+          maximum: 1000
+    ItemAtendimento:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - atendimentoId
+      - procedimentoId
+      - quantidade
+      - valorUnitarioCentavos
+      - cobradoCentavos
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        atendimentoId:
+          $ref: '#/components/schemas/Identificador'
+        procedimentoId:
+          $ref: '#/components/schemas/Identificador'
+        quantidade:
+          type: integer
+          minimum: 1
+          maximum: 1000
+        valorUnitarioCentavos:
+          $ref: '#/components/schemas/Centavos'
+        cobradoCentavos:
+          $ref: '#/components/schemas/Centavos'
+    ItemClinico:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - atendimentoId
+      - procedimentoId
+      - quantidade
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        atendimentoId:
+          $ref: '#/components/schemas/Identificador'
+        procedimentoId:
+          $ref: '#/components/schemas/Identificador'
+        quantidade:
+          type: integer
+          minimum: 1
+          maximum: 1000
+    SaldoAtendimento:
+      type: object
+      additionalProperties: false
+      required:
+      - atendimentoId
+      - cobradoCentavos
+      - recebidoLiquidoCentavos
+      - saldoCentavos
+      - pendenteCentavos
+      properties:
+        atendimentoId:
+          $ref: '#/components/schemas/Identificador'
+        cobradoCentavos:
+          $ref: '#/components/schemas/Centavos'
+        recebidoLiquidoCentavos:
+          $ref: '#/components/schemas/Centavos'
+        saldoCentavos:
+          $ref: '#/components/schemas/SaldoCentavos'
+        pendenteCentavos:
+          $ref: '#/components/schemas/Centavos'
+    Receber:
+      type: object
+      additionalProperties: false
+      required:
+      - valorCentavos
+      properties:
+        valorCentavos:
+          $ref: '#/components/schemas/CentavosLancamento'
+    Estornar:
+      type: object
+      additionalProperties: false
+      required:
+      - movimentoOrigemId
+      properties:
+        movimentoOrigemId:
+          $ref: '#/components/schemas/Identificador'
+    Recebimento:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - atendimentoId
+      - valorCentavos
+      - ocorridoEm
+      - tipo
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        atendimentoId:
+          $ref: '#/components/schemas/Identificador'
+        valorCentavos:
+          $ref: '#/components/schemas/CentavosLancamento'
+        ocorridoEm:
+          $ref: '#/components/schemas/Instante'
+        tipo:
+          type: string
+          const: recebimento
+    Estorno:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - atendimentoId
+      - valorCentavos
+      - ocorridoEm
+      - tipo
+      - movimentoOrigemId
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        atendimentoId:
+          $ref: '#/components/schemas/Identificador'
+        valorCentavos:
+          $ref: '#/components/schemas/CentavosLancamento'
+        ocorridoEm:
+          $ref: '#/components/schemas/Instante'
+        tipo:
+          type: string
+          const: estorno
+        movimentoOrigemId:
+          $ref: '#/components/schemas/Identificador'
+    ConteudoTexto:
+      type: object
+      additionalProperties: false
+      required:
+      - texto
+      properties:
+        texto:
+          type: string
+          minLength: 0
+          maxLength: 24000
+    ConteudoEstruturado:
+      type: object
+      additionalProperties: false
+      required:
+      - campos
+      properties:
+        campos:
+          type: array
+          maxItems: 50
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - chave
+            - valor
+            properties:
+              chave:
+                type: string
+                minLength: 1
+                maxLength: 80
+              valor:
+                type:
+                - string
+                - number
+                - boolean
+                - 'null'
+                maxLength: 4000
+    ConteudoDocumento:
+      oneOf:
+      - $ref: '#/components/schemas/ConteudoTexto'
+      - $ref: '#/components/schemas/ConteudoEstruturado'
+    CriarDocumento:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - tipo
+        - itemId
+        - conteudo
+        properties:
+          tipo:
+            type: string
+            const: laudo
+          itemId:
+            $ref: '#/components/schemas/Identificador'
+          conteudo:
+            $ref: '#/components/schemas/ConteudoTexto'
+      - type: object
+        additionalProperties: false
+        required:
+        - tipo
+        - conteudo
+        properties:
+          tipo:
+            type: string
+            const: evolucao_texto
+          conteudo:
+            $ref: '#/components/schemas/ConteudoTexto'
+      - type: object
+        additionalProperties: false
+        required:
+        - tipo
+        - conteudo
+        properties:
+          tipo:
+            type: string
+            enum:
+            - evolucao_estruturada
+            - evolucao_exames
+          conteudo:
+            $ref: '#/components/schemas/ConteudoEstruturado'
+    CriarVersaoRascunho:
+      type: object
+      additionalProperties: false
+      required:
+      - conteudo
+      properties:
+        conteudo:
+          $ref: '#/components/schemas/ConteudoDocumento'
+    DocumentoResumo:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - atendimentoId
+      - tipo
+      - itemId
+      - estado
+      - versaoAtual
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        atendimentoId:
+          $ref: '#/components/schemas/Identificador'
+        tipo:
+          $ref: '#/components/schemas/TipoDocumento'
+        itemId:
+          anyOf:
+          - $ref: '#/components/schemas/Identificador'
+          - type: 'null'
+        estado:
+          $ref: '#/components/schemas/EstadoDocumento'
+        versaoAtual:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+    DocumentoAtual:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - atendimentoId
+      - tipo
+      - itemId
+      - estado
+      - versaoAtual
+      - conteudo
+      properties:
+        id:
+          $ref: '#/components/schemas/Identificador'
+        atendimentoId:
+          $ref: '#/components/schemas/Identificador'
+        tipo:
+          $ref: '#/components/schemas/TipoDocumento'
+        itemId:
+          anyOf:
+          - $ref: '#/components/schemas/Identificador'
+          - type: 'null'
+        estado:
+          $ref: '#/components/schemas/EstadoDocumento'
+        versaoAtual:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        conteudo:
+          $ref: '#/components/schemas/ConteudoDocumento'
+    PaginaAgendamento:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Agendamento'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
+    PaginaPacienteResumo:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/PacienteResumo'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
+    PaginaAtendimento:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Atendimento'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
+    PaginaProfissionalResumo:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/ProfissionalResumo'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
+    PaginaConvenio:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Convenio'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
+    PaginaProcedimento:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Procedimento'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
+    PaginaItemAtendimento:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/ItemAtendimento'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
+    PaginaItemClinico:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/ItemClinico'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
+    PaginaDocumentoResumo:
+      type: object
+      additionalProperties: false
+      required:
+      - dados
+      - paginacao
+      properties:
+        dados:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/DocumentoResumo'
+        paginacao:
+          $ref: '#/components/schemas/Paginacao'
