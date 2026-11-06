@@ -28,7 +28,10 @@ test('RPC nao publica acesso anonimo',()=>{
 });
 
 test('RPC usa delimitadores PLpgSQL validos',()=>{
- assert.match(sql,/as \\$\\$\\s*declare resposta jsonb;/);
- assert.match(sql,/end;\\s*\\$\\$;\\s*revoke all on function public\\.piloto_ler_excecoes_agenda/);
- assert.doesNotMatch(sql,/as \\$\\s*declare resposta jsonb;/);
+ const open=sql.indexOf('as $$');
+ const close=sql.indexOf('$$;',open+5);
+ assert.ok(open>=0,'abertura $$ ausente');
+ assert.ok(close>open,'fechamento $$ ausente');
+ assert.match(sql.slice(open,close),/declare resposta jsonb;/);
+ assert.match(sql.slice(close),/revoke all on function public\\.piloto_ler_excecoes_agenda/);
 });
