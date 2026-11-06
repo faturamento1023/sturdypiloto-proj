@@ -51,3 +51,11 @@ Registro histórico anterior ao aceite final.
 - Em resposta à solicitação de aceite para encerramento, o responsável pelo projeto confirmou «Está aceito». O [checklist](DEV-006_CHECKLIST_VALIDACAO.md#registro-de-decisão) registra a confirmação e as questões operacionais sem resposta individual.
 - O commit técnico `b3bef24` passou na [validação das jornadas](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42142832609) e nos [testes de domínio](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42142832572). O aceite fecha o desenho das jornadas. A revisão especializada de regras clínicas e operacionais e a verificação da demonstração no navegador seguem pendentes.
 - Próxima ação: DEV-007 com jornadas aceitas, dados fictícios e estados para as regras que exigem validação posterior.
+
+## Sessão de 05/11/2026 — início da DEV-007 e bloqueio Figma
+
+- Consultado controle atualizado da branch e conferidos PRs/Issues abertos: nenhuma ocorrência aberta retornada; o controle registra DEV-006 concluída e aceite do mapa.
+- Criado arquivo Figma vazio **Projeto Piloto — DEV-007 — Protótipo UX**: https://www.figma.com/design/2oMmyZKXEbkFLJmzA3ex5R (fileKey `2oMmyZKXEbkFLJmzA3ex5R`).
+- **Bloqueio:** ao consultar bibliotecas de design, Figma retornou limite de chamadas MCP do plano Starter. Não foi possível inserir ou verificar telas editáveis; não declarar protótipo concluído.
+- Testes: nenhuma execução de testes de código nesta sessão; nenhuma alteração no WebUltra original ou dados de pacientes.
+- Próxima tarefa: após liberação de chamadas Figma, descobrir bibliotecas/componentes, construir telas desktop/mobile das jornadas aprovadas, revisar capturas e registrar IDs de frames e evidências. DEV-007 permanece **em andamento/bloqueada**.
