@@ -317,3 +317,12 @@ Registro histórico anterior ao aceite final.
 - Criados sete cenários sintéticos `scripts/dev023_projecao_grade.test.cjs` (commit `82b0e4a`); incluídos no workflow (commit `7ac36ff`).
 - **Testes escritos, não executados ou confirmados em CI nesta sessão.** A projeção é protótipo puro, não conectada à RPC PostgreSQL nem à UI. Regra de feriado bloqueante segue proposta operacional não homologada.
 - **Próxima tarefa:** integração da projeção com leitura PostgreSQL autorizada e grade DEV-022, RPC transacional de escrita com travas de reservas, testes em banco descartável e navegador. Não mesclar PR #24 antes disso.
+
+## Sessão de 07/11/2026 — isolamento das reservas na projeção DEV-023
+
+- Antes da alteração: conferidos controle na main, PR aberto #24, Issues abertas (nenhuma), critérios DEV-005, metadados do cronograma XLSM no Drive e inventário da pasta Web Ultra. A planilha foi acessada sem alteração; a leitura tabular integral não foi confirmada.
+- Corrigido `scripts/dev023_projecao_grade.cjs` (commit `2addd7c`): reservas com unidade, profissional ou data diferentes da projeção deixam de ocupar janelas alheias; registros legados sem escopo explícito continuam compatíveis apenas neste adaptador sintético.
+- Adicionados cinco testes de regressão em `scripts/dev023_projecao_grade.test.cjs` (commit `82724f9`), cobrindo três dimensões de isolamento, reserva coincidente e entrada nula.
+- **Testes escritos, mas não executados nesta sessão:** `git ls-remote` falhou por DNS de github.com. Nenhum CI, PostgreSQL ou navegador foi validado. A filtragem não substitui autorização/RLS no backend; o adaptador ainda não deve ser usado como fronteira de segurança.
+- DEV-023 segue aberta no PR #24. Próxima tarefa: executar a suíte no CI, validar RLS e transações de bloqueio contra reservas reais em PostgreSQL descartável, integrar a grade e homologar precedência de feriados.
+- Nenhum dado de pacientes, arquivo original WebUltra ou ambiente de produção foi alterado.
