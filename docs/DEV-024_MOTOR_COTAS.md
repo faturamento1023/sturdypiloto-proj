@@ -33,3 +33,9 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - Commits: `d7c4453` (correção) e `dd1cbe8` (teste). A execução remota desses commits ainda não foi confirmada.
 - A planilha XLSM consultada ainda marca DEV-024 como não iniciada; prevalece o estado técnico do PR em rascunho, sem alterar a planilha de origem.
 - Bloqueios inalterados: transação PostgreSQL, concorrência, RLS, auditoria, integração com agenda/feriados e validação operacional. Não mesclar nem homologar.
+
+## Revisão adicional — 07/11/2026, limites de intervalo e escopo
+- Adicionados sete testes sintéticos em `lib/dev024/cotas.limites.test.mjs` no commit `d0245b2`: equivalência de fuso, limites inclusivo/exclusivo da janela UTC, regra desativada, escopo de procedimento e ausência de regra.
+- Os testes exercitam o avaliador puro existente; não constituem validação de transação, concorrência, RLS ou auditoria. Execução no GitHub Actions ainda pendente de confirmação nesta sessão.
+- Política sem regra correspondente continua permissiva **provisoriamente** e exige decisão operacional; nenhuma regra clínica do WebUltra foi inferida como comprovada.
+- Próxima ação: implementar e testar reserva atômica em PostgreSQL descartável, integrar disponibilidade/feriados e conferir CI. PR #25 permanece rascunho; não mesclar nem homologar.
