@@ -378,3 +378,13 @@ Registro histórico anterior ao aceite final.
 - **Validação:** testes adicionados ao script existente, sem execução local confirmada nesta sessão. Conferir CI do novo HEAD; o adaptador sintético não comprova transação real.
 - **Bloqueios:** adapter PostgreSQL real, concorrência, RLS, auditoria, integração HTTP/UI e validação operacional da precedência de feriados. DEV-023 continua aberta; não mesclar nem publicar produção.
 - **Próxima tarefa:** confirmar CI, testar em PostgreSQL descartável e implementar o adaptador transacional da agenda.
+
+
+## Sessão de 07/11/2026 — confirmação obrigatória de auditoria (DEV-023)
+
+- Estado conferido antes da escrita: PR #24 aberto em rascunho; DEV-001 a DEV-022 concluídas; cronograma XLSM e inventário Web Ultra consultados somente para leitura.
+- Corrigido `scripts/dev023_comandos.cjs` para exigir retorno booleano `true` de `tx.audit` antes de retornar HTTP 201. Respostas indefinidas/ambíguas agora lançam erro e exigem rollback pelo adaptador transacional. Commit `574831b`.
+- Atualizado `scripts/dev023_comandos.test.cjs` para que o adaptador simulado confirme a auditoria e para testar seis respostas ambíguas, verificando ausência de confirmação simulada. Commit `548fa29`.
+- Testes: acrescentados, **execução dos novos testes ainda não confirmada** nesta sessão; o workflow anterior no head `74b6e75` havia passado. O mock não demonstra rollback real em PostgreSQL.
+- Bloqueios: implementação do adaptador PostgreSQL real, locks e concorrência, RLS, integração com a grade e decisão operacional sobre precedência de feriados.
+- Próxima ação: verificar CI dos commits novos, executar teste transacional em PostgreSQL descartável e integrar o fluxo à interface. Não mesclar PR #24 nem declarar DEV-023 concluída.
