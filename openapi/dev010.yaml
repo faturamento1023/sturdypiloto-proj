@@ -136,6 +136,10 @@ paths:
                   inicio: '2026-11-05T08:30:00-03:00'
                   fim: '2026-11-05T09:00:00-03:00'
                   local_nome: Sala fictícia
+                avisos:
+                - tipo: bloqueio
+                  inicio: '2026-11-05T09:00:00-03:00'
+                  fim: '2026-11-05T10:00:00-03:00'
         '400':
           $ref: '#/components/responses/EntradaInvalida'
         '401':

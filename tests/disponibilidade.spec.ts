@@ -47,8 +47,9 @@ test('gestão cadastra sala e horário semanal, vê a grade e encerra a vigênci
   expect((await consulta.json()).livres).toEqual([expect.objectContaining({ local_nome: sala })]);
 
   await page.getByRole('link', { name: 'Configurar disponibilidade' }).click();
-  await regras.getByLabel('Encerrar a partir de').fill('2090-11-20');
-  await regras.getByRole('button', { name: 'Encerrar regra' }).click();
+  const regraDaSala = regras.getByRole('article').filter({ hasText: sala });
+  await regraDaSala.getByLabel('Encerrar a partir de').fill('2090-11-20');
+  await regraDaSala.getByRole('button', { name: 'Encerrar regra' }).click();
   await expect(config.getByRole('status')).toContainText('Disponibilidade encerrada');
   await page.goto(grade('2090-11-20'));
   await expect(page.getByText('Livre · ' + sala)).toHaveCount(0);
