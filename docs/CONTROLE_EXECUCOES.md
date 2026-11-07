@@ -300,3 +300,12 @@ Registro histórico anterior ao aceite final.
 - Atualizado teste estrutural e acrescentada regressão do limite inclusivo em `database/dev023_excecoes_feriados.test.cjs` (commit `d9e2776`).
 - **Teste efetivamente executado:** prova isolada em Node v22.16.0 com quatro verificações sintéticas de diferenças de 30/31 dias, PASSOU. **Não executados:** arquivo completo de testes, CI, migração PostgreSQL, RLS e navegador. Git local continua sem resolver github.com; commits feitos pela integração GitHub.
 - DEV-023 continua aberta e não homologada. Próxima tarefa: transação SQL com bloqueio concorrente e proteção de reservas, integração da grade e testes PostgreSQL/navegador; validar precedência de feriados com a operação. Nenhum paciente ou sistema original alterado.
+
+## Sessão de 06/11/2026 — integridade de exceções concorrentes DEV-023
+
+- Consultados antes das alterações: controle `main` e branch, PRs (PR #24 aberto), Issues (nenhuma aberta), critérios DEV-005 v1.0, arquivo de cronograma do Drive e metadados da pasta Web Ultra. O cronograma é planejamento histórico; o controle GitHub é a fonte do estado atual.
+- Adicionadas duas restrições de exclusão GiST em `database/dev023_excecoes_feriados.sql` (commit `3ea65ed`) para impedir intervalos sobrepostos do mesmo profissional e bloqueios gerais sobrepostos na mesma unidade/dia, inclusive sob concorrência de inserts no PostgreSQL.
+- Acrescentado teste estático em `database/dev023_excecoes_feriados.test.cjs` (commit `3854720`).
+- **Limitação expressa:** as restrições não impedem conflitos entre bloqueio geral e individual, nem garantem preservação de agendamentos existentes. A futura RPC de escrita deve bloquear/revalidar reservas e escopos distintos transacionalmente. A migração depende da extensão btree_gist já utilizada em DEV-022.
+- **Não executados nesta sessão:** suíte Node, CI, migração PostgreSQL e testes navegador. Git local segue indisponível por DNS. Nenhuma aprovação operacional/clinica ou publicação em produção. DEV-023 e PR #24 permanecem abertos.
+- Próximo: RPC transacional e testes de concorrência em PostgreSQL descartável, integração da grade e UI; validar precedência de feriados com operação.
