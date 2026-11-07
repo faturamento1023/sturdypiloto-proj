@@ -536,7 +536,7 @@ test('Modelo, RLS e auditoria em PostgreSQL descartável', async t => {
     const { rows } = await q(`select count(*)::int total, bool_and(c.relrowsecurity) protegidas
       from pg_class c join pg_namespace n on n.oid=c.relnamespace
       where n.nspname in ('piloto','piloto_privado') and c.relkind='r'`);
-    assert.deepEqual(rows, [{ total: 19, protegidas: true }]);
+    assert.deepEqual(rows, [{ total: 22, protegidas: true }]);
     await q("select set_config('request.jwt.claims', $1, false)", [JSON.stringify({ sub: recep })]);
     await q("update piloto.agendamentos set estado='confirmado' where id=$1", [booking]);
     await q("select set_config('request.jwt.claims', '{}', false)");

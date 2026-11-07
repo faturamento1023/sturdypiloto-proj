@@ -12,6 +12,7 @@ import { CadastroConvenios } from './convenios/cadastro';
 import { HistoricoAtendimentos } from './atendimentos/historico';
 import { GradeAgenda } from './agenda/grade';
 import { ConfiguracaoAgenda } from './agenda/configuracao';
+import { ExcecoesAgenda } from './agenda/excecoes';
 import { perfisDaOperacao } from '../../src/autorizacao/politica';
 import './painel.css';
 
@@ -114,8 +115,8 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
   const resultados = busca ? buscarModulos(modulos, busca) : modulos;
   const historicoPermitido = perfisDaOperacao('item', 'ler').some(perfil => unidade.perfis.includes(perfil));
   const configuraAgenda = perfisDaOperacao('configuracaoAgenda', 'ler').some(perfil => unidade.perfis.includes(perfil));
-  const abreConfiguracao = atual?.id === 'agenda' && parametros.configuracaoAgenda === '1' && !busca;
-  if (abreConfiguracao && !configuraAgenda) notFound();
+  const abreConfiguracao = atual?.id === 'agenda' && !busca ? parametros.configuracaoAgenda : undefined;
+  if ((abreConfiguracao === '1' || abreConfiguracao === 'excecoes') && !configuraAgenda) notFound();
   const inicio = urlPainel(unidade.id);
   const titulo = busca ? 'Resultados da busca' : atual?.nome ?? 'Painel da unidade';
 
@@ -173,7 +174,11 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
           </header>
-          {abreConfiguracao ? (
+          {abreConfiguracao === 'excecoes' ? (
+            <ExcecoesAgenda cliente={cliente} unidade={unidade.id}
+              data={typeof parametros.dataAgenda === 'string' ? parametros.dataAgenda : ''}
+              estado={typeof parametros.estadoAgenda === 'string' ? parametros.estadoAgenda : ''} />
+          ) : abreConfiguracao === '1' ? (
             <ConfiguracaoAgenda cliente={cliente} unidade={unidade.id}
               estado={typeof parametros.estadoAgenda === 'string' ? parametros.estadoAgenda : ''} />
           ) : atual?.id === 'agenda' && !busca ? (

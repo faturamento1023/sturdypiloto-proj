@@ -97,7 +97,9 @@ paths:
         Médico recebe a própria agenda. Compromissos são recortados nas fronteiras,
         ordenados por início e ID e incluem cancelamentos. Horários livres vêm de
         janelas explícitas e disponibilidades semanais, descontando compromissos que não foram cancelados.
-        A disponibilidade semanal inclui o nome do local.
+        A disponibilidade semanal inclui o nome do local. Feriados fecham o dia,
+        horários substitutos trocam as janelas do profissional e bloqueios
+        descontam intervalos. O campo opcional avisos informa as exceções visíveis.
         Se a capacidade for excedida, reduza a janela ou filtre por profissional.
       x-perfis:
       - recepcao
@@ -134,6 +136,10 @@ paths:
                   inicio: '2026-11-05T08:30:00-03:00'
                   fim: '2026-11-05T09:00:00-03:00'
                   local_nome: Sala fictícia
+                avisos:
+                - tipo: bloqueio
+                  inicio: '2026-11-05T09:00:00-03:00'
+                  fim: '2026-11-05T10:00:00-03:00'
         '400':
           $ref: '#/components/responses/EntradaInvalida'
         '401':
@@ -2432,6 +2438,26 @@ components:
       additionalProperties: false
       required: [profissionais, agendamentos, livres]
       properties:
+        avisos:
+          type: array
+          maxItems: 532
+          items:
+            type: object
+            additionalProperties: false
+            required: [tipo, inicio, fim]
+            properties:
+              tipo:
+                type: string
+                enum: [feriado, bloqueio, substituicao]
+              inicio:
+                $ref: '#/components/schemas/Instante'
+              fim:
+                $ref: '#/components/schemas/Instante'
+              profissional_id:
+                $ref: '#/components/schemas/Identificador'
+              descricao:
+                type: string
+                maxLength: 120
         profissionais:
           type: array
           maxItems: 500

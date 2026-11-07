@@ -48,6 +48,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 
 | 2026-11-06 | DEV-022 — Configurar disponibilidade regular | **Concluída em ambiente descartável** | [Janelas semanais por profissional e sala](DEV-022_DISPONIBILIDADE_REGULAR.md). | DEV-023 — Criar exceções e feriados. |
 
+| 2026-11-07 | DEV-023 — Criar exceções e feriados | **Concluída em ambiente descartável** | [Feriados, bloqueios e horários substitutos](DEV-023_EXCECOES_FERIADOS.md). | DEV-024 — Criar motor de cotas. |
+
 ## Regras para próximas execuções
 
 1. Consultar a planilha de cronograma no Drive, este arquivo e Issues/PRs já existentes antes de escolher a próxima tarefa.
@@ -60,8 +62,8 @@ Este arquivo é o registro operacional para evitar que sessões manuais e execu�
 ## Estado geral
 
 - Fase do cronograma: **05 — Agendamento** (grade de agenda integrada).
-- Tarefas concluídas: **DEV-001 a DEV-022**.
-- Próxima tarefa: **DEV-023 — Criar exceções e feriados**.
+- Tarefas concluídas: **DEV-001 a DEV-023**.
+- Próxima tarefa: **DEV-024 — Criar motor de cotas**.
 - Etapa 02 — UX e arquitetura concluída. A etapa 03 começou com DEV-011.
 - Base web de desenvolvimento e homologação inicial disponível com dados fictícios. A aplicação clínica será implementada nas etapas seguintes.
 - **Não confundir** inspeção visual com teste funcional das telas ou homologação de regras clínicas.
@@ -218,3 +220,9 @@ Registro histórico anterior ao aceite final.
 
 - Entregue cadastro de salas e regras semanais com vigência, encerramento e proteção contra sobreposição por profissional ou sala. A grade mostra a disponibilidade calculada e o nome da sala.
 - Os testes cobrem autorização, isolamento, vigência, colisões e integração da configuração com a grade. Banco e navegador usam dados fictícios. A próxima etapa é DEV-023.
+
+## Sessão de 07/11/2026 — exceções e feriados DEV-023
+
+- O [PR #24](https://github.com/faturamento1023/sturdypiloto-proj/pull/24) partiu de projeções sintéticas e da migração inicial da automação. A entrega integrada usa PostgreSQL para calcular a precedência e evita duplicar a projeção na aplicação.
+- Entregues a tela de exceções, a integração com a grade, a escrita auditada e a proteção transacional de reservas, datas e salas.
+- A validação usa dados fictícios. A precedência operacional e a implantação no Supabase hospedado seguem pendentes. A próxima etapa é DEV-024.

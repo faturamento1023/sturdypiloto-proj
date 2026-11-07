@@ -11,12 +11,15 @@ export const rotulosAgenda = {
 
 type Intervalo = { profissional_id: string; inicio: string; fim: string };
 type HorarioLivre = Intervalo & { local_nome?: string };
+type Aviso = { tipo: 'feriado' | 'bloqueio' | 'substituicao'; inicio: string; fim: string;
+  profissional_id?: string; descricao?: string };
 type Agendamento = Intervalo & { id: string; estado: keyof typeof rotulosAgenda };
 type Profissional = { id: string; nome: string; ativo: boolean };
 type Grade = {
   profissionais: Profissional[];
   agendamentos: Agendamento[];
   livres: HorarioLivre[];
+  avisos?: Aviso[];
 };
 
 export async function lerGradeAgenda(
@@ -36,6 +39,10 @@ export async function lerGradeAgenda(
     status: 200,
     grade: {
       profissionais,
+      ...(Array.isArray(data.avisos) && data.avisos.length > 0 && {
+        avisos: data.avisos.map(({ tipo, inicio, fim, profissional_id, descricao }: Aviso) =>
+          ({ tipo, inicio, fim, ...(profissional_id && { profissional_id }), ...(descricao && { descricao }) })),
+      }),
       agendamentos: data.agendamentos.map(({ id, profissional_id, inicio, fim, estado }: Agendamento) =>
         ({ id, profissional_id, inicio, fim, estado })),
       livres: data.livres.map(({ profissional_id, inicio, fim, local_nome }: HorarioLivre) =>
