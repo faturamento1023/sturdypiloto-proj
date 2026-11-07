@@ -9,7 +9,7 @@ function validate(c){
  return {unitId:c.unitId,date:c.date,kind:c.kind,professionalId:c.professionalId??null,roomId:c.roomId??null,start:c.start,end:c.end};
 }
 async function createException({actor,command,db}){
- if(!actor||actor.active!==true||actor.mfa!==true||!['gestao','administrador'].includes(actor.role)||!Array.isArray(actor.units)||!actor.units.includes(command?.unitId))return {status:403};
+ if(!actor||typeof actor.id!=='string'||!actor.id.trim()||actor.active!==true||actor.mfa!==true||!['gestao','administrador'].includes(actor.role)||!Array.isArray(actor.units)||!actor.units.includes(command?.unitId))return {status:403};
  let data;try{data=validate(command);}catch{return {status:400};}
  if(!db||typeof db.transaction!=='function')throw Error('adaptador transacional obrigatorio');
  return db.transaction(async tx=>{
