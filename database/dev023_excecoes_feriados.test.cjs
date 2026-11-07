@@ -11,7 +11,7 @@ test('validacao de intervalo e profissional em substituicao',()=>{assert.match(s
 
 test('leitura de excecoes valida janela e audita via grade',()=>{
  assert.match(sql,/create function public\.piloto_ler_excecoes_agenda/);
- assert.match(sql,/ate - de > 31/);
+ assert.match(sql,/ate - de > 30/);
  assert.match(sql,/piloto_privado\.autorizar_grade\(unidade,profissional,correlacao\)/);
 });
 test('consulta restringe profissional e nao inclui paciente',()=>{
@@ -34,4 +34,11 @@ test('RPC usa delimitadores PLpgSQL validos',()=>{
  assert.ok(close>open,'fechamento $$ ausente');
  assert.match(sql.slice(open,close),/declare resposta jsonb;/);
  assert.match(sql.slice(close),/revoke all on function public[.]piloto_ler_excecoes_agenda/);
+});
+
+test('limite de 31 dias inclusivos nao permite 32 datas',()=>{
+ const maxDifference=30;
+ assert.equal(maxDifference+1,31);
+ assert.match(sql,/ate - de > 30/);
+ assert.doesNotMatch(sql,/ate - de > 31/);
 });
