@@ -20,6 +20,8 @@ test('agenda protege o endpoint e mostra intervalos livres e ocupados na data lo
   await page.getByRole('main').getByRole('link', { name: /Agenda/ }).click();
 
   await expect(page.getByRole('link', { name: 'Configurar disponibilidade' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Exceções e feriados' })).toHaveCount(0);
+  expect((await context.request.get('/painel?modulo=agenda&configuracaoAgenda=excecoes')).status()).toBe(404);
   expect((await context.request.get('/painel?modulo=agenda&configuracaoAgenda=1')).status()).toBe(404);
   await page.getByLabel('Data da agenda').fill('2030-11-06');
   await page.getByRole('button', { name: 'Consultar' }).click();

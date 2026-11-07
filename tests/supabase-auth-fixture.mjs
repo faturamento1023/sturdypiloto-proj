@@ -49,6 +49,13 @@ for (const unidade of [unidadeA, unidadeB]) {
   await db.query("insert into piloto.pacientes (unidade_id,id,nome) values ($1,$2,'Paciente de histórico')", [unidade, paciente]);
   await db.query("insert into piloto.procedimentos (unidade_id,id,codigo,descricao) values ($1,$2,'HIST-020','Procedimento de histórico')", [unidade, procedimento]);
   await db.query("insert into piloto.atendimentos (unidade_id,id,paciente_id,profissional_id) values ($1,$2,$3,$4)", [unidade, atendimento, paciente, profissional]);
+  const sala = randomUUID();
+  await db.query("insert into piloto.locais_agenda (unidade_id,id,nome) values ($1,$2,'Sala de exceções')", [unidade, sala]);
+  await db.query(`insert into piloto.disponibilidades_regulares
+    (unidade_id,profissional_id,local_id,dia_semana,inicio_minuto,fim_minuto,desde)
+    values ($1,$2,$3,3,480,720,'2091-11-07')`, [unidade, profissional, sala]);
+  await db.query(`insert into piloto.agendamentos (unidade_id,profissional_id,paciente_id,inicio,fim,estado) values
+    ($1,$2,$3,'2091-11-14 09:00-03','2091-11-14 09:30-03','confirmado')`, [unidade, profissional, paciente]);
   await db.query("insert into piloto.itens_atendimento (unidade_id,atendimento_id,procedimento_id,quantidade,valor_unitario_centavos) values ($1,$2,$3,2,12500)", [unidade, atendimento, procedimento]);
 }
 // Janelas datadas do piloto DEV-021, sem integração com agenda real.
@@ -229,6 +236,8 @@ async function atender(req, res) {
         return json(res, 400, { code: erro.code, message: 'Operação sintética rejeitada' });
       }
     }
+    case 'POST /rest/v1/rpc/piloto_ler_excecoes_agenda':
+    case 'POST /rest/v1/rpc/piloto_salvar_excecao_agenda':
     case 'POST /rest/v1/rpc/piloto_config_agenda':
     case 'POST /rest/v1/rpc/piloto_criar_local_agenda':
     case 'POST /rest/v1/rpc/piloto_criar_disponibilidade':
@@ -249,6 +258,9 @@ async function atender(req, res) {
       if (!acessoAtivo) return json(res, 401, { code: 'bad_jwt' });
       const nome = url.pathname.split('/').at(-1);
       const parametros = {
+        piloto_ler_excecoes_agenda: [dados.unidade, dados.profissional, dados.de, dados.ate, dados.correlacao],
+        piloto_salvar_excecao_agenda: [dados.unidade, dados.acao, dados.dia_agenda, dados.registro, dados.profissional,
+          dados.local_agenda, dados.inicio, dados.fim, dados.descricao_feriado, dados.correlacao],
         piloto_config_agenda: [dados.unidade],
         piloto_criar_local_agenda: [dados.unidade, dados.nome_local, dados.correlacao],
         piloto_criar_disponibilidade: [dados.unidade, dados.profissional, dados.local_agenda, dados.dia, dados.inicio,

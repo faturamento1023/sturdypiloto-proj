@@ -1,54 +1,18 @@
-# DEV-023 — Exceções e feriados (proposta inicial)
-**Estado:** em andamento. Critérios DEV-005 v1.0 aprovam escopo, não homologação operacional ou clínica.
+# DEV-023 — Exceções e feriados
 
-## Evidência e fronteira
-- **Documentado no Piloto:** DEV-021 fornece grade e DEV-022 configura janelas semanais por profissional/sala, com início inclusivo e fim exclusivo. A disponibilidade regular não equivale a exceção.
-- **Backlog/cronograma original:** DEV-023 prevê datas substitutas e bloqueios com precedência clara; ainda marca 'Planejado' e não é fonte do progresso real.
-- **Proposta não confirmada no WebUltra:** feriado ativo da unidade fecha todas as janelas no dia, inclusive substituições. Uma substituição específica do profissional remove as janelas regulares do dia e as substitui; bloqueios da unidade ou do profissional são subtraídos depois. Não existe liberação implícita de feriado.
-- **Teste implementado:** `scripts/dev023_excecoes.cjs` resolve janelas em memória sem pacientes, persistência, API ou acesso ao WebUltra. `scripts/dev023_excecoes.test.cjs` exercita isolamento, datas, feriados, precedência e sobreposições.
-- **Não implementado:** gravação de exceções/feriados, permissões/MFA e auditoria, RLS, integração com a grade, concorrência, UI e teste de navegador. Não usar a função pura como fonte de disponibilidade em produção.
+Em **Agenda → Exceções e feriados**, gestão e administração escolhem uma data e cadastram um feriado da unidade, um bloqueio de horário ou um horário substituto. A operação exige MFA e vínculo ativo na unidade. A grade e sua API exibem as exceções dentro do mesmo escopo de acesso dos horários.
 
-## Critérios a validar
-1. Quem pode criar e liberar feriados; exigir MFA e vínculo ativo de gestão/administração, com auditoria transacional.
-2. Se o feriado é sempre bloqueante ou admite liberação excepcional aprovada, e quem autoriza.
-3. Se exceções são por profissional, sala e/ou unidade; como resolver duas substituições no mesmo dia.
-4. O que acontece com compromissos já reservados ao inserir bloqueio: não cancelar ou alterar silenciosamente.
-5. Datas civis e fuso São Paulo; mudanças de horário e exceções em intervalos atravessando a meia-noite.
+## Precedência
 
-**Próximo passo:** projetar esquema e handlers transacionais com bloqueio e isolamento por unidade, integrar à grade DEV-021/022, validar em PostgreSQL descartável e navegador, obter revisão operacional. Não concluir DEV-023 sem esses itens.
+1. Um feriado ativo fecha a disponibilidade da unidade no dia inteiro. **Liberar dia** reabre os horários que as demais regras permitem.
+2. Um horário substituto troca as janelas do profissional naquela data e indica a sala. Cada profissional pode ter um horário substituto ativo por dia. O banco bloqueia conflito de sala com outro horário substituto ou com uma disponibilidade semanal de outro profissional.
+3. Bloqueios da unidade e do profissional retiram intervalos dos horários disponíveis. O horário final **24:00** representa o início do dia seguinte.
+4. Compromissos existentes permanecem visíveis. O sistema rejeita mudanças que afetem reservas pendentes e impede novas reservas ou remarcações em horários indisponíveis. Para retirar um horário substituto, resolva os compromissos pendentes daquele profissional e data.
 
-## Leitura SQL incremental — 06/11/2026
+A consulta usa o fuso de São Paulo. É possível consultar datas passadas. O cadastro e a retirada de exceções começam no dia corrente. Retirar um registro o desativa e conserva a trilha de auditoria.
 
-- A migração `database/dev023_excecoes_feriados.sql` agora expõe `public.piloto_ler_excecoes_agenda(unidade, profissional, de, ate, correlacao)`, limitada a 31 dias, com autenticação e trilha de leitura reaproveitadas de DEV-021.
-- O retorno JSON contém apenas feriados e intervalos de exceção; não contém nomes ou documentos de pacientes.
-- A política RLS foi ampliada para permitir que médicos vinculados vejam bloqueios gerais da própria unidade, sem permissão de escrita. Médicos continuam limitados às exceções de seus profissionais e bloqueios gerais; recepção e gestão podem consultar a unidade conforme autorização.
-- A função **não altera a disponibilidade da grade** e **não salva exceções**: integração ao cálculo da grade, testes reais de RLS e serviço transacional de escrita permanecem pendentes.
-- Quatro verificações estáticas adicionais foram escritas, mas não foram executadas nesta sessão. A precedência de feriados permanece proposta não homologada.
+## Ambiente de teste
 
-## Revisão de 07/11/2026 — isolamento da projeção
-- Adicionado `strictBookingScope: true` ao adaptador sintético `projectDay`: reservas sem unidade, profissional e data válidos agora são rejeitadas explicitamente nesse modo. O comportamento legado sem escopo permanece para testes anteriores e **não deve ser usado como integração operacional**.
-- Quatro testes de regressão adicionados (ausência de escopo, escopo parcial, reserva correspondente e reserva de outra unidade). Commits `03a0e13` e `60a3dc6`.
-- Consulta de GitHub Actions: os dois workflows do commit anterior `63d7813` estavam concluídos com sucesso; os workflows do novo commit ainda não tinham conclusão verificada no momento da consulta. Os testes novos não foram executados localmente nesta sessão.
-- **Pendente:** ativar modo estrito em integração real, conectar a grade ao PostgreSQL, validar RLS/transações/concorrência e obter decisão operacional sobre feriados. Nenhuma homologação clínica inferida.
+Aplique `database/dev023_excecoes_feriados.sql` após DEV-022. As operações de escrita compartilham uma revisão transacional por unidade para coordenar a criação de exceções com reservas e com regras semanais concorrentes. Uma transação obsoleta deve ser repetida após conferir a grade.
 
-## Revisão de 07/11/2026 — validação de datas civis
-- Corrigido o adaptador `scripts/dev023_projecao_grade.cjs`: o modo estrito agora usa `validDate` para rejeitar datas sintaticamente plausíveis mas inexistentes (ex.: 30/02 e mês 13), em vez de validar somente o formato `AAAA-MM-DD`.
-- Três regressões acrescentadas em `scripts/dev023_projecao_grade.test.cjs`, incluindo 29/02 de ano bissexto válido. Commits `62fd37e` e `691f5d5`.
-- A correção não altera o WebUltra original nem comprova integração SQL, execução da suíte ou homologação. O modo estrito ainda precisa ser ligado ao fluxo real da grade.
-
-## Revisão de 07/11/2026 — identidade do autor da mutação
-- `scripts/dev023_comandos.cjs` agora rejeita previamente autor sem `id` string não vazia, evitando autorização baseada somente em perfil, MFA e unidade. Commit `a6712a9`.
-- `scripts/dev023_comandos.test.cjs` recebeu dois testes negativos que exigem HTTP 403 e nenhuma transação iniciada para identificador ausente ou em branco. Commit `753dccb`.
-- Testes adicionados mas execução local/CI **não confirmada** nesta sessão (consulta de Actions para o commit de testes retornou zero execuções).
-- A alteração não resolve atomicidade/concorrência no PostgreSQL; exige revisão do adaptador transacional, locks e RLS em banco descartável antes de mesclar.
-
-## Revisão de 07/11/2026 — tipo do estado de feriado
-- `scripts/dev023_excecoes.cjs` agora rejeita `active` não booleano para feriados da unidade/data consultadas, evitando interpretar a string `"false"` como feriado ativo. A ausência de `active` conserva a compatibilidade com a proposta inicial (ativo por padrão).
-- Três testes de regressão cobrem estado ambíguo, feriado explicitamente inativo e isolamento de outra unidade. Commits `95f6c22` e `93d2ed2`.
-- **Execução dos testes e CI ainda não confirmados** nesta revisão. A precedência de feriados segue proposta não homologada; persistência, concorrência, RLS, integração com a grade e validação operacional permanecem pendentes.
-
-## Revisão de 07/11/2026 — ponte de leitura RPC para grade sintética
-- Criado `scripts/dev023_rpc_bridge.cjs`: converte a resposta JSON da RPC de leitura (`feriados` e `excecoes`, com minutos inteiros) para o motor de projeção em memória e **obriga** `strictBookingScope: true`.
-- Oito testes sintéticos em `scripts/dev023_rpc_bridge.test.cjs`, incluídos no workflow `dev023-exceptions.yml`. Não há conexão HTTP nem PostgreSQL nesta ponte; execução CI ainda não confirmada.
-- **Limite identificado:** a migração SQL permite `fim_minuto=1440`, mas o motor de janelas aceita somente `HH:MM` até 23:59. A ponte rejeita explicitamente esse caso, em vez de truncar horários. Harmonizar os contratos antes da integração operacional.
-- **Bloqueios:** validar o CI, fazer leitura RPC autenticada com RLS, integrar no painel, testar PostgreSQL descartável e homologar precedência dos feriados com os responsáveis. Nenhum dado real foi usado.
+A precedência descrita foi adotada para o Piloto e testada com dados fictícios. A homologação operacional com a clínica e a implantação no Supabase hospedado seguem pendentes. A próxima tarefa é **DEV-024 — Motor de cotas**.

@@ -23,6 +23,7 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
 
   const grade = leitura.status === 200 ? leitura.grade : null;
   const opcoes = grade?.profissionais ?? (leitura.status === 422 ? leitura.profissionais : []);
+  const nomes = new Map(opcoes.map(p => [p.id, p.nome]));
   const termo = buscarNome(busca);
   const equipes = grade?.profissionais.filter(p => (!profissional || p.id === profissional.toLowerCase())
     && buscarNome(p.nome).includes(termo)) ?? [];
@@ -48,9 +49,12 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
           {dataConsulta < ultimaData && <Link href={url(deslocarDia(dataConsulta, 1))} prefetch={false}>Próximo dia</Link>}
         </nav>
       </header>
-      {configuraAgenda && <Link className="agenda-config-link"
+      {configuraAgenda && <div className="agenda-dias"><Link className="agenda-config-link"
         href={'/painel?' + new URLSearchParams({ unidade, modulo: 'agenda', configuracaoAgenda: '1' })}
-        prefetch={false}>Configurar disponibilidade</Link>}
+        prefetch={false}>Configurar disponibilidade</Link>
+        <Link href={'/painel?' + new URLSearchParams({
+          unidade, modulo: 'agenda', dataAgenda: dataConsulta, configuracaoAgenda: 'excecoes',
+        })} prefetch={false}>Exceções e feriados</Link></div>}
       <form action="/painel" method="get" className="agenda-filtros" aria-label="Filtros da agenda" key={dataConsulta + profissional + busca}>
         <input type="hidden" name="unidade" value={unidade} />
         <input type="hidden" name="modulo" value="agenda" />
@@ -66,6 +70,15 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
         <button type="submit" className="botao">Consultar</button>
       </form>
       <p className="agenda-contexto">Horário de Brasília. Os intervalos livres aparecem dentro da disponibilidade cadastrada.</p>
+      {!!grade?.avisos?.length && <aside className="painel-aviso" aria-label="Avisos da data">
+        {grade.avisos.map(a => <p key={[a.tipo, a.inicio, a.fim, a.profissional_id].join(':')}>
+          {a.tipo === 'feriado' ? 'Feriado · ' + a.descricao : [
+            a.tipo === 'bloqueio' ? 'Bloqueio' : 'Horário substituto',
+            a.profissional_id ? nomes.get(a.profissional_id) ?? 'Profissional' : 'Toda a unidade',
+            hora.format(new Date(a.inicio)) + ' a ' + (Date.parse(a.fim) === Date.parse(fim) ? '24:00' : hora.format(new Date(a.fim))),
+          ].join(' · ')}
+        </p>)}
+      </aside>}
       {!grade && <p className="painel-aviso" role="alert">{leitura.status === 403
         ? 'Agenda indisponível para o profissional selecionado.'
         : leitura.status === 422 ? 'Há muitos registros para esta consulta. Selecione um profissional.'
