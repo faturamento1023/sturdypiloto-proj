@@ -388,3 +388,12 @@ Registro histórico anterior ao aceite final.
 - Testes: acrescentados, **execução dos novos testes ainda não confirmada** nesta sessão; o workflow anterior no head `74b6e75` havia passado. O mock não demonstra rollback real em PostgreSQL.
 - Bloqueios: implementação do adaptador PostgreSQL real, locks e concorrência, RLS, integração com a grade e decisão operacional sobre precedência de feriados.
 - Próxima ação: verificar CI dos commits novos, executar teste transacional em PostgreSQL descartável e integrar o fluxo à interface. Não mesclar PR #24 nem declarar DEV-023 concluída.
+
+## Sessão de 07/11/2026 — validação de escopo DEV-023
+
+- Conferidos `main`, PR #24 aberto, Issues, cronograma XLSM e inventário Web Ultra (somente leitura). DEV-001 a DEV-022 concluídas no controle; DEV-023 segue aberta.
+- Corrigida validação em `scripts/dev023_excecoes.cjs`: IDs de unidade/profissional compostos somente por espaços são rejeitados antes da resolução de agenda. Adicionado teste negativo em `scripts/dev023_excecoes.test.cjs`.
+- Commits: `db405b0` (correção) e `351899f` (regressão), na branch existente `dev-023-excecoes-feriados`.
+- CI anterior do commit `995eba4`: workflow geral `42376829299` aprovado. CI dos novos commits pendente de confirmação; não declarar teste aprovado antes da execução.
+- Bloqueios: PostgreSQL descartável para comprovar rollback, RLS e concorrência; integração real da grade; homologação da precedência de feriados. Nenhuma regra clínica foi aprovada nesta sessão.
+- Próxima ação: verificar GitHub Actions do commit de teste e executar teste transacional PostgreSQL, sem publicar produção.
