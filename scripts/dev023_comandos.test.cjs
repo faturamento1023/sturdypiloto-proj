@@ -31,3 +31,22 @@ test('nome de perfil inexistente administracao rejeitado',async()=>assert.equal(
 
 test('ator sem id nao inicia transacao',async()=>{const d=fake();assert.equal((await createException({actor:{...actor,id:undefined},command,db:d})).status,403);assert.equal(d.committed,0);});
 test('ator com id vazio nao inicia transacao',async()=>{const d=fake();assert.equal((await createException({actor:{...actor,id:'  '},command,db:d})).status,403);assert.equal(d.committed,0);});
+
+test('data inexistente rejeitada antes de iniciar transacao',async()=>{
+ const d=fake();
+ assert.equal((await createException({actor,command:{...command,date:'2026-02-30'},db:d})).status,400);
+ assert.equal(d.committed,0);
+ assert.equal(d.events.length,0);
+});
+test('falha na insercao nao registra auditoria nem confirma transacao',async()=>{
+ const d=fake({insertException:async()=>{throw Error('insert failure')}});
+ await assert.rejects(createException({actor,command,db:d}),/insert failure/);
+ assert.equal(d.committed,0);
+ assert.equal(d.events.length,0);
+});
+test('auditoria registra identidade e unidade do ator autorizado',async()=>{
+ const d=fake();
+ const response=await createException({actor,command,db:d});
+ assert.equal(response.status,201);
+ assert.deepEqual(d.events,[{actorId:'fake',unitId:'u1',recordId:'e1',action:'excecao_criada'}]);
+});
