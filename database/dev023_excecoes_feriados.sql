@@ -54,7 +54,7 @@ as $$
 declare resposta jsonb;
 begin
  if de is null or ate is null or not isfinite(de) or not isfinite(ate)
-    or ate < de or ate - de > 31 then
+    or ate < de or ate - de > 30 then
    raise exception 'Janela invalida' using errcode='22023';
  end if;
  if not piloto_privado.autorizar_grade(unidade,profissional,correlacao) then
