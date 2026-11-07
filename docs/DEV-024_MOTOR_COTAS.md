@@ -11,3 +11,12 @@ Fonte do cronograma: DEV-024, etapa 05 Agendamento, prioridade P0. Restrições 
 Esta é uma **proposta de implementação**, não comportamento observado no WebUltra. Não efetua reserva, não substitui verificação de disponibilidade DEV-023 e não oferece garantia contra concorrência. Regras sem correspondência retornam permitido: isso exige política explícita de ausência de cota. A definição do fuso e da janela de cotas deve ser homologada antes da API.
 
 Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verificação conjunta de cotas, feriados, exceções e conflito de sala; testes de concorrência, RLS e auditoria; UI e CI. Não mesclar nem encerrar DEV-024 sem essas provas.
+
+## Revisão de 07/11/2026 — robustez de entradas
+- Reconciliado PR #25 na branch existente antes da escrita; cronograma XLSM lido sem alterações.
+- A validação agora rejeita `ativo` não booleano (incluindo a string `"false"`) e reservas ativas com data sem fuso explícito.
+- Adicionados oito cenários de regressão em `lib/dev024/cotas.validacao.test.mjs` e execução dos testes DEV-024 no CI geral.
+- Commits: `681d670` (correção), `c544566` (testes), `00425b3` (CI).
+- CI anterior do PR #25: [42400674544](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42400674544), sucesso, **antes** da inclusão dos novos testes; novo CI pendente de confirmação.
+- A origem WebUltra documenta o domínio, mas esta política de validação é **proposta do piloto**, não comportamento comprovado do sistema original.
+- Bloqueios mantidos: reserva atômica PostgreSQL, concorrência, RLS, auditoria, integração com feriados/exceções e interface; não mesclar ou homologar.
