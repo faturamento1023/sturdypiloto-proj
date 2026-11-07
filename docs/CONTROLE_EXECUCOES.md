@@ -368,3 +368,13 @@ Registro histórico anterior ao aceite final.
 - Acrescentado teste negativo para quatro retornos inválidos em `scripts/dev023_comandos.test.cjs`; exige erro, nenhuma auditoria e ausência de confirmação da transação no adaptador sintético. Commit `8afa918`.
 - **Limite:** testes adicionados, sem comprovação de execução local ou PostgreSQL nesta sessão; o adaptador `fake` não comprova rollback real, concorrência ou RLS. A regra de feriados permanece proposta sem homologação.
 - **Próxima tarefa:** confirmar GitHub Actions no head atualizado, executar transações em PostgreSQL descartável com RLS/locks/auditoria e conectar à grade. Manter PR #24 em rascunho e não publicar produção.
+
+## Sessão de 07/11/2026 — falha fechada no adaptador DEV-023
+
+- Antes da escrita: controle da main e branch, PR #24 aberto em rascunho, Issues abertas, DEV-005 v1.0, cronograma XLSM e inventário Web Ultra consultados somente em leitura. O controle da main registra DEV-001–DEV-022 concluídas.
+- Confirmados dois workflows do HEAD anterior `2be9706` com conclusão `success` (execuções 42363890004 e 42363889941). Isto **não** comprova testes PostgreSQL nem homologação operacional.
+- Corrigida a interpretação dos retornos do adaptador transacional: vínculo só autoriza com booleano `true`; consultas de reservas e conflitos só liberam escrita com booleano `false`. Retornos ambíguos abortam a operação, evitando autorização implícita e gravação sobre reservas. Commit `fe0ce91`.
+- Acrescentados três grupos de regressão sintética com valores `undefined`, `null`, numéricos, strings e objetos, verificando ausência de auditoria e commit para resultados inválidos. Commit `70d439b`.
+- **Validação:** testes adicionados ao script existente, sem execução local confirmada nesta sessão. Conferir CI do novo HEAD; o adaptador sintético não comprova transação real.
+- **Bloqueios:** adapter PostgreSQL real, concorrência, RLS, auditoria, integração HTTP/UI e validação operacional da precedência de feriados. DEV-023 continua aberta; não mesclar nem publicar produção.
+- **Próxima tarefa:** confirmar CI, testar em PostgreSQL descartável e implementar o adaptador transacional da agenda.
