@@ -326,3 +326,10 @@ Registro histórico anterior ao aceite final.
 - **Testes escritos, mas não executados nesta sessão:** `git ls-remote` falhou por DNS de github.com. Nenhum CI, PostgreSQL ou navegador foi validado. A filtragem não substitui autorização/RLS no backend; o adaptador ainda não deve ser usado como fronteira de segurança.
 - DEV-023 segue aberta no PR #24. Próxima tarefa: executar a suíte no CI, validar RLS e transações de bloqueio contra reservas reais em PostgreSQL descartável, integrar a grade e homologar precedência de feriados.
 - Nenhum dado de pacientes, arquivo original WebUltra ou ambiente de produção foi alterado.
+
+## Sessão de 07/11/2026 — datas civis em reservas DEV-023
+
+- Consultados antes da escrita: controle da `main` e branch DEV-023, PRs/Issues (somente PR #24 aberto), critérios DEV-005, cronograma original XLSM (aba Cronograma: fase 05, agendamento; aba Telas Admin: agenda substituta e feriados) e inventário Web Ultra no Drive. A planilha mantém o planejamento histórico; não foi alterada.
+- Corrigida a validação do escopo estrito das reservas em `scripts/dev023_projecao_grade.cjs`: rejeita datas impossíveis, além de formato inválido (commit `62fd37e`). Três testes sintéticos em `scripts/dev023_projecao_grade.test.cjs` (commit `691f5d5`); documentação no commit `31f000e`.
+- CI consultado para `691f5d5`: workflow **DEV-023 excecoes e feriados** concluído com sucesso (run `42342462131`); workflow **Piloto CI e homologacao** ainda em andamento (run `42342462077`) na consulta. Não houve execução local, PostgreSQL descartável ou teste de navegador nesta sessão.
+- **DEV-023 continua em andamento**: falta integração da projeção à grade real, escrita transacional com proteção de reservas e conflitos cruzados, execução de migração/RLS e revisão operacional da precedência de feriados. Não mesclar PR #24 ainda. Nenhum dado de pacientes, segredo, WebUltra original ou produção alterado.
