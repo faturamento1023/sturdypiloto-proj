@@ -26,3 +26,10 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - Corrigidos dois casos de integridade do avaliador: regras sem `id` textual não vazio são rejeitadas; intervalos cujo produto em milissegundos excede inteiro seguro também são rejeitados.
 - Commits: `7e03007` (código), `10295f9` (três testes sintéticos). O padrão `lib/dev024/*.test.mjs` já está no CI. Execução desses novos testes ainda não confirmada.
 - Sem transação PostgreSQL, testes de concorrência/RLS/auditoria, integração de agenda ou homologação. PR permanece em rascunho; não mesclar.
+
+## Revisão complementar — 07/11/2026, domínio temporal
+- Confirmado no GitHub Actions que o workflow [42410515390](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42410515390) terminou com sucesso no commit `5bdc8d8`, cobrindo a bateria anterior.
+- O avaliador passou a rejeitar intervalos em milissegundos maiores que o alcance temporal representável por `Date` (8,64 × 10^15 ms), mesmo quando ainda são inteiros seguros. Acrescentado teste de regressão sintético.
+- Commits: `d7c4453` (correção) e `dd1cbe8` (teste). A execução remota desses commits ainda não foi confirmada.
+- A planilha XLSM consultada ainda marca DEV-024 como não iniciada; prevalece o estado técnico do PR em rascunho, sem alterar a planilha de origem.
+- Bloqueios inalterados: transação PostgreSQL, concorrência, RLS, auditoria, integração com agenda/feriados e validação operacional. Não mesclar nem homologar.
