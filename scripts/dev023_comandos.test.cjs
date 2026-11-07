@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');
 const {createException}=require('./dev023_comandos.cjs');
 const actor={id:'fake',active:true,mfa:true,role:'gestao',units:['u1']};
 const command={unitId:'u1',date:'2026-11-09',kind:'bloqueio',start:'08:00',end:'12:00'};
-function fake(overrides={}){const events=[];let committed=0;const tx={isActiveMembership:async()=>true,hasAffectedReservations:async()=>false,hasConflictingException:async()=>false,insertException:async()=>({id:'e1'}),audit:async e=>events.push(e),...overrides};return {events,get committed(){return committed},transaction:async fn=>{const result=await fn(tx);committed++;return result;}};}
+function fake(overrides={}){const events=[];let committed=0;const tx={isActiveMembership:async()=>true,hasAffectedReservations:async()=>false,hasConflictingException:async()=>false,insertException:async()=>({id:'e1'}),audit:async e=>{events.push(e);return true;},...overrides};return {events,get committed(){return committed},transaction:async fn=>{const result=await fn(tx);committed++;return result;}};}
 test('MFA exigido',async()=>assert.equal((await createException({actor:{...actor,mfa:false},command})).status,403));
 test('isolamento por unidade',async()=>assert.equal((await createException({actor,command:{...command,unitId:'u2'}})).status,403));
 test('recepcao nao altera',async()=>assert.equal((await createException({actor:{...actor,role:'recepcao'},command})).status,403));
@@ -81,5 +81,14 @@ test('consulta de conflitos com resposta ambigua aborta sem escrita',async()=>{
   await assert.rejects(createException({actor,command,db:d}),/resultado invalido da consulta de conflitos/);
   assert.equal(d.committed,0);
   assert.equal(d.events.length,0);
+ }
+});
+
+test('auditoria sem confirmacao explicita aborta transacao',async()=>{
+ for(const answer of [undefined,null,false,0,'true',{}]){
+  const d=fake({audit:async e=>{d.events.push(e);return answer;}});
+  await assert.rejects(createException({actor,command,db:d}),/auditoria nao confirmada/);
+  assert.equal(d.committed,0);
+  assert.equal(d.events.length,1);
  }
 });
