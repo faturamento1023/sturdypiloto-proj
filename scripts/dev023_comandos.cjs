@@ -28,7 +28,8 @@ async function createException({actor,command,db}){
   }
   const record=await tx.insertException(data);
   if(!record||typeof record.id!=='string'||!record.id.trim())throw Error('insercao sem id valido');
-  await tx.audit({actorId:actor.id,unitId:data.unitId,recordId:record.id,action:'excecao_criada'});
+  const audited=await tx.audit({actorId:actor.id,unitId:data.unitId,recordId:record.id,action:'excecao_criada'});
+  if(audited!==true)throw Error('auditoria nao confirmada');
   return {status:201,id:record.id};
  });
 }
