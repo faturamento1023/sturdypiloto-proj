@@ -32,6 +32,7 @@ jobs:
       - run: npm run test:database
       - run: npm run test:authorization
       - run: node --test src/agenda/*.test.ts src/cadastros/*.test.mjs scripts/dev019_precos.test.cjs scripts/dev019_migracao.test.cjs
+      - run: node --test lib/dev024/*.test.mjs
       - run: npm run build
       - run: npm run prepare:homologacao
       - run: npm run test:e2e
