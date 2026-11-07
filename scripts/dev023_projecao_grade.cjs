@@ -13,6 +13,9 @@ function projectDay(input){
   // No modo estrito, escopo ausente e erro (nao assumir que pertence ao profissional).
   if(strictScope&&(typeof b.unitId!=='string'||!b.unitId||typeof b.professionalId!=='string'||!b.professionalId||!validDate(b.date)))throw new TypeError('escopo da reserva invalido');
   // Modo legado aceita registros sem escopo somente em simulacoes.
+  if(strictScope&&(!Number.isInteger(b.start)||!Number.isInteger(b.end)||b.start<0||b.end>1440||b.end<=b.start))throw new TypeError('reserva invalida');
+  // Mesmo reservas fora do escopo precisam ser integras no modo estrito.
+  // Evita esconder dados corrompidos por filtros de unidade, profissional ou data.
   if(b.unitId!==undefined&&b.unitId!==input.unitId)return false;
   if(b.professionalId!==undefined&&b.professionalId!==input.professionalId)return false;
   if(b.date!==undefined&&b.date!==input.date)return false;
