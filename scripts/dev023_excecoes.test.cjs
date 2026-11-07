@@ -26,3 +26,13 @@ test('escopo com identificadores em branco e rejeitado',()=>{
  assert.throws(()=>run({unitId:'   '}),/contexto invalido/);
  assert.throws(()=>run({professionalId:'  '}),/contexto invalido/);
 });
+
+// Regressao: payloads malformados devem falhar fechados antes de calcular disponibilidade.
+test('colecoes ausentes sao opcionais, mas colecoes malformadas sao rejeitadas',()=>{
+ assert.equal(run({}).status,'regular');
+ for(const field of ['regular','exceptions','holidays']){
+  for(const value of [null,{},'invalido',false]){
+   assert.throws(()=>run({[field]:value}),/colecoes de agenda invalidas/);
+  }
+ }
+});
