@@ -11,7 +11,9 @@ function resolveDay({date,unitId,professionalId,regular=[],exceptions=[],holiday
  if(!validDate(date)||typeof unitId!=='string'||!unitId||typeof professionalId!=='string'||!professionalId)throw new TypeError('contexto invalido');
  const selected=exceptions.filter(e=>e&&e.date===date&&e.unitId===unitId&&(e.professionalId===professionalId||e.professionalId==null));
  for(const e of selected){if(!['bloqueio','substituicao'].includes(e.kind))throw new TypeError('tipo invalido');if(e.professionalId==null&&e.kind==='substituicao')throw new TypeError('substituicao requer profissional');window(e);}
- const holiday=holidays.some(h=>h&&h.date===date&&h.unitId===unitId&&h.active!==false);
+ const selectedHolidays=holidays.filter(h=>h&&h.date===date&&h.unitId===unitId);
+ for(const h of selectedHolidays){if(h.active!==undefined&&typeof h.active!=='boolean')throw new TypeError('estado de feriado invalido');}
+ const holiday=selectedHolidays.some(h=>h.active!==false);
  // Feriado prevalece: liberar feriado exige fluxo futuro de aprovacao explicita.
  if(holiday)return {status:'feriado',windows:[]};
  const replacements=selected.filter(e=>e.kind==='substituicao');
