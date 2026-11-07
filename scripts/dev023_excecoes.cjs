@@ -8,7 +8,7 @@ function window(w){if(!w||typeof w!=='object')throw new TypeError('janela invali
 function merge(windows){const ordered=windows.slice().sort((a,b)=>a.start-b.start||a.end-b.end);const out=[];for(const w of ordered){const last=out[out.length-1];if(last&&w.start<last.end)throw new RangeError('janelas sobrepostas');out.push(w);}return out;}
 function subtract(windows,blocks){let result=windows.slice();for(const block of blocks){result=result.flatMap(w=>{if(block.end<=w.start||block.start>=w.end)return [w];const pieces=[];if(block.start>w.start)pieces.push({...w,end:block.start});if(block.end<w.end)pieces.push({...w,start:block.end});return pieces;});}return result;}
 function resolveDay({date,unitId,professionalId,regular=[],exceptions=[],holidays=[]}){
- if(!validDate(date)||typeof unitId!=='string'||!unitId||typeof professionalId!=='string'||!professionalId)throw new TypeError('contexto invalido');
+ if(!validDate(date)||typeof unitId!=='string'||!unitId.trim()||typeof professionalId!=='string'||!professionalId.trim())throw new TypeError('contexto invalido');
  const selected=exceptions.filter(e=>e&&e.date===date&&e.unitId===unitId&&(e.professionalId===professionalId||e.professionalId==null));
  for(const e of selected){if(!['bloqueio','substituicao'].includes(e.kind))throw new TypeError('tipo invalido');if(e.professionalId==null&&e.kind==='substituicao')throw new TypeError('substituicao requer profissional');window(e);}
  const selectedHolidays=holidays.filter(h=>h&&h.date===date&&h.unitId===unitId);
