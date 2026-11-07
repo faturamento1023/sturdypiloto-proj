@@ -351,3 +351,12 @@ Registro histórico anterior ao aceite final.
 - Commits: `118a661` (SQL), `296f7d0` (regressão). Novo CI ainda não confirmado neste registro; nenhuma migração executada em banco nesta sessão.
 - Bloqueios: persistência transacional com travas de reservas, testes reais PostgreSQL/RLS/concorrência, integração à grade e validação operacional de precedência de feriados. Não mesclar PR #24 ou declarar homologação.
 - Próxima ação: confirmar CI do novo commit e executar migração e testes transacionais em PostgreSQL descartável antes de implementar gravação de exceções.
+
+## Sessão de 07/11/2026 — DEV-023: regressões de atomicidade e CI
+
+- Reconciliado PR #24 em rascunho (HEAD anterior `da6a3c1`) e conferidos controle, Issues, cronograma XLSM e pasta Web Ultra em leitura. A `main` permanece documentada até DEV-022; DEV-023 segue em desenvolvimento.
+- Confirmados dois workflows **success** no HEAD `da6a3c1`: https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42355246134 e https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42355246183.
+- Adicionados três testes sintéticos em `scripts/dev023_comandos.test.cjs`: data impossível rejeitada antes da transação; erro de inserção sem auditoria/commit; identidade e unidade registradas corretamente na auditoria. Commit `48c1c68`.
+- Os três testes novos foram **escritos, não executados localmente**; conferir GitHub Actions do novo HEAD antes de afirmar aprovação. Os workflows anteriores não comprovam integração com PostgreSQL.
+- Bloqueios: adaptador PostgreSQL com transação e travas, testes de concorrência/RLS/auditoria em banco descartável, integração HTTP e interface da grade, validação operacional da precedência dos feriados. Não homologar, mesclar ou publicar em produção.
+- Próxima ação: verificar CI do commit `48c1c68`, implementar e exercitar adaptador transacional real em ambiente descartável e só então integrar a grade.
