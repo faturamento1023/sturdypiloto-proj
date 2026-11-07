@@ -5,7 +5,14 @@ function projectDay(input){
  const resolved=resolveDay(input);
  const bookings=input.bookings??[];
  if(!Array.isArray(bookings))throw new TypeError('reservas invalidas');
- const intervals=bookings.filter(b=>b&&b.status!=='cancelado').map(b=>{
+ const intervals=bookings.filter(b=>{
+  if(!b||typeof b!=='object')throw new TypeError('reserva invalida');
+  // Escopo informado deve coincidir; registros sem escopo sao aceitos apenas no adaptador legado.
+  if(b.unitId!==undefined&&b.unitId!==input.unitId)return false;
+  if(b.professionalId!==undefined&&b.professionalId!==input.professionalId)return false;
+  if(b.date!==undefined&&b.date!==input.date)return false;
+  return b.status!=='cancelado';
+ }).map(b=>{
   if(!Number.isInteger(b.start)||!Number.isInteger(b.end)||b.start<0||b.end>1440||b.end<=b.start)throw new TypeError('reserva invalida');
   return {start:b.start,end:b.end};
  });
