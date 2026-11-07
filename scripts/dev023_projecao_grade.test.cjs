@@ -25,3 +25,8 @@ test('modo estrito ignora reserva de outra unidade com escopo completo',()=>asse
 test('modo estrito rejeita dia inexistente',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:'2026-02-30',start:480,end:540}]}),/escopo da reserva invalido/));
 test('modo estrito rejeita mes inexistente',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:'2026-13-09',start:480,end:540}]}),/escopo da reserva invalido/));
 test('modo estrito aceita data bissexta valida de outro dia',()=>assert.equal(projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:'2028-02-29',start:480,end:540}]}).free.length,1));
+
+// Regressao: filtro de escopo nao pode mascarar intervalos corrompidos no modo estrito.
+test('modo estrito rejeita intervalo invalido de outra unidade',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u2',professionalId:'p1',date:base.date,start:700,end:600}]}),/reserva invalida/));
+test('modo estrito rejeita horario fora do dia de outro profissional',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p2',date:base.date,start:-1,end:600}]}),/reserva invalida/));
+test('modo estrito rejeita intervalo fracionario de outra data',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:'2026-11-10',start:480.5,end:600}]}),/reserva invalida/));
