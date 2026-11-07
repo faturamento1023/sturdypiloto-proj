@@ -406,3 +406,12 @@ Registro histórico anterior ao aceite final.
 - Consulta de GitHub Actions do commit de testes retornou lista vazia; **execução e aprovação não confirmadas**. Nenhum teste PostgreSQL ou de navegador foi executado nesta sessão.
 - Bloqueios: adaptador PostgreSQL transacional, rollback e concorrência reais, RLS/auditoria, integração à grade e validação operacional da precedência de feriados. Nenhuma homologação clínica ou alteração do WebUltra/produção.
 - Próxima ação: confirmar CI e implementar/testar adaptador em PostgreSQL descartável antes de integrar a interface; manter PR #24 em rascunho.
+
+## Sessão de 07/11/2026 — integridade dos identificadores de sala DEV-023
+
+- Consultados previamente controle na `main` e na branch, PRs/Issues, DEV-005 v1.0, cronograma XLSM e inventário Web Ultra no Drive. O cronograma ainda marca DEV-023 como «Não iniciado» (planejamento defasado); a branch e o PR #24 mostram trabalho em andamento. Nenhuma fonte original foi editada.
+- Corrigida a projeção `scripts/dev023_excecoes.cjs` para rejeitar `roomId` numérico, booleano, objeto ou string em branco em janelas regulares e substituições, preservando `null` como sala não informada. Commit `36105922e38417c16999b4f2a4bf14a4212ebb18`.
+- Adicionado teste sintético para os quatro valores inválidos nos dois tipos de janela e caso `null`. Commit `4f3cd3dcfd7096d47188c586a6a8cc4a6026f10b`.
+- **Teste automatizado ainda sem resultado confirmado nesta sessão**; commits não equivalem a homologação. Não houve PostgreSQL real, navegador, dados de pacientes ou publicação de produção.
+- Bloqueios: conferir CI, validar rollback/RLS/concorrência/auditoria em PostgreSQL descartável, integrar exceções à grade e obter validação operacional da precedência de feriados. PR #24 permanece em rascunho.
+- Próxima ação: confirmar CI e executar integração transacional com banco descartável antes de prosseguir para interface.
