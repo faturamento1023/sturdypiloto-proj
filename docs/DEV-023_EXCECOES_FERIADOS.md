@@ -35,3 +35,9 @@
 - Corrigido o adaptador `scripts/dev023_projecao_grade.cjs`: o modo estrito agora usa `validDate` para rejeitar datas sintaticamente plausíveis mas inexistentes (ex.: 30/02 e mês 13), em vez de validar somente o formato `AAAA-MM-DD`.
 - Três regressões acrescentadas em `scripts/dev023_projecao_grade.test.cjs`, incluindo 29/02 de ano bissexto válido. Commits `62fd37e` e `691f5d5`.
 - A correção não altera o WebUltra original nem comprova integração SQL, execução da suíte ou homologação. O modo estrito ainda precisa ser ligado ao fluxo real da grade.
+
+## Revisão de 07/11/2026 — identidade do autor da mutação
+- `scripts/dev023_comandos.cjs` agora rejeita previamente autor sem `id` string não vazia, evitando autorização baseada somente em perfil, MFA e unidade. Commit `a6712a9`.
+- `scripts/dev023_comandos.test.cjs` recebeu dois testes negativos que exigem HTTP 403 e nenhuma transação iniciada para identificador ausente ou em branco. Commit `753dccb`.
+- Testes adicionados mas execução local/CI **não confirmada** nesta sessão (consulta de Actions para o commit de testes retornou zero execuções).
+- A alteração não resolve atomicidade/concorrência no PostgreSQL; exige revisão do adaptador transacional, locks e RLS em banco descartável antes de mesclar.
