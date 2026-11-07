@@ -16,3 +16,8 @@ test('reserva de outro profissional nao bloqueia agenda',()=>assert.equal(projec
 test('reserva de outra data nao bloqueia agenda',()=>assert.equal(projectDay({...base,bookings:[{unitId:'u1',professionalId:'p1',date:'2026-11-10',start:480,end:720}]}).free.length,1));
 test('reserva no escopo correto bloqueia agenda',()=>assert.deepEqual(projectDay({...base,bookings:[{unitId:'u1',professionalId:'p1',date:base.date,start:480,end:720}]}).free,[]));
 test('entrada nula de reserva rejeitada',()=>assert.throws(()=>projectDay({...base,bookings:[null]}),/reserva invalida/));
+
+test('modo estrito rejeita reserva sem escopo',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{start:480,end:540}]}),/escopo da reserva invalido/));
+test('modo estrito rejeita escopo parcial',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',start:480,end:540}]}),/escopo da reserva invalido/));
+test('modo estrito aceita reserva totalmente identificada',()=>assert.deepEqual(projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:base.date,start:480,end:720}]}).free,[]));
+test('modo estrito ignora reserva de outra unidade com escopo completo',()=>assert.equal(projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u2',professionalId:'p1',date:base.date,start:480,end:720}]}).free.length,1));
