@@ -1,6 +1,8 @@
 -- DEV-023: armazenamento inicial; aplicar depois de dev022_disponibilidade.sql.
 -- Nao integra ainda a grade nem autoriza cancelamento de agendamentos.
 begin;
+-- Fixar resolucao de funcoes e operadores durante a migracao, como na DEV-022.
+set local search_path = pg_catalog, extensions;
 create table piloto.feriados_agenda (
  unidade_id uuid not null references piloto.unidades(id),
  id uuid not null default gen_random_uuid(),
