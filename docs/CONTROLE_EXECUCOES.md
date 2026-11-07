@@ -333,3 +333,12 @@ Registro histórico anterior ao aceite final.
 - Corrigida a validação do escopo estrito das reservas em `scripts/dev023_projecao_grade.cjs`: rejeita datas impossíveis, além de formato inválido (commit `62fd37e`). Três testes sintéticos em `scripts/dev023_projecao_grade.test.cjs` (commit `691f5d5`); documentação no commit `31f000e`.
 - CI consultado para `691f5d5`: workflow **DEV-023 excecoes e feriados** concluído com sucesso (run `42342462131`); workflow **Piloto CI e homologacao** ainda em andamento (run `42342462077`) na consulta. Não houve execução local, PostgreSQL descartável ou teste de navegador nesta sessão.
 - **DEV-023 continua em andamento**: falta integração da projeção à grade real, escrita transacional com proteção de reservas e conflitos cruzados, execução de migração/RLS e revisão operacional da precedência de feriados. Não mesclar PR #24 ainda. Nenhum dado de pacientes, segredo, WebUltra original ou produção alterado.
+
+## Sessão de 07/11/2026 — DEV-023: integridade de reservas fora do escopo
+
+- Estado conferido antes da escrita: DEV-001–DEV-022 concluídas; PR #24 aberto em rascunho, head `630d203`; cronograma original identificado no Drive como XLSM (não convertido nem editado), pasta Web Ultra consultada somente para inventário.
+- Corrigido `scripts/dev023_projecao_grade.cjs`: no modo `strictBookingScope`, validar também os intervalos de reservas de outra unidade, profissional ou data antes de filtrá-las. Antes, entradas inválidas fora do escopo eram descartadas silenciosamente; a correção falha de modo explícito. Modo legado preservado.
+- Adicionados 3 cenários de regressão em `scripts/dev023_projecao_grade.test.cjs`: intervalo invertido de outra unidade, início negativo de outro profissional e início fracionário de outra data.
+- Commits: `052331c` (correção), `0a22314` (testes). Consulta inicial ao GitHub Actions para `0a22314` retornou zero execuções; **testes ainda não confirmados**, sem alegação de aprovação.
+- Bloqueios: integração transacional PostgreSQL/HTTP/navegador, concorrência e precedência operacional dos feriados ainda não homologadas. DEV-023 permanece aberta, sem mesclar PR.
+- Próxima ação: confirmar CI do commit atual e executar migração e testes em PostgreSQL descartável, depois integrar grade real com transações seguras.
