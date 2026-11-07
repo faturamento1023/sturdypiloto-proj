@@ -360,3 +360,11 @@ Registro histórico anterior ao aceite final.
 - Os três testes novos foram **escritos, não executados localmente**; conferir GitHub Actions do novo HEAD antes de afirmar aprovação. Os workflows anteriores não comprovam integração com PostgreSQL.
 - Bloqueios: adaptador PostgreSQL com transação e travas, testes de concorrência/RLS/auditoria em banco descartável, integração HTTP e interface da grade, validação operacional da precedência dos feriados. Não homologar, mesclar ou publicar em produção.
 - Próxima ação: verificar CI do commit `48c1c68`, implementar e exercitar adaptador transacional real em ambiente descartável e só então integrar a grade.
+
+## Sessão de 07/11/2026 — validação do ID persistido DEV-023
+
+- Estado conferido antes da escrita: PR #24 aberto em rascunho, head inicial `9071d0e`; DEV-001–DEV-022 concluídas no controle. Cronograma XLSM e inventário da pasta Web Ultra consultados em leitura, sem alterações.
+- Corrigido `scripts/dev023_comandos.cjs`: a inserção precisa devolver `record.id` como string não vazia; número, `null` e espaços não seguem para auditoria. Commit `5c06e9c`.
+- Acrescentado teste negativo para quatro retornos inválidos em `scripts/dev023_comandos.test.cjs`; exige erro, nenhuma auditoria e ausência de confirmação da transação no adaptador sintético. Commit `8afa918`.
+- **Limite:** testes adicionados, sem comprovação de execução local ou PostgreSQL nesta sessão; o adaptador `fake` não comprova rollback real, concorrência ou RLS. A regra de feriados permanece proposta sem homologação.
+- **Próxima tarefa:** confirmar GitHub Actions no head atualizado, executar transações em PostgreSQL descartável com RLS/locks/auditoria e conectar à grade. Manter PR #24 em rascunho e não publicar produção.
