@@ -46,3 +46,9 @@
 - `scripts/dev023_excecoes.cjs` agora rejeita `active` não booleano para feriados da unidade/data consultadas, evitando interpretar a string `"false"` como feriado ativo. A ausência de `active` conserva a compatibilidade com a proposta inicial (ativo por padrão).
 - Três testes de regressão cobrem estado ambíguo, feriado explicitamente inativo e isolamento de outra unidade. Commits `95f6c22` e `93d2ed2`.
 - **Execução dos testes e CI ainda não confirmados** nesta revisão. A precedência de feriados segue proposta não homologada; persistência, concorrência, RLS, integração com a grade e validação operacional permanecem pendentes.
+
+## Revisão de 07/11/2026 — ponte de leitura RPC para grade sintética
+- Criado `scripts/dev023_rpc_bridge.cjs`: converte a resposta JSON da RPC de leitura (`feriados` e `excecoes`, com minutos inteiros) para o motor de projeção em memória e **obriga** `strictBookingScope: true`.
+- Oito testes sintéticos em `scripts/dev023_rpc_bridge.test.cjs`, incluídos no workflow `dev023-exceptions.yml`. Não há conexão HTTP nem PostgreSQL nesta ponte; execução CI ainda não confirmada.
+- **Limite identificado:** a migração SQL permite `fim_minuto=1440`, mas o motor de janelas aceita somente `HH:MM` até 23:59. A ponte rejeita explicitamente esse caso, em vez de truncar horários. Harmonizar os contratos antes da integração operacional.
+- **Bloqueios:** validar o CI, fazer leitura RPC autenticada com RLS, integrar no painel, testar PostgreSQL descartável e homologar precedência dos feriados com os responsáveis. Nenhum dado real foi usado.
