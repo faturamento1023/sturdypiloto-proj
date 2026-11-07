@@ -292,3 +292,11 @@ Registro histórico anterior ao aceite final.
 - Corrigido outro defeito real na expressão regular de `database/dev023_excecoes_feriados.test.cjs`: `public\\.piloto` no literal regex procurava uma barra invertida antes de qualquer caractere, não o ponto literal. Usada classe `[.]` inequívoca (commit `fe3192d`).
 - Executada localmente com Node uma prova isolada da expressão corrigida sobre trecho sintético `as $$ ... $$; revoke all on function public.piloto_ler_excecoes_agenda`: PASSOU. **Não equivale a executar o arquivo de teste completo, GitHub Actions ou PostgreSQL.**
 - DEV-023 continua aberta. Pendências: validar migração em banco descartável, integrar gravação transacional e grade, testes RLS/HTTP/navegador, revisar precedência de feriados com a operação. Sem publicação, pacientes ou mudanças no WebUltra.
+
+## Sessão de 06/11/2026 — limite de período da leitura DEV-023
+
+- Antes de escrever: consultados controle atualizado em main e branch, PR #24 aberto, Issues abertas (nenhuma), DEV-005 v1.0, cronograma original XLSM do Drive e pasta Web Ultra. O backlog mantém DEV-023 como `Planejado` na planilha histórica; a situação técnica efetiva permanece em andamento no GitHub.
+- Detectado erro de limite inclusivo: a condição `ate - de > 31` permitia consultar 32 datas civis (diferença de 31 dias). Corrigido para `> 30` em `database/dev023_excecoes_feriados.sql` (commit `e1a5306`), restringindo a no máximo 31 datas.
+- Atualizado teste estrutural e acrescentada regressão do limite inclusivo em `database/dev023_excecoes_feriados.test.cjs` (commit `d9e2776`).
+- **Teste efetivamente executado:** prova isolada em Node v22.16.0 com quatro verificações sintéticas de diferenças de 30/31 dias, PASSOU. **Não executados:** arquivo completo de testes, CI, migração PostgreSQL, RLS e navegador. Git local continua sem resolver github.com; commits feitos pela integração GitHub.
+- DEV-023 continua aberta e não homologada. Próxima tarefa: transação SQL com bloqueio concorrente e proteção de reservas, integração da grade e testes PostgreSQL/navegador; validar precedência de feriados com a operação. Nenhum paciente ou sistema original alterado.
