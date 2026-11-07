@@ -20,3 +20,9 @@ test('substituicao de toda unidade rejeitada',()=>assert.throws(()=>run({excepti
 test('feriado com estado ambiguo e rejeitado sem assumir bloqueio',()=>assert.throws(()=>run({holidays:[{date:ctx.date,unitId:'u1',active:'false'}]}),/estado de feriado invalido/));
 test('feriado explicitamente inativo preserva janela regular',()=>assert.equal(run({holidays:[{date:ctx.date,unitId:'u1',active:false}]}).windows.length,1));
 test('estado invalido de feriado de outra unidade nao afeta consulta',()=>assert.equal(run({holidays:[{date:ctx.date,unitId:'u2',active:'false'}]}).windows.length,1));
+
+// Identificadores com espacos nao representam unidade ou profissional valido.
+test('escopo com identificadores em branco e rejeitado',()=>{
+ assert.throws(()=>run({unitId:'   '}),/contexto invalido/);
+ assert.throws(()=>run({professionalId:'  '}),/contexto invalido/);
+});
