@@ -28,3 +28,6 @@ test('id ausente aborta auditoria',async()=>{const d=fake({insertException:async
 
 test('perfil administrador do banco autorizado com MFA e vinculo',async()=>assert.equal((await createException({actor:{...actor,role:'administrador'},command,db:fake()})).status,201));
 test('nome de perfil inexistente administracao rejeitado',async()=>assert.equal((await createException({actor:{...actor,role:'administracao'},command,db:fake()})).status,403));
+
+test('ator sem id nao inicia transacao',async()=>{const d=fake();assert.equal((await createException({actor:{...actor,id:undefined},command,db:d})).status,403);assert.equal(d.committed,0);});
+test('ator com id vazio nao inicia transacao',async()=>{const d=fake();assert.equal((await createException({actor:{...actor,id:'  '},command,db:d})).status,403);assert.equal(d.committed,0);});
