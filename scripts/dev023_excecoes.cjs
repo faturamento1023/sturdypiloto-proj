@@ -9,6 +9,7 @@ function merge(windows){const ordered=windows.slice().sort((a,b)=>a.start-b.star
 function subtract(windows,blocks){let result=windows.slice();for(const block of blocks){result=result.flatMap(w=>{if(block.end<=w.start||block.start>=w.end)return [w];const pieces=[];if(block.start>w.start)pieces.push({...w,end:block.start});if(block.end<w.end)pieces.push({...w,start:block.end});return pieces;});}return result;}
 function resolveDay({date,unitId,professionalId,regular=[],exceptions=[],holidays=[]}){
  if(!validDate(date)||typeof unitId!=='string'||!unitId.trim()||typeof professionalId!=='string'||!professionalId.trim())throw new TypeError('contexto invalido');
+ if(!Array.isArray(regular)||!Array.isArray(exceptions)||!Array.isArray(holidays))throw new TypeError('colecoes de agenda invalidas');
  const selected=exceptions.filter(e=>e&&e.date===date&&e.unitId===unitId&&(e.professionalId===professionalId||e.professionalId==null));
  for(const e of selected){if(!['bloqueio','substituicao'].includes(e.kind))throw new TypeError('tipo invalido');if(e.professionalId==null&&e.kind==='substituicao')throw new TypeError('substituicao requer profissional');window(e);}
  const selectedHolidays=holidays.filter(h=>h&&h.date===date&&h.unitId===unitId);
