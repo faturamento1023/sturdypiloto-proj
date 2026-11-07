@@ -342,3 +342,12 @@ Registro histórico anterior ao aceite final.
 - Commits: `052331c` (correção), `0a22314` (testes). Consulta inicial ao GitHub Actions para `0a22314` retornou zero execuções; **testes ainda não confirmados**, sem alegação de aprovação.
 - Bloqueios: integração transacional PostgreSQL/HTTP/navegador, concorrência e precedência operacional dos feriados ainda não homologadas. DEV-023 permanece aberta, sem mesclar PR.
 - Próxima ação: confirmar CI do commit atual e executar migração e testes em PostgreSQL descartável, depois integrar grade real com transações seguras.
+
+## Sessão de 07/11/2026 — DEV-023: ambiente de migração SQL
+
+- Conferidos controle, DEV-005, PR #24 aberto na branch `dev-023-excecoes-feriados`, Issues, cronograma XLSM e inventário Web Ultra (somente leitura). DEV-001 a DEV-022 concluídas; DEV-023 em andamento.
+- O workflow DEV-023 do commit `ff4df01` foi confirmado **success**: https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42350591277. Isso não comprova execução de PostgreSQL.
+- A migração `database/dev023_excecoes_feriados.sql` não fixava o `search_path` transacional, diferentemente da DEV-022. Adicionado `set local search_path = pg_catalog, extensions;` para resolver operadores/funções da migração em ambiente controlado. Adicionado teste estrutural em `database/dev023_excecoes_feriados.test.cjs`.
+- Commits: `118a661` (SQL), `296f7d0` (regressão). Novo CI ainda não confirmado neste registro; nenhuma migração executada em banco nesta sessão.
+- Bloqueios: persistência transacional com travas de reservas, testes reais PostgreSQL/RLS/concorrência, integração à grade e validação operacional de precedência de feriados. Não mesclar PR #24 ou declarar homologação.
+- Próxima ação: confirmar CI do novo commit e executar migração e testes transacionais em PostgreSQL descartável antes de implementar gravação de exceções.
