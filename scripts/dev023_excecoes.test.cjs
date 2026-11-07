@@ -16,3 +16,7 @@ test('intervalo adjacente nao bloqueia',()=>assert.equal(run({exceptions:[{date:
 test('substituicoes sobrepostas sao rejeitadas',()=>assert.throws(()=>run({exceptions:[{date:ctx.date,unitId:'u1',professionalId:'m1',kind:'substituicao',start:'13:00',end:'15:00'},{date:ctx.date,unitId:'u1',professionalId:'m1',kind:'substituicao',start:'14:00',end:'16:00'}]}),/sobrepostas/));
 test('datas impossiveis rejeitadas',()=>assert.throws(()=>run({date:'2026-02-30'}),/contexto/));
 test('substituicao de toda unidade rejeitada',()=>assert.throws(()=>run({exceptions:[{date:ctx.date,unitId:'u1',kind:'substituicao',start:'08:00',end:'09:00'}]}),/requer profissional/));
+
+test('feriado com estado ambiguo e rejeitado sem assumir bloqueio',()=>assert.throws(()=>run({holidays:[{date:ctx.date,unitId:'u1',active:'false'}]}),/estado de feriado invalido/));
+test('feriado explicitamente inativo preserva janela regular',()=>assert.equal(run({holidays:[{date:ctx.date,unitId:'u1',active:false}]}).windows.length,1));
+test('estado invalido de feriado de outra unidade nao afeta consulta',()=>assert.equal(run({holidays:[{date:ctx.date,unitId:'u2',active:'false'}]}).windows.length,1));
