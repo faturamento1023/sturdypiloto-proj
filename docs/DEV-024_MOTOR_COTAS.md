@@ -39,3 +39,11 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - Os testes exercitam o avaliador puro existente; não constituem validação de transação, concorrência, RLS ou auditoria. Execução no GitHub Actions ainda pendente de confirmação nesta sessão.
 - Política sem regra correspondente continua permissiva **provisoriamente** e exige decisão operacional; nenhuma regra clínica do WebUltra foi inferida como comprovada.
 - Próxima ação: implementar e testar reserva atômica em PostgreSQL descartável, integrar disponibilidade/feriados e conferir CI. PR #25 permanece rascunho; não mesclar nem homologar.
+
+## Revisão complementar — 07/11/2026, cenários combinados
+- Conferidos novamente o controle de execução, o PR #25, o cronograma XLSM e o inventário Web Ultra antes da alteração.
+- Criado `lib/dev024/cotas.regressao-combinada.test.mjs` com cinco testes sintéticos: limite zero, precedência da regra restritiva, cancelamento, isolamento por unidade e limite final exclusivo da janela.
+- Commit: [158793a](https://github.com/faturamento1023/sturdypiloto-proj/commit/158793a56019fc5a9ce138bbc411793aa80ced3b).
+- **Execução dos novos testes ainda não verificada**: a criação do arquivo não demonstra aprovação do CI. O workflow já usa o padrão `lib/dev024/*.test.mjs`; conferir o run do commit antes de mesclar.
+- Revisão estática: o avaliador puro não garante atomicidade e não deve ser usado como decisão final de reserva; ausência de regra continua permissiva por proposta, sem homologação. Não se trata de observação funcional confirmada no WebUltra.
+- Próxima entrega prioritária: transação PostgreSQL com bloqueio por chave de cota, concorrência de duas reservas simultâneas, RLS, auditoria e integração com feriados e grade. Manter PR #25 em rascunho.
