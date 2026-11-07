@@ -397,3 +397,12 @@ Registro histórico anterior ao aceite final.
 - CI anterior do commit `995eba4`: workflow geral `42376829299` aprovado. CI dos novos commits pendente de confirmação; não declarar teste aprovado antes da execução.
 - Bloqueios: PostgreSQL descartável para comprovar rollback, RLS e concorrência; integração real da grade; homologação da precedência de feriados. Nenhuma regra clínica foi aprovada nesta sessão.
 - Próxima ação: verificar GitHub Actions do commit de teste e executar teste transacional PostgreSQL, sem publicar produção.
+
+## Sessão de 07/11/2026 — validação de coleções da agenda DEV-023
+
+- Reconciliados controle, Issue #4 fechada, PR #5 mesclado, PR #24 aberto em rascunho, DEV-005 v1.0, cronograma XLSM e inventário Web Ultra (leitura). DEV-023 permanece em andamento; a referência antiga a DEV-006 no prompt não corresponde ao estado atual.
+- `scripts/dev023_excecoes.cjs`: rejeita `regular`, `exceptions` ou `holidays` que não sejam arrays antes da projeção, em vez de aceitar objetos/string ou falhar em operação intermediária. Commit `ab18b0439edd36a1844d96a3cf9ac2cffe9019cd`.
+- `scripts/dev023_excecoes.test.cjs`: regressão com `null`, objeto, string e booleano em cada coleção, mantendo arrays opcionais por padrão. Commit `51cb68b2f092d3afad6c71dc426aa36f8521b35c`.
+- Consulta de GitHub Actions do commit de testes retornou lista vazia; **execução e aprovação não confirmadas**. Nenhum teste PostgreSQL ou de navegador foi executado nesta sessão.
+- Bloqueios: adaptador PostgreSQL transacional, rollback e concorrência reais, RLS/auditoria, integração à grade e validação operacional da precedência de feriados. Nenhuma homologação clínica ou alteração do WebUltra/produção.
+- Próxima ação: confirmar CI e implementar/testar adaptador em PostgreSQL descartável antes de integrar a interface; manter PR #24 em rascunho.
