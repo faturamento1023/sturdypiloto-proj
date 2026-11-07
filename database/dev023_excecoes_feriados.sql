@@ -25,6 +25,19 @@ create table piloto.excecoes_agenda (
  check (tipo <> 'substituicao' or profissional_id is not null)
 );
 create index excecoes_agenda_dia_idx on piloto.excecoes_agenda(unidade_id,dia,profissional_id);
+-- Evita intervalos sobrepostos para o mesmo profissional no mesmo dia.
+-- Bloqueios gerais da unidade sao protegidos separadamente.
+-- A concorrencia com agendamentos e entre escopos distintos exige RPC transacional.
+alter table piloto.excecoes_agenda add constraint excecoes_profissional_sem_sobreposicao
+ exclude using gist (
+  unidade_id with =, dia with =, profissional_id with =,
+  int4range(inicio_minuto,fim_minuto,'[)') with &&
+ ) where (profissional_id is not null);
+alter table piloto.excecoes_agenda add constraint excecoes_unidade_sem_sobreposicao
+ exclude using gist (
+  unidade_id with =, dia with =,
+  int4range(inicio_minuto,fim_minuto,'[)') with &&
+ ) where (profissional_id is null);
 alter table piloto.feriados_agenda enable row level security;
 alter table piloto.excecoes_agenda enable row level security;
 revoke all on piloto.feriados_agenda,piloto.excecoes_agenda from public,anon,authenticated,service_role;
