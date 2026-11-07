@@ -30,3 +30,8 @@
 - Quatro testes de regressão adicionados (ausência de escopo, escopo parcial, reserva correspondente e reserva de outra unidade). Commits `03a0e13` e `60a3dc6`.
 - Consulta de GitHub Actions: os dois workflows do commit anterior `63d7813` estavam concluídos com sucesso; os workflows do novo commit ainda não tinham conclusão verificada no momento da consulta. Os testes novos não foram executados localmente nesta sessão.
 - **Pendente:** ativar modo estrito em integração real, conectar a grade ao PostgreSQL, validar RLS/transações/concorrência e obter decisão operacional sobre feriados. Nenhuma homologação clínica inferida.
+
+## Revisão de 07/11/2026 — validação de datas civis
+- Corrigido o adaptador `scripts/dev023_projecao_grade.cjs`: o modo estrito agora usa `validDate` para rejeitar datas sintaticamente plausíveis mas inexistentes (ex.: 30/02 e mês 13), em vez de validar somente o formato `AAAA-MM-DD`.
+- Três regressões acrescentadas em `scripts/dev023_projecao_grade.test.cjs`, incluindo 29/02 de ano bissexto válido. Commits `62fd37e` e `691f5d5`.
+- A correção não altera o WebUltra original nem comprova integração SQL, execução da suíte ou homologação. O modo estrito ainda precisa ser ligado ao fluxo real da grade.
