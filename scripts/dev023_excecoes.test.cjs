@@ -36,3 +36,12 @@ test('colecoes ausentes sao opcionais, mas colecoes malformadas sao rejeitadas',
   }
  }
 });
+
+// Identificadores de sala invalidos nao devem contaminar a grade calculada.
+test('janelas com identificador de sala invalido sao rejeitadas',()=>{
+ for(const roomId of [42,false,{},'   ']){
+  assert.throws(()=>run({regular:[{start:'08:00',end:'12:00',roomId}]}),/sala invalida/);
+  assert.throws(()=>run({exceptions:[{date:ctx.date,unitId:'u1',professionalId:'m1',kind:'substituicao',start:'13:00',end:'15:00',roomId}]}),/sala invalida/);
+ }
+ assert.equal(run({regular:[{start:'08:00',end:'12:00',roomId:null}]}).windows[0].roomId,null);
+});
