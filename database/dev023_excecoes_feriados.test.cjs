@@ -50,3 +50,7 @@ test('exclusao de intervalos sobrepostos por profissional e por unidade',()=>{
  assert.match(sql,/where \(profissional_id is null\)/);
  assert.equal((sql.match(/int4range\(inicio_minuto,fim_minuto,'\[\)'\) with &&/g)||[]).length,2);
 });
+
+test('migracao fixa search_path como DEV-022',()=>{
+ assert.match(sql,/begin;\s*--[^\n]*\nset local search_path = pg_catalog, extensions;/);
+});
