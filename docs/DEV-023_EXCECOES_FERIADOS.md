@@ -41,3 +41,8 @@
 - `scripts/dev023_comandos.test.cjs` recebeu dois testes negativos que exigem HTTP 403 e nenhuma transação iniciada para identificador ausente ou em branco. Commit `753dccb`.
 - Testes adicionados mas execução local/CI **não confirmada** nesta sessão (consulta de Actions para o commit de testes retornou zero execuções).
 - A alteração não resolve atomicidade/concorrência no PostgreSQL; exige revisão do adaptador transacional, locks e RLS em banco descartável antes de mesclar.
+
+## Revisão de 07/11/2026 — tipo do estado de feriado
+- `scripts/dev023_excecoes.cjs` agora rejeita `active` não booleano para feriados da unidade/data consultadas, evitando interpretar a string `"false"` como feriado ativo. A ausência de `active` conserva a compatibilidade com a proposta inicial (ativo por padrão).
+- Três testes de regressão cobrem estado ambíguo, feriado explicitamente inativo e isolamento de outra unidade. Commits `95f6c22` e `93d2ed2`.
+- **Execução dos testes e CI ainda não confirmados** nesta revisão. A precedência de feriados segue proposta não homologada; persistência, concorrência, RLS, integração com a grade e validação operacional permanecem pendentes.
