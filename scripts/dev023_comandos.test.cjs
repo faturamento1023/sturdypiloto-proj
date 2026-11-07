@@ -59,3 +59,27 @@ test('id persistido vazio ou apenas espacos aborta antes da auditoria',async()=>
   assert.equal(d.events.length,0);
  }
 });
+
+test('vinculo indefinido ou objeto nao autoriza',async()=>{
+ for(const membership of [undefined,null,1,{active:true},'true']){
+  const d=fake({isActiveMembership:async()=>membership});
+  assert.equal((await createException({actor,command,db:d})).status,403);
+  assert.equal(d.events.length,0);
+ }
+});
+test('consulta de reservas com resposta ambigua aborta sem escrita',async()=>{
+ for(const affected of [undefined,null,0,'false',{}]){
+  const d=fake({hasAffectedReservations:async()=>affected});
+  await assert.rejects(createException({actor,command,db:d}),/resultado invalido da consulta de agendamentos/);
+  assert.equal(d.committed,0);
+  assert.equal(d.events.length,0);
+ }
+});
+test('consulta de conflitos com resposta ambigua aborta sem escrita',async()=>{
+ for(const conflict of [undefined,null,0,'false',{}]){
+  const d=fake({hasConflictingException:async()=>conflict});
+  await assert.rejects(createException({actor,command,db:d}),/resultado invalido da consulta de conflitos/);
+  assert.equal(d.committed,0);
+  assert.equal(d.events.length,0);
+ }
+});
