@@ -309,3 +309,11 @@ Registro histórico anterior ao aceite final.
 - **Limitação expressa:** as restrições não impedem conflitos entre bloqueio geral e individual, nem garantem preservação de agendamentos existentes. A futura RPC de escrita deve bloquear/revalidar reservas e escopos distintos transacionalmente. A migração depende da extensão btree_gist já utilizada em DEV-022.
 - **Não executados nesta sessão:** suíte Node, CI, migração PostgreSQL e testes navegador. Git local segue indisponível por DNS. Nenhuma aprovação operacional/clinica ou publicação em produção. DEV-023 e PR #24 permanecem abertos.
 - Próximo: RPC transacional e testes de concorrência em PostgreSQL descartável, integração da grade e UI; validar precedência de feriados com operação.
+
+## Sessão de 06/11/2026 — projeção pura da grade DEV-023
+
+- Antes de escrever: consultados controle `main`, PRs (somente #24 aberto), Issues (nenhuma aberta), critérios DEV-005 v1.0 e planilha original `Plano_Desenvolvimento_Sistema_DM_Ultra_2026-2027.xlsm` no Drive; DEV-023 permanece 'Planejado' na planilha, que não foi modificada. Consultado inventário da pasta Web Ultra, sem republicar arquivos.
+- Criado `scripts/dev023_projecao_grade.cjs` (commit `c95c396`) para compor janelas regulares, feriados, exceções e reservas em memória, sem pacientes. Reserva cancelada não ocupa; horários são tratados como intervalos [início, fim).
+- Criados sete cenários sintéticos `scripts/dev023_projecao_grade.test.cjs` (commit `82b0e4a`); incluídos no workflow (commit `7ac36ff`).
+- **Testes escritos, não executados ou confirmados em CI nesta sessão.** A projeção é protótipo puro, não conectada à RPC PostgreSQL nem à UI. Regra de feriado bloqueante segue proposta operacional não homologada.
+- **Próxima tarefa:** integração da projeção com leitura PostgreSQL autorizada e grade DEV-022, RPC transacional de escrita com travas de reservas, testes em banco descartável e navegador. Não mesclar PR #24 antes disso.
