@@ -24,3 +24,9 @@
 - A política RLS foi ampliada para permitir que médicos vinculados vejam bloqueios gerais da própria unidade, sem permissão de escrita. Médicos continuam limitados às exceções de seus profissionais e bloqueios gerais; recepção e gestão podem consultar a unidade conforme autorização.
 - A função **não altera a disponibilidade da grade** e **não salva exceções**: integração ao cálculo da grade, testes reais de RLS e serviço transacional de escrita permanecem pendentes.
 - Quatro verificações estáticas adicionais foram escritas, mas não foram executadas nesta sessão. A precedência de feriados permanece proposta não homologada.
+
+## Revisão de 07/11/2026 — isolamento da projeção
+- Adicionado `strictBookingScope: true` ao adaptador sintético `projectDay`: reservas sem unidade, profissional e data válidos agora são rejeitadas explicitamente nesse modo. O comportamento legado sem escopo permanece para testes anteriores e **não deve ser usado como integração operacional**.
+- Quatro testes de regressão adicionados (ausência de escopo, escopo parcial, reserva correspondente e reserva de outra unidade). Commits `03a0e13` e `60a3dc6`.
+- Consulta de GitHub Actions: os dois workflows do commit anterior `63d7813` estavam concluídos com sucesso; os workflows do novo commit ainda não tinham conclusão verificada no momento da consulta. Os testes novos não foram executados localmente nesta sessão.
+- **Pendente:** ativar modo estrito em integração real, conectar a grade ao PostgreSQL, validar RLS/transações/concorrência e obter decisão operacional sobre feriados. Nenhuma homologação clínica inferida.
