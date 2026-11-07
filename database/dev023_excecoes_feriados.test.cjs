@@ -42,3 +42,11 @@ test('limite de 31 dias inclusivos nao permite 32 datas',()=>{
  assert.match(sql,/ate - de > 30/);
  assert.doesNotMatch(sql,/ate - de > 31/);
 });
+
+test('exclusao de intervalos sobrepostos por profissional e por unidade',()=>{
+ assert.match(sql,/constraint excecoes_profissional_sem_sobreposicao/);
+ assert.match(sql,/constraint excecoes_unidade_sem_sobreposicao/);
+ assert.match(sql,/where \(profissional_id is not null\)/);
+ assert.match(sql,/where \(profissional_id is null\)/);
+ assert.equal((sql.match(/int4range\(inicio_minuto,fim_minuto,'\[\)'\) with &&/g)||[]).length,2);
+});
