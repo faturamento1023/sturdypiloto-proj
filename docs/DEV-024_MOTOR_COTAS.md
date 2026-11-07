@@ -20,3 +20,9 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - CI anterior do PR #25: [42400674544](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42400674544), sucesso, **antes** da inclusão dos novos testes; novo CI pendente de confirmação.
 - A origem WebUltra documenta o domínio, mas esta política de validação é **proposta do piloto**, não comportamento comprovado do sistema original.
 - Bloqueios mantidos: reserva atômica PostgreSQL, concorrência, RLS, auditoria, integração com feriados/exceções e interface; não mesclar ou homologar.
+
+## Revisão complementar — 07/11/2026
+- CI do commit `c1b6766` confirmado com sucesso: [workflow 42405401901](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42405401901). Isso não valida as alterações posteriores.
+- Corrigidos dois casos de integridade do avaliador: regras sem `id` textual não vazio são rejeitadas; intervalos cujo produto em milissegundos excede inteiro seguro também são rejeitados.
+- Commits: `7e03007` (código), `10295f9` (três testes sintéticos). O padrão `lib/dev024/*.test.mjs` já está no CI. Execução desses novos testes ainda não confirmada.
+- Sem transação PostgreSQL, testes de concorrência/RLS/auditoria, integração de agenda ou homologação. PR permanece em rascunho; não mesclar.
