@@ -50,3 +50,12 @@ test('auditoria registra identidade e unidade do ator autorizado',async()=>{
  assert.equal(response.status,201);
  assert.deepEqual(d.events,[{actorId:'fake',unitId:'u1',recordId:'e1',action:'excecao_criada'}]);
 });
+
+test('id persistido vazio ou apenas espacos aborta antes da auditoria',async()=>{
+ for(const id of ['', '  ', null, 123]){
+  const d=fake({insertException:async()=>({id})});
+  await assert.rejects(createException({actor,command,db:d}),/insercao sem id valido/);
+  assert.equal(d.committed,0);
+  assert.equal(d.events.length,0);
+ }
+});
