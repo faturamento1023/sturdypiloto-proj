@@ -17,7 +17,7 @@ async function createException({actor,command,db}){
   if(await tx.hasAffectedReservations(data))return {status:409,error:'agendamentos_existentes'};
   if(await tx.hasConflictingException(data))return {status:409,error:'excecao_conflitante'};
   const record=await tx.insertException(data);
-  if(!record||!record.id)throw Error('insercao sem id');
+  if(!record||typeof record.id!=='string'||!record.id.trim())throw Error('insercao sem id valido');
   await tx.audit({actorId:actor.id,unitId:data.unitId,recordId:record.id,action:'excecao_criada'});
   return {status:201,id:record.id};
  });
