@@ -21,3 +21,7 @@ test('modo estrito rejeita reserva sem escopo',()=>assert.throws(()=>projectDay(
 test('modo estrito rejeita escopo parcial',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',start:480,end:540}]}),/escopo da reserva invalido/));
 test('modo estrito aceita reserva totalmente identificada',()=>assert.deepEqual(projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:base.date,start:480,end:720}]}).free,[]));
 test('modo estrito ignora reserva de outra unidade com escopo completo',()=>assert.equal(projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u2',professionalId:'p1',date:base.date,start:480,end:720}]}).free.length,1));
+
+test('modo estrito rejeita dia inexistente',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:'2026-02-30',start:480,end:540}]}),/escopo da reserva invalido/));
+test('modo estrito rejeita mes inexistente',()=>assert.throws(()=>projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:'2026-13-09',start:480,end:540}]}),/escopo da reserva invalido/));
+test('modo estrito aceita data bissexta valida de outro dia',()=>assert.equal(projectDay({...base,strictBookingScope:true,bookings:[{unitId:'u1',professionalId:'p1',date:'2028-02-29',start:480,end:540}]}).free.length,1));
