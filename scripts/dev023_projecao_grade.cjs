@@ -4,10 +4,15 @@ const {resolveDay}=require('./dev023_excecoes.cjs');
 function projectDay(input){
  const resolved=resolveDay(input);
  const bookings=input.bookings??[];
+ // Modo estrito para integracoes: nao aceitar reservas sem escopo completo.
+ // O modo legado permanece apenas para testes sinteticos anteriores.
+ const strictScope=input.strictBookingScope===true;
  if(!Array.isArray(bookings))throw new TypeError('reservas invalidas');
  const intervals=bookings.filter(b=>{
   if(!b||typeof b!=='object')throw new TypeError('reserva invalida');
-  // Escopo informado deve coincidir; registros sem escopo sao aceitos apenas no adaptador legado.
+  // No modo estrito, escopo ausente e erro (nao assumir que pertence ao profissional).
+  if(strictScope&&(typeof b.unitId!=='string'||!b.unitId||typeof b.professionalId!=='string'||!b.professionalId||typeof b.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(b.date)))throw new TypeError('escopo da reserva invalido');
+  // Modo legado aceita registros sem escopo somente em simulacoes.
   if(b.unitId!==undefined&&b.unitId!==input.unitId)return false;
   if(b.professionalId!==undefined&&b.professionalId!==input.professionalId)return false;
   if(b.date!==undefined&&b.date!==input.date)return false;
