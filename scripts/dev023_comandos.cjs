@@ -13,9 +13,19 @@ async function createException({actor,command,db}){
  let data;try{data=validate(command);}catch{return {status:400};}
  if(!db||typeof db.transaction!=='function')throw Error('adaptador transacional obrigatorio');
  return db.transaction(async tx=>{
-  if(!await tx.isActiveMembership(actor.id,data.unitId))return {status:403};
-  if(await tx.hasAffectedReservations(data))return {status:409,error:'agendamentos_existentes'};
-  if(await tx.hasConflictingException(data))return {status:409,error:'excecao_conflitante'};
+  // Falhar fechado: adaptadores devem retornar booleanos reais, nao objetos truthy/falsy.
+  const membership=await tx.isActiveMembership(actor.id,data.unitId);
+  if(membership!==true)return {status:403};
+  const affected=await tx.hasAffectedReservations(data);
+  if(affected!==false){
+   if(affected===true)return {status:409,error:'agendamentos_existentes'};
+   throw Error('resultado invalido da consulta de agendamentos');
+  }
+  const conflict=await tx.hasConflictingException(data);
+  if(conflict!==false){
+   if(conflict===true)return {status:409,error:'excecao_conflitante'};
+   throw Error('resultado invalido da consulta de conflitos');
+  }
   const record=await tx.insertException(data);
   if(!record||typeof record.id!=='string'||!record.id.trim())throw Error('insercao sem id valido');
   await tx.audit({actorId:actor.id,unitId:data.unitId,recordId:record.id,action:'excecao_criada'});
