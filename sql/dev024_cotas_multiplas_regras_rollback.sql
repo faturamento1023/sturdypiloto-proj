@@ -86,4 +86,39 @@ BEGIN
   END IF;
 END
 $dev024_sucesso$;
+
+-- Caminho de saturacao: repetir a operacao deve falhar sem alterar
+-- qualquer contador, inclusive quando uma regra ainda possui capacidade.
+DO $dev024_saturacao$
+DECLARE
+  alteradas integer;
+  primeira integer;
+  segunda integer;
+  bloqueou boolean := false;
+BEGIN
+  BEGIN
+    UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
+     WHERE regra_id = '00000000-0000-4000-8000-000000000031'
+       AND utilizados < limite;
+    GET DIAGNOSTICS alteradas = ROW_COUNT;
+    IF alteradas <> 1 THEN RAISE EXCEPTION 'DEV024: primeira regra deveria ter capacidade'; END IF;
+
+    UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
+     WHERE regra_id = '00000000-0000-4000-8000-000000000032'
+       AND utilizados < limite;
+    GET DIAGNOSTICS alteradas = ROW_COUNT;
+    IF alteradas <> 1 THEN RAISE EXCEPTION 'DEV024: segunda regra saturada'; END IF;
+  EXCEPTION WHEN OTHERS THEN
+    bloqueou := true;
+  END;
+  IF NOT bloqueou THEN RAISE EXCEPTION 'DEV024: saturacao nao bloqueou nova reserva'; END IF;
+  SELECT utilizados INTO primeira FROM piloto_cota_contadores
+   WHERE regra_id = '00000000-0000-4000-8000-000000000031';
+  SELECT utilizados INTO segunda FROM piloto_cota_contadores
+   WHERE regra_id = '00000000-0000-4000-8000-000000000032';
+  IF primeira IS DISTINCT FROM 1 OR segunda IS DISTINCT FROM 1 THEN
+    RAISE EXCEPTION 'DEV024: saturacao alterou contadores (% / %)', primeira, segunda;
+  END IF;
+END
+$dev024_saturacao$;
 ROLLBACK;
