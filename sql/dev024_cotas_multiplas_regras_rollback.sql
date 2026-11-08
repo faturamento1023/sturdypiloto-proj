@@ -159,4 +159,32 @@ BEGIN
   END IF;
 END
 $dev024_outra_unidade$;
+
+-- Regressao inversa: consumo autorizado na outra unidade nao altera a local.
+-- Usa a mesma regra e janela para exercitar a chave composta.
+DO $dev024_isolamento_inverso$
+DECLARE
+  alteradas integer;
+  outra integer;
+  local_atual integer;
+BEGIN
+  UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000025'
+     AND regra_id = '00000000-0000-4000-8000-000000000031'
+     AND utilizados < limite;
+  GET DIAGNOSTICS alteradas = ROW_COUNT;
+  IF alteradas <> 1 THEN
+    RAISE EXCEPTION 'DEV024: consumo da outra unidade nao foi unico (%)', alteradas;
+  END IF;
+  SELECT utilizados INTO outra FROM piloto_cota_contadores
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000025'
+     AND regra_id = '00000000-0000-4000-8000-000000000031';
+  SELECT utilizados INTO local_atual FROM piloto_cota_contadores
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+     AND regra_id = '00000000-0000-4000-8000-000000000031';
+  IF outra IS DISTINCT FROM 1 OR local_atual IS DISTINCT FROM 2 THEN
+    RAISE EXCEPTION 'DEV024: isolamento inverso falhou (% / %)', outra, local_atual;
+  END IF;
+END
+$dev024_isolamento_inverso$;
 ROLLBACK;
