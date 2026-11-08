@@ -68,3 +68,11 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - Corrigido o filtro para comparar reservas com as dimensões explicitamente fixadas na **regra**, mantendo isolamento por unidade, status cancelado e janelas temporais. Commit [80e4f56](https://github.com/faturamento1023/sturdypiloto-proj/commit/80e4f568aab24f5b1a8c2a779302b2cfca9bbb29).
 - Criados seis testes sintéticos em `lib/dev024/cotas.escopo-compartilhado.test.mjs`, commit [a4d45b2](https://github.com/faturamento1023/sturdypiloto-proj/commit/a4d45b2235948ce3a17a85332573924a2dc3bc36). Os seis testes passaram localmente com Node 22 em cópia isolada da função corrigida; CI do commit remoto ainda deve ser conferido.
 - Esta semântica de cotas compartilhadas é **proposta do Projeto Piloto**, não regra comprovada do WebUltra. Ainda faltam transação atômica PostgreSQL, concorrência, RLS, auditoria, integração com agenda/feriados e homologação operacional. Não mesclar PR #25.
+
+
+## Revisão de 08/11/2026 — primeiro artefato PostgreSQL (não executado)
+- Consulta prévia: controle de execução, PR #25, Issues, critérios DEV-005, cronograma XLSM e pasta Web Ultra. DEV-024 permanece aberta; PR em rascunho.
+- CI verificado: [run 42438474688](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42438474688) concluído com sucesso para o commit `102104a` (bateria de testes existente).
+- Criado `sql/dev024_cotas_contadores_experimental.sql` no commit `11826ce`: tabela de contadores por unidade/regra/janela, restrições de integridade e modelo de UPDATE condicional atômico sob lock de linha.
+- **Não executado em PostgreSQL**; SQL experimental, sem política RLS, auditoria, integração de agenda, idempotência ou testes concorrentes. Não é migração pronta nem comprovação de paridade WebUltra.
+- Próxima ação: integrar o modelo ao esquema DEV-009 em banco descartável, testar duas reservas simultâneas e rollback de múltiplas regras, validar RLS e auditoria, só depois integrar à API. Não mesclar PR #25.
