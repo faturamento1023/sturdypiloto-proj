@@ -187,4 +187,42 @@ BEGIN
   END IF;
 END
 $dev024_isolamento_inverso$;
+
+-- Regressao temporal: mesma unidade e regra, mas janelas distintas.
+-- O identificador da regra sozinho nao identifica um contador.
+INSERT INTO piloto_cota_contadores
+ (unidade_id, regra_id, janela_inicio, janela_fim, limite, utilizados)
+VALUES
+ ('00000000-0000-4000-8000-000000000025',
+  '00000000-0000-4000-8000-000000000031',
+  '2026-11-08 13:00+00','2026-11-08 14:00+00',5,0);
+DO $dev024_isolamento_janela$
+DECLARE
+  alteradas integer;
+  janela_original integer;
+  janela_seguinte integer;
+BEGIN
+  UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000025'
+     AND regra_id = '00000000-0000-4000-8000-000000000031'
+     AND janela_inicio = '2026-11-08 13:00+00'::timestamptz
+     AND janela_fim = '2026-11-08 14:00+00'::timestamptz
+     AND utilizados < limite;
+  GET DIAGNOSTICS alteradas = ROW_COUNT;
+  IF alteradas <> 1 THEN
+    RAISE EXCEPTION 'DEV024: janela alvo nao foi atualizada uma unica vez (%)', alteradas;
+  END IF;
+  SELECT utilizados INTO janela_original FROM piloto_cota_contadores
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000025'
+     AND regra_id = '00000000-0000-4000-8000-000000000031'
+     AND janela_inicio = '2026-11-08 12:00+00'::timestamptz;
+  SELECT utilizados INTO janela_seguinte FROM piloto_cota_contadores
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000025'
+     AND regra_id = '00000000-0000-4000-8000-000000000031'
+     AND janela_inicio = '2026-11-08 13:00+00'::timestamptz;
+  IF janela_original IS DISTINCT FROM 1 OR janela_seguinte IS DISTINCT FROM 1 THEN
+    RAISE EXCEPTION 'DEV024: vazamento entre janelas (% / %)', janela_original, janela_seguinte;
+  END IF;
+END
+$dev024_isolamento_janela$;
 ROLLBACK;
