@@ -50,4 +50,40 @@ BEGIN
   END IF;
 END
 $dev024$;
+
+-- Caminho positivo: com capacidade em ambas as regras, ambas devem consumir
+-- exatamente uma unidade na mesma transação de teste.
+UPDATE piloto_cota_contadores
+   SET limite = 1
+ WHERE regra_id = '00000000-0000-4000-8000-000000000032';
+
+DO $dev024_sucesso$
+DECLARE
+  alteradas integer;
+  primeira integer;
+  segunda integer;
+BEGIN
+  UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+     AND regra_id = '00000000-0000-4000-8000-000000000031'
+     AND utilizados < limite;
+  GET DIAGNOSTICS alteradas = ROW_COUNT;
+  IF alteradas <> 1 THEN RAISE EXCEPTION 'DEV024: primeira regra nao consumida'; END IF;
+
+  UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+     AND regra_id = '00000000-0000-4000-8000-000000000032'
+     AND utilizados < limite;
+  GET DIAGNOSTICS alteradas = ROW_COUNT;
+  IF alteradas <> 1 THEN RAISE EXCEPTION 'DEV024: segunda regra nao consumida'; END IF;
+
+  SELECT utilizados INTO primeira FROM piloto_cota_contadores
+   WHERE regra_id = '00000000-0000-4000-8000-000000000031';
+  SELECT utilizados INTO segunda FROM piloto_cota_contadores
+   WHERE regra_id = '00000000-0000-4000-8000-000000000032';
+  IF primeira <> 1 OR segunda <> 1 THEN
+    RAISE EXCEPTION 'DEV024: consumo positivo inconsistente (% / %)', primeira, segunda;
+  END IF;
+END
+$dev024_sucesso$;
 ROLLBACK;
