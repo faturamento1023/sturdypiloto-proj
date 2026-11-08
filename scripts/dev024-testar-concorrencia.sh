@@ -13,6 +13,13 @@ if [[ ! "$DATABASE_URL" =~ ^postgres(ql)?://([^/?#@]+@)?(localhost|127[.]0[.]0[.
   echo "Segurança: use URI postgres:// ou postgresql:// para localhost/127.0.0.1, com banco explícito e sem query/fragmento" >&2
   exit 2
 fi
+# Proteção adicional: mesmo em localhost, nunca executar contra um banco
+# operacional. O CI usa exclusivamente o banco descartável piloto_dev024.
+# Validar o nome efetivo no servidor (não apenas o texto da URI).
+if [[ ! "$DATABASE_URL" =~ /piloto_dev024$ ]]; then
+  echo "Segurança: o banco deve ser exclusivamente piloto_dev024" >&2
+  exit 2
+fi
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 tmp="$(mktemp -d)"
 schema="dev024_concorrencia_${RANDOM}_$$"
@@ -35,6 +42,11 @@ diagnostics() {
   cleanup
 }
 trap diagnostics EXIT
+actual_db="$(psql_run -c 'SELECT current_database()')"
+if [[ "$actual_db" != "piloto_dev024" ]]; then
+  echo "Segurança: conexão apontou para banco inesperado" >&2
+  exit 2
+fi
 psql_run -c "CREATE SCHEMA $schema" >/dev/null
 PGOPTIONS="-c search_path=$schema,public -c statement_timeout=12000" \
   psql "$DATABASE_URL" -X -q -v ON_ERROR_STOP=1 -f "$root/sql/dev024_cotas_contadores_experimental.sql" >/dev/null
