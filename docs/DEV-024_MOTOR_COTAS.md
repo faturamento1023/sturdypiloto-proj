@@ -47,3 +47,10 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - **Execução dos novos testes ainda não verificada**: a criação do arquivo não demonstra aprovação do CI. O workflow já usa o padrão `lib/dev024/*.test.mjs`; conferir o run do commit antes de mesclar.
 - Revisão estática: o avaliador puro não garante atomicidade e não deve ser usado como decisão final de reserva; ausência de regra continua permissiva por proposta, sem homologação. Não se trata de observação funcional confirmada no WebUltra.
 - Próxima entrega prioritária: transação PostgreSQL com bloqueio por chave de cota, concorrência de duas reservas simultâneas, RLS, auditoria e integração com feriados e grade. Manter PR #25 em rascunho.
+
+## Revisão de 07/11/2026 — validação integral do lote
+- Reconciliado o PR #25 e consultados controle, Issue DEV-006, critérios DEV-005 e cronograma original no Drive antes da escrita.
+- Corrigido o avaliador para validar todas as reservas do lote antes de filtrar regras aplicáveis. Anteriormente uma reserva ativa com data inválida poderia passar despercebida se nenhuma regra correspondesse; isso não cria reserva nem altera banco.
+- Commits: `dcfeff3` (correção) e `9f13fa8` (cinco testes sintéticos em `lib/dev024/cotas.lote-validacao.test.mjs`). O padrão `lib/dev024/*.test.mjs` está configurado no CI.
+- **Testes novos ainda não confirmados como executados no GitHub Actions**; não declarar aprovação. Política de validação é proposta do Piloto, não observação comprovada do WebUltra.
+- Bloqueios: reserva transacional PostgreSQL, concorrência, RLS, auditoria, integração da grade com feriados/exceções e homologação operacional. Manter PR em rascunho e não publicar produção.
