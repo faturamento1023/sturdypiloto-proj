@@ -130,4 +130,33 @@ BEGIN
   END IF;
 END
 $dev024_saturacao$;
+-- Regressao de isolamento: mesma regra e janela em outra unidade.
+-- Um UPDATE sem unidade_id poderia consumir cota de outra unidade.
+INSERT INTO piloto_cota_contadores
+ (unidade_id, regra_id, janela_inicio, janela_fim, limite, utilizados)
+VALUES
+ ('00000000-0000-4000-8000-000000000025',
+  '00000000-0000-4000-8000-000000000031',
+  '2026-11-08 12:00+00','2026-11-08 13:00+00',5,0);
+
+DO $dev024_outra_unidade$
+DECLARE
+  outra integer;
+  local_atual integer;
+BEGIN
+  UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+     AND regra_id = '00000000-0000-4000-8000-000000000031'
+     AND utilizados < limite;
+  SELECT utilizados INTO outra FROM piloto_cota_contadores
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000025'
+     AND regra_id = '00000000-0000-4000-8000-000000000031';
+  SELECT utilizados INTO local_atual FROM piloto_cota_contadores
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+     AND regra_id = '00000000-0000-4000-8000-000000000031';
+  IF outra IS DISTINCT FROM 0 OR local_atual IS DISTINCT FROM 2 THEN
+    RAISE EXCEPTION 'DEV024: vazamento entre unidades (% / %)', outra, local_atual;
+  END IF;
+END
+$dev024_outra_unidade$;
 ROLLBACK;
