@@ -54,3 +54,10 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - Commits: `dcfeff3` (correção) e `9f13fa8` (cinco testes sintéticos em `lib/dev024/cotas.lote-validacao.test.mjs`). O padrão `lib/dev024/*.test.mjs` está configurado no CI.
 - **Testes novos ainda não confirmados como executados no GitHub Actions**; não declarar aprovação. Política de validação é proposta do Piloto, não observação comprovada do WebUltra.
 - Bloqueios: reserva transacional PostgreSQL, concorrência, RLS, auditoria, integração da grade com feriados/exceções e homologação operacional. Manter PR em rascunho e não publicar produção.
+
+## Revisão de 07/11/2026 — offsets em reservas ativas
+- Inspecionado o avaliador na branch do PR #25. Detectado defeito concreto: a expressão regular de reservas ativas continha barras duplicadas (\\\\d) no código-fonte e não reconhecia offsets ISO como `-03:00`, embora a validação do pedido os reconhecesse.
+- Corrigida a expressão regular no commit `c1eb97a`; adicionados três testes sintéticos de regressão no commit `110dcd0`, cobrindo equivalência UTC, outra janela e rejeição de data sem fuso.
+- **Execução dos novos testes no CI ainda não confirmada.** A mudança não oferece atomicidade nem prova de homologação.
+- Cronograma XLSM original consultado somente para leitura: DEV-024 consta como “Não iniciado”, divergindo do trabalho em andamento no GitHub. Fonte Web Ultra preservada.
+- Próxima prioridade permanece transação PostgreSQL com concorrência, RLS, auditoria e integração de feriados/exceções; não mesclar PR #25.
