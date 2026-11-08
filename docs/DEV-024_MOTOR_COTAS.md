@@ -61,3 +61,10 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - **Execução dos novos testes no CI ainda não confirmada.** A mudança não oferece atomicidade nem prova de homologação.
 - Cronograma XLSM original consultado somente para leitura: DEV-024 consta como “Não iniciado”, divergindo do trabalho em andamento no GitHub. Fonte Web Ultra preservada.
 - Próxima prioridade permanece transação PostgreSQL com concorrência, RLS, auditoria e integração de feriados/exceções; não mesclar PR #25.
+
+## Revisão de 07/11/2026 — escopo compartilhado de cotas
+- Confirmados controle de execução, PR #25 em rascunho, critérios DEV-005, cronograma XLSM e inventário Web Ultra antes de alterar a branch.
+- Defeito identificado no avaliador puro: para uma regra com dimensão opcional ausente (cota global/compartilhada), o contador filtrava reservas pelos atributos do **pedido**. Assim, reservas de outro convênio/procedimento/grupo na mesma unidade não consumiam a cota global.
+- Corrigido o filtro para comparar reservas com as dimensões explicitamente fixadas na **regra**, mantendo isolamento por unidade, status cancelado e janelas temporais. Commit [80e4f56](https://github.com/faturamento1023/sturdypiloto-proj/commit/80e4f568aab24f5b1a8c2a779302b2cfca9bbb29).
+- Criados seis testes sintéticos em `lib/dev024/cotas.escopo-compartilhado.test.mjs`, commit [a4d45b2](https://github.com/faturamento1023/sturdypiloto-proj/commit/a4d45b2235948ce3a17a85332573924a2dc3bc36). Os seis testes passaram localmente com Node 22 em cópia isolada da função corrigida; CI do commit remoto ainda deve ser conferido.
+- Esta semântica de cotas compartilhadas é **proposta do Projeto Piloto**, não regra comprovada do WebUltra. Ainda faltam transação atômica PostgreSQL, concorrência, RLS, auditoria, integração com agenda/feriados e homologação operacional. Não mesclar PR #25.
