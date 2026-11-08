@@ -20,7 +20,20 @@ cleanup() {
   psql_run -c "DROP SCHEMA IF EXISTS $schema CASCADE" >/dev/null 2>&1 || true
   rm -rf "$tmp"
 }
-trap cleanup EXIT
+diagnostics() {
+  local code=$?
+  if (( code != 0 )); then
+    echo "DEV-024: falha no ensaio (exit=$code); resultados SQL sinteticos:" >&2
+    for f in a.out a.err b.out b.err; do
+      if [[ -f "$tmp/$f" ]]; then
+        echo "--- $f ---" >&2
+        tail -n 20 "$tmp/$f" >&2
+      fi
+    done
+  fi
+  cleanup
+}
+trap diagnostics EXIT
 psql_run -c "CREATE SCHEMA $schema" >/dev/null
 PGOPTIONS="-c search_path=$schema,public -c statement_timeout=12000" \
   psql "$DATABASE_URL" -X -q -v ON_ERROR_STOP=1 -f "$root/sql/dev024_cotas_contadores_experimental.sql" >/dev/null
