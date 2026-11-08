@@ -6,9 +6,10 @@ set -euo pipefail
 command -v psql >/dev/null || { echo "psql não instalado" >&2; exit 2; }
 command -v timeout >/dev/null || { echo "timeout não instalado" >&2; exit 2; }
 # Exigir URI PostgreSQL sem parâmetros que possam sobrescrever host/porta.
+# Usar [.] no regex Bash evita dupla escapagem acidental e aceita 127.0.0.1.
 # Procurar apenas a substring "localhost" não é seguro: um host remoto
 # como localhost.exemplo.org também passaria nessa verificação.
-if [[ ! "$DATABASE_URL" =~ ^postgres(ql)?://([^/?#@]+@)?(localhost|127\\.0\\.0\\.1)(:[0-9]{1,5})?/[^/?#]+$ ]]; then
+if [[ ! "$DATABASE_URL" =~ ^postgres(ql)?://([^/?#@]+@)?(localhost|127[.]0[.]0[.]1)(:[0-9]{1,5})?/[^/?#]+$ ]]; then
   echo "Segurança: use URI postgres:// ou postgresql:// para localhost/127.0.0.1, com banco explícito e sem query/fragmento" >&2
   exit 2
 fi
