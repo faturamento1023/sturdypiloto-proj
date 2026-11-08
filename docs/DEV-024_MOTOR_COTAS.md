@@ -76,3 +76,10 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - Criado `sql/dev024_cotas_contadores_experimental.sql` no commit `11826ce`: tabela de contadores por unidade/regra/janela, restrições de integridade e modelo de UPDATE condicional atômico sob lock de linha.
 - **Não executado em PostgreSQL**; SQL experimental, sem política RLS, auditoria, integração de agenda, idempotência ou testes concorrentes. Não é migração pronta nem comprovação de paridade WebUltra.
 - Próxima ação: integrar o modelo ao esquema DEV-009 em banco descartável, testar duas reservas simultâneas e rollback de múltiplas regras, validar RLS e auditoria, só depois integrar à API. Não mesclar PR #25.
+
+## Verificação de 08/11/2026 — CI do isolamento por unidade
+- Reconciliado o PR #25 na branch `dev-024-motor-cotas`, HEAD `33007291357cc24ee02fb18b45e70a720f8f8943`; PR continua aberto e em rascunho. O controle de execuções registra DEV-001 a DEV-023 concluídas e DEV-024 em andamento.
+- O commit `3300729` (filtros de unidade no ensaio de múltiplas regras) passou no [CI principal #42514545217](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42514545217) e no [PostgreSQL #42514545216](https://github.com/faturamento1023/sturdypiloto-proj/actions/runs/42514545216), ambos com conclusão `success` para o mesmo SHA.
+- Escopo da evidência: testes automatizados sintéticos de contadores, concorrência COMMIT/ROLLBACK e atomicidade multi-regra. **Não** prova isolamento RLS real, auditoria de reservas, idempotência, bloqueio de sala, feriados, exceções ou integração com a agenda.
+- Cronograma original XLSM e inventário Web Ultra consultados somente para leitura. A política de cotas permanece proposta do Piloto, não observação comprovada no WebUltra.
+- Próxima implementação: reserva transacional persistida com chave idempotente por unidade, verificação de disponibilidade DEV-023 dentro da mesma transação, RLS e auditoria; acrescentar testes de acesso cruzado e repetição da mesma requisição antes de considerar merge.
