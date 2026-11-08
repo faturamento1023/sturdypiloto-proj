@@ -5,10 +5,13 @@ set -euo pipefail
 : "${DATABASE_URL:?Defina DATABASE_URL para um PostgreSQL LOCAL DESCARTÁVEL}"
 command -v psql >/dev/null || { echo "psql não instalado" >&2; exit 2; }
 command -v timeout >/dev/null || { echo "timeout não instalado" >&2; exit 2; }
-case "$DATABASE_URL" in
-  *localhost*|*127.0.0.1*|*"/var/run/postgresql"*) ;;
-  *) echo "Segurança: DATABASE_URL deve apontar explicitamente para localhost/127.0.0.1" >&2; exit 2 ;;
-esac
+# Exigir URI PostgreSQL sem parâmetros que possam sobrescrever host/porta.
+# Procurar apenas a substring "localhost" não é seguro: um host remoto
+# como localhost.exemplo.org também passaria nessa verificação.
+if [[ ! "$DATABASE_URL" =~ ^postgres(ql)?://([^/?#@]+@)?(localhost|127\\.0\\.0\\.1)(:[0-9]{1,5})?/[^/?#]+$ ]]; then
+  echo "Segurança: use URI postgres:// ou postgresql:// para localhost/127.0.0.1, com banco explícito e sem query/fragmento" >&2
+  exit 2
+fi
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 tmp="$(mktemp -d)"
 schema="dev024_concorrencia_${RANDOM}_$$"
