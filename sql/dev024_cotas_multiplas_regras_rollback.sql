@@ -42,9 +42,11 @@ BEGIN
 
   IF NOT falhou THEN RAISE EXCEPTION 'DEV024: era esperado bloqueio pela segunda regra'; END IF;
   SELECT utilizados INTO primeira FROM piloto_cota_contadores
-   WHERE regra_id = '00000000-0000-4000-8000-000000000031';
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000031';
   SELECT utilizados INTO segunda FROM piloto_cota_contadores
-   WHERE regra_id = '00000000-0000-4000-8000-000000000032';
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000032';
   IF primeira <> 0 OR segunda <> 0 THEN
     RAISE EXCEPTION 'DEV024: atualização parcial detectada (% / %)', primeira, segunda;
   END IF;
@@ -55,7 +57,8 @@ $dev024$;
 -- exatamente uma unidade na mesma transação de teste.
 UPDATE piloto_cota_contadores
    SET limite = 1
- WHERE regra_id = '00000000-0000-4000-8000-000000000032';
+ WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000032';
 
 DO $dev024_sucesso$
 DECLARE
@@ -78,9 +81,11 @@ BEGIN
   IF alteradas <> 1 THEN RAISE EXCEPTION 'DEV024: segunda regra nao consumida'; END IF;
 
   SELECT utilizados INTO primeira FROM piloto_cota_contadores
-   WHERE regra_id = '00000000-0000-4000-8000-000000000031';
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000031';
   SELECT utilizados INTO segunda FROM piloto_cota_contadores
-   WHERE regra_id = '00000000-0000-4000-8000-000000000032';
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000032';
   IF primeira <> 1 OR segunda <> 1 THEN
     RAISE EXCEPTION 'DEV024: consumo positivo inconsistente (% / %)', primeira, segunda;
   END IF;
@@ -98,13 +103,15 @@ DECLARE
 BEGIN
   BEGIN
     UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
-     WHERE regra_id = '00000000-0000-4000-8000-000000000031'
+     WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000031'
        AND utilizados < limite;
     GET DIAGNOSTICS alteradas = ROW_COUNT;
     IF alteradas <> 1 THEN RAISE EXCEPTION 'DEV024: primeira regra deveria ter capacidade'; END IF;
 
     UPDATE piloto_cota_contadores SET utilizados = utilizados + 1
-     WHERE regra_id = '00000000-0000-4000-8000-000000000032'
+     WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000032'
        AND utilizados < limite;
     GET DIAGNOSTICS alteradas = ROW_COUNT;
     IF alteradas <> 1 THEN RAISE EXCEPTION 'DEV024: segunda regra saturada'; END IF;
@@ -113,9 +120,11 @@ BEGIN
   END;
   IF NOT bloqueou THEN RAISE EXCEPTION 'DEV024: saturacao nao bloqueou nova reserva'; END IF;
   SELECT utilizados INTO primeira FROM piloto_cota_contadores
-   WHERE regra_id = '00000000-0000-4000-8000-000000000031';
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000031';
   SELECT utilizados INTO segunda FROM piloto_cota_contadores
-   WHERE regra_id = '00000000-0000-4000-8000-000000000032';
+   WHERE unidade_id = '00000000-0000-4000-8000-000000000024'
+   AND regra_id = '00000000-0000-4000-8000-000000000032';
   IF primeira IS DISTINCT FROM 1 OR segunda IS DISTINCT FROM 1 THEN
     RAISE EXCEPTION 'DEV024: saturacao alterou contadores (% / %)', primeira, segunda;
   END IF;
