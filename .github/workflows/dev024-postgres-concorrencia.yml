@@ -5,6 +5,7 @@ on:
       - 'scripts/dev024-testar-concorrencia.sh'
       - 'sql/dev024_cotas_contadores_experimental.sql'
       - 'sql/dev024_cotas_multiplas_regras_rollback.sql'
+      - 'sql/dev024_idempotencia_experimental.sql'
       - '.github/workflows/dev024-postgres-concorrencia.yml'
   workflow_dispatch:
 
@@ -49,7 +50,11 @@ jobs:
           psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
             -f sql/dev024_cotas_contadores_experimental.sql \
             -f sql/dev024_cotas_multiplas_regras_rollback.sql
+      - name: Validar ensaio isolado de idempotencia (ROLLBACK)
+        env:
+          DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
+        run: psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f sql/dev024_idempotencia_experimental.sql
       - name: Limites do teste
         run: |
-          echo "Ensaio somente de contadores em banco descartavel."
+          echo "Ensaios de contadores e idempotencia isolada em banco descartavel."
           echo "Nao valida reserva clinica, RLS, auditoria ou homologacao."
