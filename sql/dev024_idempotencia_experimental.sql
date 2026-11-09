@@ -55,6 +55,35 @@ BEGIN
    RAISE EXCEPTION 'DEV024: replay perdeu referencia da reserva';
  END IF;
 END $teste$;
+-- Regressões negativas: as restrições devem falhar no próprio PostgreSQL.
+-- Cada erro esperado é capturado sem interromper o ensaio descartável.
+DO $teste$
+BEGIN
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+  VALUES ('00000000-0000-4000-8000-000000000024','hash-invalido','nao-e-sha256');
+  RAISE EXCEPTION 'DEV024: hash malformado foi aceito';
+ EXCEPTION WHEN check_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash,estado)
+  VALUES ('00000000-0000-4000-8000-000000000024','confirmada-sem-reserva',repeat('c',64),'confirmada');
+  RAISE EXCEPTION 'DEV024: confirmacao sem reserva foi aceita';
+ EXCEPTION WHEN check_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash,estado,reserva_id)
+  VALUES ('00000000-0000-4000-8000-000000000024','pendente-com-reserva',repeat('d',64),'pendente','00000000-0000-4000-8000-000000000125');
+  RAISE EXCEPTION 'DEV024: reserva vinculada a estado pendente foi aceita';
+ EXCEPTION WHEN check_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+  VALUES ('00000000-0000-4000-8000-000000000024','teste-a',repeat('a',64));
+  RAISE EXCEPTION 'DEV024: duplicidade da chave por unidade foi aceita';
+ EXCEPTION WHEN unique_violation THEN NULL;
+ END;
+END $teste$;
 -- Mesma chave em outra unidade é independente.
 INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
 VALUES ('00000000-0000-4000-8000-000000000025','teste-a',repeat('b',64));
