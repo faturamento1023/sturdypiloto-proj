@@ -18,7 +18,7 @@ CREATE TEMP TABLE dev024_reservas (
 );
 CREATE TEMP TABLE dev024_operacoes (
  unidade uuid NOT NULL, chave text NOT NULL, hash text NOT NULL,
- reserva_id bigint NOT NULL, PRIMARY KEY(unidade,chave)
+ slot uuid NOT NULL, reserva_id bigint NOT NULL, PRIMARY KEY(unidade,chave)
 );
 CREATE TEMP TABLE dev024_auditoria (
  unidade uuid NOT NULL, reserva_id bigint NOT NULL, acao text NOT NULL,
@@ -27,7 +27,7 @@ CREATE TEMP TABLE dev024_auditoria (
 CREATE OR REPLACE FUNCTION pg_temp.dev024_reservar(
  p_unidade uuid,p_slot uuid,p_chave text,p_hash text
 ) RETURNS bigint LANGUAGE plpgsql AS $$
-DECLARE v_id bigint; v_hash text; v_linhas integer;
+DECLARE v_id bigint; v_hash text; v_slot uuid; v_linhas integer;
 BEGIN
  IF p_unidade IS NULL OR p_slot IS NULL OR p_chave IS NULL OR
     btrim(p_chave) <> p_chave OR length(p_chave) NOT BETWEEN 1 AND 128 OR
@@ -36,10 +36,10 @@ BEGIN
  END IF;
  -- Serializa a mesma chave antes de consumir a cota. Hash divergente e conflito.
  PERFORM pg_advisory_xact_lock(hashtextextended(p_unidade::text || ':' || p_chave,0));
- SELECT hash,reserva_id INTO v_hash,v_id FROM dev024_operacoes
+ SELECT hash,slot,reserva_id INTO v_hash,v_slot,v_id FROM dev024_operacoes
  WHERE unidade=p_unidade AND chave=p_chave;
  IF FOUND THEN
-   IF v_hash <> p_hash THEN
+   IF v_hash <> p_hash OR v_slot <> p_slot THEN
      RAISE EXCEPTION 'chave reutilizada com payload diferente' USING ERRCODE='23505';
    END IF;
    RETURN v_id;
@@ -53,7 +53,7 @@ BEGIN
  GET DIAGNOSTICS v_linhas=ROW_COUNT;
  IF v_linhas<>1 THEN RAISE EXCEPTION 'cota esgotada' USING ERRCODE='P0001'; END IF;
  INSERT INTO dev024_reservas(unidade,slot) VALUES(p_unidade,p_slot) RETURNING id INTO v_id;
- INSERT INTO dev024_operacoes VALUES(p_unidade,p_chave,p_hash,v_id);
+ INSERT INTO dev024_operacoes VALUES(p_unidade,p_chave,p_hash,p_slot,v_id);
  INSERT INTO dev024_auditoria(unidade,reserva_id,acao) VALUES(p_unidade,v_id,'criada');
  RETURN v_id;
 END $$;
@@ -71,6 +71,11 @@ BEGIN
  a:=pg_temp.dev024_reservar('00000000-0000-4000-8000-000000000024','00000000-0000-4000-8000-000000000031','op1',repeat('a',64));
  b:=pg_temp.dev024_reservar('00000000-0000-4000-8000-000000000024','00000000-0000-4000-8000-000000000031','op1',repeat('a',64));
  IF a<>b THEN RAISE EXCEPTION 'replay criou outra reserva'; END IF;
+ -- Mesmo hash, mas slot diferente, nao pode devolver reserva do primeiro slot.
+ BEGIN
+  PERFORM pg_temp.dev024_reservar('00000000-0000-4000-8000-000000000024','00000000-0000-4000-8000-000000000032','op1',repeat('a',64));
+  RAISE EXCEPTION 'replay com slot diferente aceito';
+ EXCEPTION WHEN unique_violation THEN NULL; END;
  BEGIN
   PERFORM pg_temp.dev024_reservar('00000000-0000-4000-8000-000000000024','00000000-0000-4000-8000-000000000031','op1',repeat('b',64));
   RAISE EXCEPTION 'hash divergente aceito';
