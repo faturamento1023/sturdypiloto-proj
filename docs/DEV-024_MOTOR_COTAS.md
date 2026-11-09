@@ -83,3 +83,9 @@ Próximo passo: esquema PostgreSQL, transação atômica com bloqueio e verifica
 - Escopo da evidência: testes automatizados sintéticos de contadores, concorrência COMMIT/ROLLBACK e atomicidade multi-regra. **Não** prova isolamento RLS real, auditoria de reservas, idempotência, bloqueio de sala, feriados, exceções ou integração com a agenda.
 - Cronograma original XLSM e inventário Web Ultra consultados somente para leitura. A política de cotas permanece proposta do Piloto, não observação comprovada no WebUltra.
 - Próxima implementação: reserva transacional persistida com chave idempotente por unidade, verificação de disponibilidade DEV-023 dentro da mesma transação, RLS e auditoria; acrescentar testes de acesso cruzado e repetição da mesma requisição antes de considerar merge.
+
+## Sessão de 08/11/2026 — ensaio de idempotência (não validado em banco)
+- Conferidos controle, critérios DEV-005, PR #25, Issues, cronograma XLSM e inventário Web Ultra antes da escrita. DEV-024 segue aberta.
+- Adicionado `sql/dev024_idempotencia_experimental.sql` no commit `dc8cd4b`: tabela experimental com chave composta (unidade, token), hash de requisição, estados e testes sintéticos de repetição e separação de unidades, encapsulados em transação com ROLLBACK.
+- **Não executado em PostgreSQL nem incluído no CI nesta sessão**; o ambiente local não disponibiliza `psql`. O script é ensaio isolado, não implementação de reserva nem garantia de idempotência ponta a ponta.
+- Próximo: integrar token e resposta persistida à reserva atômica, detectar payload divergente com erro 409, testar concorrência entre conexões, RLS, auditoria e agenda/feriados/exceções. Não mesclar PR nem declarar homologação.
