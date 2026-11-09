@@ -94,5 +94,51 @@ BEGIN
  IF n<>2 THEN RAISE EXCEPTION 'cotas incorretas %',n; END IF;
 END $$;
 SQL
+# Duas conexoes independentes reutilizam simultaneamente a mesma chave no slot 32.
+# O lock consultivo deve serializar o replay e produzir apenas uma reserva.
+(
+ psql_test >"$tmp/replay_a.log" 2>&1 <<'SQL'
+BEGIN;
+SELECT dev024_reserva_concorrente.reservar(24,32,'mesma-chave');
+SELECT pg_sleep(2);
+COMMIT;
+SQL
+) &
+pid_replay=$!
+for i in $(seq 1 60); do
+ if grep -Eq '^[[:space:]]*[0-9]+[[:space:]]*
+echo "Limites: sem agenda operacional, RLS ou homologacao clinica."
+ "$tmp/replay_a.log" 2>/dev/null; then break; fi
+ if ! kill -0 "$pid_replay" 2>/dev/null; then cat "$tmp/replay_a.log"; exit 1; fi
+ sleep 0.1
+done
+if ! grep -Eq '^[[:space:]]*[0-9]+[[:space:]]*
+echo "Limites: sem agenda operacional, RLS, replay concorrente ou homologacao clinica."
+ "$tmp/replay_a.log"; then
+ echo "Sessao replay A nao iniciou"; exit 1
+fi
+if ! timeout 12 psql "$DATABASE_URL" -X -q -v ON_ERROR_STOP=1 \
+ -c "SELECT dev024_reserva_concorrente.reservar(24,32,'mesma-chave')" >"$tmp/replay_b.log" 2>&1; then
+ cat "$tmp/replay_b.log"; echo "Replay concorrente falhou"; exit 1
+fi
+wait "$pid_replay"
+psql_test <<'SQL'
+DO $
+DECLARE n int; r bigint; r2 bigint;
+BEGIN
+ SELECT count(*) INTO n FROM dev024_reserva_concorrente.reservas
+ WHERE unidade=24 AND slot=32 AND chave='mesma-chave';
+ IF n<>1 THEN RAISE EXCEPTION 'replay criou % reservas',n; END IF;
+ SELECT id INTO r FROM dev024_reserva_concorrente.reservas
+ WHERE unidade=24 AND slot=32 AND chave='mesma-chave';
+ r2:=dev024_reserva_concorrente.reservar(24,32,'mesma-chave');
+ IF r<>r2 THEN RAISE EXCEPTION 'replay mudou identificador'; END IF;
+ SELECT usados INTO n FROM dev024_reserva_concorrente.cotas WHERE unidade=24 AND slot=32;
+ IF n<>1 THEN RAISE EXCEPTION 'replay consumiu cota indevida: %',n; END IF;
+ SELECT count(*) INTO n FROM dev024_reserva_concorrente.auditoria WHERE reserva_id=r;
+ IF n<>1 THEN RAISE EXCEPTION 'replay duplicou auditoria: %',n; END IF;
+END $;
+SQL
+echo "DEV-024: replay concorrente da mesma chave verificado em duas conexoes."
 echo "DEV-024: duas sessoes concorrentes verificadas em schema descartavel."
 echo "Limites: sem agenda operacional, RLS, replay concorrente ou homologacao clinica."
