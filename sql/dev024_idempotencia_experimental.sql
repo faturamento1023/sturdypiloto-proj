@@ -93,6 +93,40 @@ BEGIN
  SELECT count(*) INTO n FROM piloto_cota_idempotencia_experimental WHERE chave='teste-a';
  IF n <> 2 THEN RAISE EXCEPTION 'DEV024: isolamento por unidade falhou'; END IF;
 END $teste$;
+-- Regressões de campos obrigatórios e domínio da chave/estado.
+DO $teste$
+BEGIN
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+  VALUES ('00000000-0000-4000-8000-000000000024','',repeat('a',64));
+  RAISE EXCEPTION 'DEV024: chave vazia foi aceita';
+ EXCEPTION WHEN check_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+  VALUES ('00000000-0000-4000-8000-000000000024',repeat('x',129),repeat('a',64));
+  RAISE EXCEPTION 'DEV024: chave acima do limite foi aceita';
+ EXCEPTION WHEN check_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash,estado)
+  VALUES ('00000000-0000-4000-8000-000000000024','estado-invalido',repeat('a',64),'finalizada');
+  RAISE EXCEPTION 'DEV024: estado desconhecido foi aceito';
+ EXCEPTION WHEN check_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+  VALUES (NULL,'sem-unidade',repeat('a',64));
+  RAISE EXCEPTION 'DEV024: unidade nula foi aceita';
+ EXCEPTION WHEN not_null_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+  VALUES ('00000000-0000-4000-8000-000000000024','sem-hash',NULL);
+  RAISE EXCEPTION 'DEV024: hash nulo foi aceito';
+ EXCEPTION WHEN not_null_violation THEN NULL;
+ END;
+END $teste$;
 ROLLBACK;
 -- Pendências: integrar reserva e auditoria na mesma transação, RLS, resposta
 -- persistida, recuperação após falha e testes de duas conexões concorrentes.
