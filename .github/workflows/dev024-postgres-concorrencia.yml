@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'scripts/dev024-testar-concorrencia.sh'
+      - 'scripts/dev024-testar-reserva-concorrente.sh'
       - 'sql/dev024_cotas_contadores_experimental.sql'
       - 'sql/dev024_cotas_multiplas_regras_rollback.sql'
       - 'sql/dev024_idempotencia_experimental.sql'
@@ -44,6 +45,10 @@ jobs:
         env:
           DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
         run: bash scripts/dev024-testar-concorrencia.sh
+      - name: Testar disputa de reserva entre duas conexoes independentes
+        env:
+          DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
+        run: bash scripts/dev024-testar-reserva-concorrente.sh
       - name: Validar atomicidade de multiplas regras (ROLLBACK)
         env:
           DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
