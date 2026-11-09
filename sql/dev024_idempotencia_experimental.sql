@@ -4,7 +4,7 @@
 BEGIN;
 CREATE TABLE piloto_cota_idempotencia_experimental (
  unidade_id uuid NOT NULL,
- chave text NOT NULL CHECK (length(chave) BETWEEN 1 AND 128),
+ chave text NOT NULL CHECK (length(chave) BETWEEN 1 AND 128 AND chave = btrim(chave)),
  requisicao_hash text NOT NULL CHECK (requisicao_hash ~ '^[0-9a-f]{64}$'),
  estado text NOT NULL DEFAULT 'pendente' CHECK (estado IN ('pendente','confirmada','rejeitada')),
  reserva_id uuid,
@@ -100,6 +100,18 @@ BEGIN
   INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
   VALUES ('00000000-0000-4000-8000-000000000024','',repeat('a',64));
   RAISE EXCEPTION 'DEV024: chave vazia foi aceita';
+ EXCEPTION WHEN check_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+  VALUES ('00000000-0000-4000-8000-000000000024','   ',repeat('a',64));
+  RAISE EXCEPTION 'DEV024: chave composta de espacos foi aceita';
+ EXCEPTION WHEN check_violation THEN NULL;
+ END;
+ BEGIN
+  INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+  VALUES ('00000000-0000-4000-8000-000000000024',' teste-a ',repeat('a',64));
+  RAISE EXCEPTION 'DEV024: chave com espacos externos foi aceita';
  EXCEPTION WHEN check_violation THEN NULL;
  END;
  BEGIN
