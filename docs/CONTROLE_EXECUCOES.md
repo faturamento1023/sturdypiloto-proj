@@ -226,3 +226,13 @@ Registro histórico anterior ao aceite final.
 - O [PR #24](https://github.com/faturamento1023/sturdypiloto-proj/pull/24) partiu de projeções sintéticas e da migração inicial da automação. A entrega integrada usa PostgreSQL para calcular a precedência e evita duplicar a projeção na aplicação.
 - Entregues a tela de exceções, a integração com a grade, a escrita auditada e a proteção transacional de reservas, datas e salas.
 - A validação usa dados fictícios. A precedência operacional e a implantação no Supabase hospedado seguem pendentes. A próxima etapa é DEV-024.
+
+
+## Sessão de 09/11/2026 — DEV-024 contrato de concorrência integrada
+
+- Conferidos antes da alteração: controle de execuções e DEV-005 v1.0 no GitHub, Issues/PRs, PR #25 (HEAD anterior `1cd123f`), cronograma XLSM no Drive e inventário da pasta Web Ultra. DEV-001 a DEV-023 permanecem registradas como concluídas; DEV-024 continua em desenvolvimento.
+- Publicado `docs/DEV-024_CONTRATO_CONCORRENCIA_RESERVA.md` no commit [`c9cb217`](https://github.com/faturamento1023/sturdypiloto-proj/commit/c9cb21752edd6c1e51d963a440313e6c9c9906b7), com 10 cenários de aceitação e critérios de transação, replay, isolamento e auditoria.
+- Lacuna técnica identificada: `sql/dev024_reserva_integrada_experimental.sql` usa tabelas TEMP e uma sessão; portanto **não comprova duas conexões concorrentes na reserva integrada**. Os ensaios existentes de contadores não substituem esse teste.
+- Testes nesta sessão: **nenhum teste novo executado**; entrega documental, sem aprovação de CI para o novo commit. Os workflows aprovados de `1cd123f` são evidências anteriores.
+- Bloqueios: harness de múltiplas conexões, integração com agenda/feriados/exceções, RLS e auditoria persistente, regras operacionais e homologação clínica.
+- Próxima tarefa: implementar e executar C01–C04, C06, C07 e C09 com conexões PostgreSQL independentes em banco descartável; depois C05/C08/C10 na implementação integrada. Não mesclar PR #25 ou publicar produção.
