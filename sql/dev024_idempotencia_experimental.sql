@@ -28,7 +28,32 @@ BEGIN
  WHERE unidade_id='00000000-0000-4000-8000-000000000024' AND chave='teste-a';
  IF h IS DISTINCT FROM repeat('a',64) THEN RAISE EXCEPTION 'DEV024: hash inesperado'; END IF;
  -- Mesmo token com payload diferente é conflito (409), não repetição válida.
- IF h = repeat('b',64) THEN RAISE EXCEPTION 'DEV024: conflito nao detectado'; END IF;
+ IF h IS NOT DISTINCT FROM repeat('b',64) THEN
+   RAISE EXCEPTION 'DEV024: payload divergente aceito indevidamente';
+ END IF;
+ -- O serviço deve transformar esta divergência em HTTP 409. Aqui só se
+ -- verifica a decisão do domínio, sem simular uma API inexistente.
+ IF NOT (h IS DISTINCT FROM repeat('b',64)) THEN
+   RAISE EXCEPTION 'DEV024: conflito de hash nao identificado';
+ END IF;
+END $teste$;
+-- Repetição de uma operação confirmada preserva a reserva original.
+UPDATE piloto_cota_idempotencia_experimental
+SET estado='confirmada', reserva_id='00000000-0000-4000-8000-000000000124'
+WHERE unidade_id='00000000-0000-4000-8000-000000000024' AND chave='teste-a';
+DO $teste$
+DECLARE n integer; r uuid;
+BEGIN
+ INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
+ VALUES ('00000000-0000-4000-8000-000000000024','teste-a',repeat('a',64))
+ ON CONFLICT (unidade_id,chave) DO NOTHING;
+ GET DIAGNOSTICS n = ROW_COUNT;
+ IF n <> 0 THEN RAISE EXCEPTION 'DEV024: replay confirmado duplicou operacao'; END IF;
+ SELECT reserva_id INTO r FROM piloto_cota_idempotencia_experimental
+ WHERE unidade_id='00000000-0000-4000-8000-000000000024' AND chave='teste-a';
+ IF r IS DISTINCT FROM '00000000-0000-4000-8000-000000000124'::uuid THEN
+   RAISE EXCEPTION 'DEV024: replay perdeu referencia da reserva';
+ END IF;
 END $teste$;
 -- Mesma chave em outra unidade é independente.
 INSERT INTO piloto_cota_idempotencia_experimental (unidade_id,chave,requisicao_hash)
