@@ -100,5 +100,12 @@ BEGIN
  IF n<>2 THEN RAISE EXCEPTION 'auditoria nao corresponde a reservas'; END IF;
  SELECT sum(usados) INTO n FROM dev024_cotas;
  IF n<>2 THEN RAISE EXCEPTION 'contadores divergentes'; END IF;
+ -- Toda rejeicao anterior deve ter revertido seus efeitos, inclusive auditoria.
+ SELECT count(*) INTO n FROM dev024_operacoes;
+ IF n<>2 THEN RAISE EXCEPTION 'operacoes gravadas apos rejeicao: %',n; END IF;
+ SELECT count(*) INTO n FROM dev024_reservas WHERE unidade='00000000-0000-4000-8000-000000000024' AND slot='00000000-0000-4000-8000-000000000032';
+ IF n<>0 THEN RAISE EXCEPTION 'reserva persistiu em slot bloqueado'; END IF;
+ SELECT usados INTO n FROM dev024_cotas WHERE unidade='00000000-0000-4000-8000-000000000024' AND slot='00000000-0000-4000-8000-000000000032';
+ IF n<>0 THEN RAISE EXCEPTION 'cota consumida em slot bloqueado'; END IF;
 END $test$;
 ROLLBACK;
