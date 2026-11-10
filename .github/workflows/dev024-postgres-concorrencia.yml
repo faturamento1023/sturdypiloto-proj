@@ -1,0 +1,72 @@
+name: DEV-024 PostgreSQL concorrencia real
+on:
+  pull_request:
+    paths:
+      - 'scripts/dev024-testar-concorrencia.sh'
+      - 'scripts/dev024-testar-reserva-concorrente.sh'
+      - 'sql/dev024_cotas_contadores_experimental.sql'
+      - 'sql/dev024_cotas_multiplas_regras_rollback.sql'
+      - 'sql/dev024_idempotencia_experimental.sql'
+      - 'sql/dev024_reserva_integrada_experimental.sql'
+      - '.github/workflows/dev024-postgres-concorrencia.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  concorrencia:
+    name: Duas sessoes PostgreSQL descartavel
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: piloto_teste
+          POSTGRES_PASSWORD: piloto_teste_descartavel
+          POSTGRES_DB: piloto_dev024
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd "pg_isready -U piloto_teste -d piloto_dev024"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Instalar cliente PostgreSQL
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Verificar sintaxe Bash
+        run: |
+          bash -n scripts/dev024-testar-concorrencia.sh
+          bash -n scripts/dev024-testar-reserva-concorrente.sh
+      - name: Executar COMMIT e ROLLBACK concorrentes
+        env:
+          DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
+        run: bash scripts/dev024-testar-concorrencia.sh
+      - name: Testar disputa de reserva entre duas conexoes independentes
+        env:
+          DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
+        run: bash scripts/dev024-testar-reserva-concorrente.sh
+      - name: Validar atomicidade de multiplas regras (ROLLBACK)
+        env:
+          DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
+        run: |
+          psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 \
+            -f sql/dev024_cotas_contadores_experimental.sql \
+            -f sql/dev024_cotas_multiplas_regras_rollback.sql
+      - name: Validar ensaio isolado de idempotencia (ROLLBACK)
+        env:
+          DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
+        run: psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f sql/dev024_idempotencia_experimental.sql
+      - name: Validar reserva integrada experimental (ROLLBACK)
+        env:
+          DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
+        run: psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f sql/dev024_reserva_integrada_experimental.sql
+      - name: Limites do teste
+        run: |
+          echo "Ensaios de contadores, idempotencia e reserva integrada experimental em banco descartavel."
+          echo "Nao valida reserva clinica, RLS, auditoria ou homologacao."
