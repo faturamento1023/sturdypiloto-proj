@@ -36,7 +36,7 @@ export function FormularioPaciente({ unidade, chave, hoje }: { unidade: string; 
   );
 }
 
-export function BuscaPaciente({ unidade }: { unidade: string }) {
+export function BuscaPaciente({ unidade, onSelecionar }: { unidade: string; onSelecionar?: (id: string, nome: string) => void }) {
   const [resposta, buscar, pendente] = useActionState(buscarPacientes.bind(null, unidade), null);
   const [termo, definirTermo] = useState('');
   return (
@@ -52,10 +52,13 @@ export function BuscaPaciente({ unidade }: { unidade: string }) {
         {resposta.pacientes.length === 0 ? <p>Nenhum paciente encontrado.</p> : (
           <div className="painel-tabela-rolagem" role="region" tabIndex={0} aria-label="Resultados da busca de pacientes">
             <table className="painel-tabela">
-              <thead><tr><th scope="col">Nome</th><th scope="col">Nome social</th><th scope="col">Nascimento</th></tr></thead>
+              <thead><tr><th scope="col">Nome</th><th scope="col">Nome social</th><th scope="col">Nascimento</th>{onSelecionar && <th scope="col">Ações</th>}</tr></thead>
               <tbody>{resposta.pacientes.map(paciente => <tr key={paciente.id}>
                 <th scope="row">{paciente.nome}</th><td>{paciente.nome_social ?? '—'}</td>
                 <td>{paciente.nascimento ? paciente.nascimento.split('-').reverse().join('/') : '—'}</td>
+                {onSelecionar && <td><button type="button" className="painel-controle"
+                  aria-label={'Selecionar ' + (paciente.nome_social ?? paciente.nome)}
+                  onClick={() => onSelecionar(paciente.id, paciente.nome_social ?? paciente.nome)}>Selecionar</button></td>}
               </tr>)}</tbody>
             </table>
           </div>

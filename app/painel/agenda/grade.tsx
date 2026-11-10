@@ -16,12 +16,13 @@ const situacoes = [
 
 const buscarNome = (valor: string) => valor.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('pt-BR');
 
-export async function GradeAgenda({ cliente, unidade, data, profissional, busca, configuraAgenda, situacao, permiteAbrir, abertura }: {
+export async function GradeAgenda({ cliente, unidade, data, profissional, busca, configuraAgenda, situacao, permiteAbrir, permiteReservar, abertura }: {
   cliente: NonNullable<Awaited<ReturnType<typeof sessaoNoServidor>>>;
   unidade: string; data: string; profissional: string; busca: string; configuraAgenda: boolean; situacao?: string;
-  permiteAbrir: boolean; abertura?: string;
+  permiteAbrir: boolean; permiteReservar: boolean; abertura?: string;
 }) {
   const hoje = dataAgenda(new Date());
+  const primeiroMinutoDisponivel = Math.ceil(Date.now() / 60_000) * 60_000;
   const dataConsulta = dataValida(data) && data >= primeiraData && data <= ultimaData ? data : hoje;
   const profissionalValido = !profissional || uuidAgenda.test(profissional);
   const { inicio, fim } = janelaDoDia(dataConsulta);
@@ -97,6 +98,8 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
           <Link className="painel-controle" href={'/painel?' + new URLSearchParams({
             unidade, modulo: 'agenda', dataAgenda: dataConsulta, configuracaoAgenda: 'excecoes',
           })} prefetch={false}>Exceções e feriados</Link>
+          <Link className="painel-controle" href={'/painel?' + new URLSearchParams({ unidade, modulo: 'agenda', configuracaoAgenda: 'cotas' })}
+            prefetch={false}>Cotas de agendamento</Link>
         </nav>}
       </div>
       <p className="agenda-contexto">Horário de Brasília. As vagas exibidas seguem a disponibilidade cadastrada.</p>
@@ -133,7 +136,7 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
                 : 'Sem disponibilidade cadastrada ou agendamentos para este dia.'}</p>
             ) : (
               <table className="painel-tabela">
-                <thead><tr><th scope="col">Horário</th><th scope="col">Situação</th><th scope="col">Local</th>{permiteAbrir && <th scope="col">Ações</th>}</tr></thead>
+                <thead><tr><th scope="col">Horário</th><th scope="col">Situação</th><th scope="col">Local</th>{(permiteAbrir || permiteReservar) && <th scope="col">Ações</th>}</tr></thead>
                 <tbody>{intervalos.map(item => {
                   const livre = item.estado === 'livre';
                   const de = new Date(item.inicio);
@@ -142,7 +145,12 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
                     <td className="painel-numero"><time dateTime={de.toISOString()}>{hora.format(de)}</time> a <time dateTime={ate.toISOString()}>{Date.parse(item.fim) === Date.parse(fim) ? '24:00' : hora.format(ate)}</time></td>
                     <td><span className="painel-estado" data-estado={item.estado}>{livre ? 'Livre' : rotulosAgenda[item.estado]}</span></td>
                     <td>{livre ? item.local_nome ?? '—' : '—'}</td>
-                    {permiteAbrir && <td>{['reservado', 'confirmado', 'remarcado'].includes(item.estado) ? (
+                    {(permiteAbrir || permiteReservar) && <td>{livre && permiteReservar && ate.getTime() > primeiroMinutoDisponivel ? (
+                      <Link className="painel-controle" prefetch={false} href={'/painel?' + new URLSearchParams({ unidade, modulo: 'agenda',
+                        reservaAgenda: '1', profissionalReserva: p.id,
+                        inicioReserva: new Date(Math.max(de.getTime(), primeiroMinutoDisponivel)).toISOString(),
+                        fimReserva: ate.toISOString() })}>Reservar</Link>
+                    ) : permiteAbrir && ['reservado', 'confirmado', 'remarcado'].includes(item.estado) ? (
                       <form action={abrirAtendimentoAgendado.bind(null, unidade, item.id, dataConsulta)}>
                         <button className="painel-controle" type="submit">Abrir atendimento</button>
                       </form>
