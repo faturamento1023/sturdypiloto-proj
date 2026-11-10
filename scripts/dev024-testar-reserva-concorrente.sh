@@ -3,6 +3,7 @@
 set -euo pipefail
 : "${DATABASE_URL:?DATABASE_URL obrigatoria para banco de teste descartavel}"
 export PGCONNECT_TIMEOUT=10
+export PGOPTIONS="-c statement_timeout=12000 -c idle_in_transaction_session_timeout=12000"
 psql_test() { psql "$DATABASE_URL" -X -q -v ON_ERROR_STOP=1 "$@"; }
 schema="dev024_reserva_concorrente"
 cleanup() { psql_test -c "DROP SCHEMA IF EXISTS $schema CASCADE" >/dev/null || true; }
@@ -24,7 +25,7 @@ CREATE TABLE dev024_reserva_concorrente.auditoria (
  reserva_id bigint NOT NULL, acao text NOT NULL
 );
 INSERT INTO dev024_reserva_concorrente.cotas(unidade,slot,limite)
- VALUES (24,31,1),(24,32,1),(25,31,1);
+ VALUES (24,31,1),(24,32,1),(24,33,1),(24,34,1),(25,31,1);
 CREATE FUNCTION dev024_reserva_concorrente.reservar(p_unidade int,p_slot int,p_chave text)
 RETURNS bigint LANGUAGE plpgsql AS $$
 DECLARE v_id bigint; v_slot int;
@@ -47,30 +48,72 @@ BEGIN
 END $$;
 SQL
 tmp="$(mktemp -d)"
-trap 'rm -rf "$tmp"; cleanup' EXIT
-# Sessao A segura lock da linha apos reservar, enquanto B disputa o mesmo slot.
-(
- psql_test >"$tmp/a.log" 2>&1 <<'SQL'
-BEGIN;
-SELECT dev024_reserva_concorrente.reservar(24,31,'a');
-SELECT pg_sleep(2);
-COMMIT;
+pid_a=''
+pid_b=''
+encerrar() {
+  if [[ -n "$pid_a" ]]; then kill "$pid_a" 2>/dev/null || true; wait "$pid_a" 2>/dev/null || true; fi
+  if [[ -n "$pid_b" ]]; then kill "$pid_b" 2>/dev/null || true; wait "$pid_b" 2>/dev/null || true; fi
+  rm -rf "$tmp"
+  cleanup
+}
+trap encerrar EXIT
+
+bloqueada_por_a() {
+  [[ $(psql_test -At -v nome_a="$1" -v nome_b="$2" <<'SQL'
+SELECT EXISTS (
+  SELECT 1 FROM pg_stat_activity b
+  JOIN pg_stat_activity a ON a.pid = ANY(pg_blocking_pids(b.pid))
+  WHERE a.application_name = :'nome_a' AND b.application_name = :'nome_b'
+);
 SQL
-) &
-pid_a=$!
-# Aguarda a reserva A aparecer no log antes de iniciar a disputa B.
-for i in $(seq 1 60); do
- if grep -Eq '^[[:space:]]*[0-9]+[[:space:]]*$' "$tmp/a.log" 2>/dev/null; then break; fi
- if ! kill -0 "$pid_a" 2>/dev/null; then cat "$tmp/a.log"; exit 1; fi
- sleep 0.1
-done
-if ! grep -Eq '^[[:space:]]*[0-9]+[[:space:]]*$' "$tmp/a.log"; then echo "Sessao A nao iniciou"; exit 1; fi
-# B deve esperar o COMMIT de A e falhar, sem consumir cota ou criar reserva.
-if timeout 12 psql "$DATABASE_URL" -X -q -v ON_ERROR_STOP=1 -c  "SELECT dev024_reserva_concorrente.reservar(24,31,'b')" >"$tmp/b.log" 2>&1; then
- echo "ERRO: duas reservas no slot de limite 1"; exit 1
-fi
-wait "$pid_a"
-if ! grep -q 'cota esgotada' "$tmp/b.log"; then cat "$tmp/b.log"; exit 1; fi
+) == t ]]
+}
+
+executar_disputa() {
+  local nome=$1 slot_a=$2 chave_a=$3 slot_b=$4 chave_b=$5 falha=${6:-}
+  local app_a="dev024_${nome}_a" app_b="dev024_${nome}_b"
+  local fifo="$tmp/$nome.sql" log_a="$tmp/$nome-a.log" log_b="$tmp/$nome-b.log"
+  local entrada i pronta=false codigo_b=0
+  mkfifo "$fifo"
+  PGAPPNAME="$app_a" timeout 18 psql "$DATABASE_URL" -X -qAt -v ON_ERROR_STOP=1 <"$fifo" >"$log_a" 2>&1 &
+  pid_a=$!
+  exec {entrada}<>"$fifo"
+  printf "BEGIN;\nSELECT dev024_reserva_concorrente.reservar(24,%s,'%s');\n" "$slot_a" "$chave_a" >&"$entrada"
+  for ((i=0; i<60; i++)); do
+    if grep -Eq '^[0-9]+$' "$log_a" 2>/dev/null; then pronta=true; break; fi
+    if ! kill -0 "$pid_a" 2>/dev/null; then break; fi
+    sleep 0.1
+  done
+  if [[ "$pronta" != true ]]; then cat "$log_a"; echo "$nome: sessao A nao iniciou"; return 1; fi
+
+  PGAPPNAME="$app_b" timeout 15 psql "$DATABASE_URL" -X -qAt -v ON_ERROR_STOP=1 -v VERBOSITY=verbose \
+    -c "SELECT dev024_reserva_concorrente.reservar(24,$slot_b,'$chave_b')" >"$log_b" 2>&1 &
+  pid_b=$!
+  pronta=false
+  for ((i=0; i<60; i++)); do
+    if bloqueada_por_a "$app_a" "$app_b"; then pronta=true; break; fi
+    if ! kill -0 "$pid_b" 2>/dev/null; then break; fi
+    sleep 0.1
+  done
+  if [[ "$pronta" != true ]]; then cat "$log_a" "$log_b"; echo "$nome: sessao B nao aguardou o lock de A"; return 1; fi
+
+  printf 'COMMIT;\n' >&"$entrada"
+  exec {entrada}>&-
+  if ! wait "$pid_a"; then cat "$log_a"; return 1; fi
+  pid_a=''
+  wait "$pid_b" || codigo_b=$?
+  pid_b=''
+  if [[ -n "$falha" ]]; then
+    if [[ "$codigo_b" == 0 ]] || ! grep -Fq "$falha" "$log_b"; then
+      cat "$log_b"; echo "$nome: conflito esperado nao observado"; return 1
+    fi
+  elif [[ "$codigo_b" != 0 ]] || ! cmp -s "$log_a" "$log_b"; then
+    cat "$log_a" "$log_b"; echo "$nome: as sessoes nao receberam o mesmo identificador"; return 1
+  fi
+}
+
+# O COMMIT de A so acontece depois que o banco identifica B esperando por A.
+executar_disputa cota 31 a 31 b 'P0001: cota esgotada'
 # Repeticao da mesma chave e unidade nao cria segunda reserva neste ensaio sequencial.
 psql_test <<'SQL'
 DO $$
@@ -94,51 +137,20 @@ BEGIN
  IF n<>2 THEN RAISE EXCEPTION 'cotas incorretas %',n; END IF;
 END $$;
 SQL
-# Duas conexoes independentes reutilizam simultaneamente a mesma chave no slot 32.
-# O lock consultivo deve serializar o replay e produzir apenas uma reserva.
-(
- psql_test >"$tmp/replay_a.log" 2>&1 <<'SQL'
-BEGIN;
-SELECT dev024_reserva_concorrente.reservar(24,32,'mesma-chave');
-SELECT pg_sleep(2);
-COMMIT;
-SQL
-) &
-pid_replay=$!
-for i in $(seq 1 60); do
- if grep -Eq '^[[:space:]]*[0-9]+[[:space:]]*
-echo "Limites: sem agenda operacional, RLS ou homologacao clinica."
- "$tmp/replay_a.log" 2>/dev/null; then break; fi
- if ! kill -0 "$pid_replay" 2>/dev/null; then cat "$tmp/replay_a.log"; exit 1; fi
- sleep 0.1
-done
-if ! grep -Eq '^[[:space:]]*[0-9]+[[:space:]]*
-echo "Limites: sem agenda operacional, RLS, replay concorrente ou homologacao clinica."
- "$tmp/replay_a.log"; then
- echo "Sessao replay A nao iniciou"; exit 1
-fi
-if ! timeout 12 psql "$DATABASE_URL" -X -q -v ON_ERROR_STOP=1 \
- -c "SELECT dev024_reserva_concorrente.reservar(24,32,'mesma-chave')" >"$tmp/replay_b.log" 2>&1; then
- cat "$tmp/replay_b.log"; echo "Replay concorrente falhou"; exit 1
-fi
-wait "$pid_replay"
+# Replay concorrente e reutilizacao da mesma chave com slot diferente.
+executar_disputa replay 32 mesma-chave 32 mesma-chave
+executar_disputa divergente 33 chave-divergente 34 chave-divergente '23505: chave reutilizada em outro slot'
 psql_test <<'SQL'
-DO $
-DECLARE n int; r bigint; r2 bigint;
+DO $$
 BEGIN
- SELECT count(*) INTO n FROM dev024_reserva_concorrente.reservas
- WHERE unidade=24 AND slot=32 AND chave='mesma-chave';
- IF n<>1 THEN RAISE EXCEPTION 'replay criou % reservas',n; END IF;
- SELECT id INTO r FROM dev024_reserva_concorrente.reservas
- WHERE unidade=24 AND slot=32 AND chave='mesma-chave';
- r2:=dev024_reserva_concorrente.reservar(24,32,'mesma-chave');
- IF r<>r2 THEN RAISE EXCEPTION 'replay mudou identificador'; END IF;
- SELECT usados INTO n FROM dev024_reserva_concorrente.cotas WHERE unidade=24 AND slot=32;
- IF n<>1 THEN RAISE EXCEPTION 'replay consumiu cota indevida: %',n; END IF;
- SELECT count(*) INTO n FROM dev024_reserva_concorrente.auditoria WHERE reserva_id=r;
- IF n<>1 THEN RAISE EXCEPTION 'replay duplicou auditoria: %',n; END IF;
-END $;
+  IF (SELECT count(*) FROM dev024_reserva_concorrente.reservas WHERE unidade=24 AND slot IN (32,33)) <> 2
+    OR (SELECT sum(usados) FROM dev024_reserva_concorrente.cotas WHERE unidade=24 AND slot IN (32,33)) <> 2
+    OR (SELECT usados FROM dev024_reserva_concorrente.cotas WHERE unidade=24 AND slot=34) <> 0
+    OR (SELECT count(*) FROM dev024_reserva_concorrente.auditoria a
+        JOIN dev024_reserva_concorrente.reservas r ON r.id=a.reserva_id
+        WHERE r.unidade=24 AND r.slot IN (32,33)) <> 2
+  THEN RAISE EXCEPTION 'efeitos indevidos apos replay ou conflito concorrente'; END IF;
+END $$;
 SQL
-echo "DEV-024: replay concorrente da mesma chave verificado em duas conexoes."
-echo "DEV-024: duas sessoes concorrentes verificadas em schema descartavel."
-echo "Limites: sem agenda operacional, RLS, replay concorrente ou homologacao clinica."
+echo "DEV-024: disputa, replay e conflito de chave validados em duas conexoes independentes."
+echo "Limites: sem agenda operacional, RLS ou homologacao clinica."

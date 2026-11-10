@@ -40,7 +40,9 @@ jobs:
       - name: Instalar cliente PostgreSQL
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - name: Verificar sintaxe Bash
-        run: bash -n scripts/dev024-testar-concorrencia.sh
+        run: |
+          bash -n scripts/dev024-testar-concorrencia.sh
+          bash -n scripts/dev024-testar-reserva-concorrente.sh
       - name: Executar COMMIT e ROLLBACK concorrentes
         env:
           DATABASE_URL: postgresql://piloto_teste:piloto_teste_descartavel@127.0.0.1:5432/piloto_dev024
