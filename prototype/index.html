@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Prévia de navegação da recepção da Clínica DM com dados fictícios.">
   <title>Agenda · Clínica DM</title>
-  <link rel="stylesheet" href="recepcao.css?v=3">
-  <script src="recepcao.js?v=2" defer></script>
+  <link rel="stylesheet" href="recepcao.css?v=4">
+  <script src="recepcao.js?v=3" defer></script>
 </head>
 <body>
   <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -45,10 +45,15 @@
       <div class="identity"><strong>Clínica DM</strong><span>Sistema de atendimento</span></div>
       <nav class="side-nav" aria-label="Módulos da recepção">
         <div class="nav-caption">RECEPÇÃO</div>
-        <button type="button" data-view="agenda"><svg><use href="#calendar"/></svg> Agendamento</button>
-        <button type="button" data-view="grade"><svg><use href="#list"/></svg> Grade por profissional</button>
-        <button type="button" data-view="atendimentos"><svg><use href="#desk"/></svg> Atendimentos</button>
-        <button type="button" data-view="historico"><svg><use href="#document"/></svg> Histórico de itens</button>
+        <details class="side-group" open>
+          <summary><svg><use href="#calendar"/></svg> Agendamento</summary>
+          <button type="button" data-view="agenda">Mostrar Agendamentos</button>
+        </details>
+        <details class="side-group">
+          <summary><svg><use href="#desk"/></svg> Atendimentos</summary>
+          <button type="button" data-view="atendimentos">Listar atendimentos</button>
+          <button type="button" data-view="historico">Histórico de itens</button>
+        </details>
         <button type="button" data-view="pacientes"><svg><use href="#user"/></svg> Pacientes</button>
       </nav>
       <p class="side-note">Ambiente demonstrativo</p>
@@ -56,13 +61,12 @@
     <main id="workspace" tabindex="-1">
       <p id="notice" class="notice" role="status" hidden></p>
       <section id="view-agenda" aria-labelledby="agenda-title">
-        <header class="page-head"><h1 id="agenda-title">Agenda</h1><span id="agenda-date-label"></span></header>
+        <header class="page-head"><h1 id="agenda-title">Agenda</h1><span id="agenda-date-label"></span><button class="btn blue add-booking" type="button" id="new-booking"><svg><use href="#plus"/></svg> Novo agendamento</button></header>
         <div class="work-panel agenda-toolbar" aria-label="Controles da agenda">
           <div class="toolbar">
             <button class="btn teal" type="button" id="free"><svg><use href="#list"/></svg> Horários Livres</button>
             <button class="btn teal" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
-            <button class="btn teal" type="button" data-search="agenda-search"><svg><use href="#search"/></svg> Pesquisar</button>
-            <button class="btn neutral" type="button" data-view="grade"><svg><use href="#list"/></svg> Grade por profissional</button>
+            <button class="btn teal" type="button" data-open-search="agenda"><svg><use href="#search"/></svg> Pesquisar</button>
             <div class="date-controls" aria-label="Selecionar dia">
               <button class="btn neutral icon" type="button" id="prev-day" aria-label="Dia anterior"><svg><use href="#prev"/></svg></button>
               <span class="date-field"><span id="agenda-date-br" aria-hidden="true"></span><input type="date" aria-label="Data da agenda" id="agenda-date" required></span>
@@ -70,12 +74,6 @@
             </div>
             <select id="agenda-selection" aria-label="Agenda selecionada"></select>
             <button class="btn green" type="button" id="refresh"><svg><use href="#refresh"/></svg> Atualizar</button>
-          </div>
-          <div class="toolbar secondary-bar">
-            <label class="compact"><span>Período</span><select id="period" aria-label="Período da agenda"><option value="day">Dia</option><option value="week">Semana</option></select></label>
-            <label class="compact"><span>Situação</span><select id="status" aria-label="Situação da agenda"><option value="">Todos</option><option>Reservado</option><option>Confirmado</option><option>Em atendimento</option><option>Cancelado</option></select></label>
-            <input id="agenda-search" type="search" aria-label="Pesquisar na agenda" placeholder="Paciente, procedimento ou convênio">
-            <button class="btn blue add-booking" type="button" id="new-booking"><svg><use href="#plus"/></svg> Novo agendamento</button>
           </div>
         </div>
         <div class="table-box">
@@ -113,17 +111,23 @@
       <section id="view-atendimentos" aria-labelledby="attendance-title" hidden>
         <header class="page-head"><h1 id="attendance-title">Atendimentos</h1><span>Recepção</span></header>
         <div class="totals" id="attendance-totals"></div>
-        <div class="work-panel toolbar">
-          <button class="btn teal" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
-          <button class="btn teal" type="button" data-search="attendance-search"><svg><use href="#search"/></svg> Pesquisar</button>
-          <input type="date" id="attendance-date" aria-label="Data do atendimento">
-          <input id="attendance-search" type="search" aria-label="Pesquisar atendimentos" placeholder="Nome ou registro">
-          <button class="btn neutral" type="button" data-view="historico"><svg><use href="#document"/></svg> Histórico de itens</button>
-          <button class="btn green" type="button" id="new-attendance"><svg><use href="#plus"/></svg> Novo</button>
+        <div class="work-panel attendance-toolbar">
+          <div class="toolbar">
+            <button class="btn teal" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
+            <button class="btn teal" type="button" data-open-search="attendance"><svg><use href="#search"/></svg> Pesquisar</button>
+            <select id="attendance-period" aria-label="Período dos atendimentos"><option value="day">Dia</option><option value="range">Intervalo</option></select>
+            <div class="compact"><label for="attendance-date">Início</label><input type="date" id="attendance-date" required></div>
+            <div class="compact" id="attendance-end-field" hidden><label for="attendance-end">Fim</label><input type="date" id="attendance-end" required></div>
+          </div>
+          <div class="toolbar secondary-bar">
+            <button class="btn green" type="button" id="attendance-refresh"><svg><use href="#refresh"/></svg> Atualizar</button>
+            <button class="btn green" type="button" id="new-attendance"><svg><use href="#plus"/></svg> Novo</button>
+            <button class="btn neutral" type="button" data-view="historico"><svg><use href="#document"/></svg> Histórico de itens</button>
+          </div>
         </div>
         <div class="table-box">
           <table class="attendance-table">
-            <thead><tr><th>Registro</th><th>Data</th><th>Nome Paciente</th><th>Convênio</th><th>Procedimentos</th><th>Status</th><th>Valor Tabela</th><th>Valor Cobrado</th><th>Valor Pago</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Chave</th><th>Registro</th><th>Data</th><th>Nome Paciente</th><th>Convênio</th><th>Procedimentos</th><th>Status</th><th>Valor Tabela</th><th>Valor Cobrado</th><th>Valor Pago</th><th>Ações</th></tr></thead>
             <tbody id="attendance-rows"></tbody>
           </table>
         </div>
@@ -208,7 +212,30 @@
     </form>
   </dialog>
   <dialog id="free-dialog" aria-labelledby="free-title">
-    <div class="dialog-body"><header class="dialog-head"><h2 id="free-title">Horários Livres</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header><p class="muted" id="free-date"></p><div id="free-rows"></div></div>
+    <div class="dialog-body">
+      <header class="dialog-head"><h2 id="free-title">Horários Livres</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header>
+      <div class="toolbar"><p class="muted" id="free-date"></p><button type="button" class="btn neutral small" id="free-grade">Grade por profissional</button></div>
+      <div id="free-rows"></div>
+      <footer class="toolbar dialog-actions"><button type="button" class="btn neutral" data-dismiss>Fechar</button></footer>
+    </div>
+  </dialog>
+  <dialog id="agenda-search-dialog" aria-labelledby="agenda-search-title">
+    <form class="dialog-body form-grid" id="agenda-search-form">
+      <header class="dialog-head"><h2 id="agenda-search-title">Pesquisa de Agendamento</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header>
+      <label>Paciente, procedimento ou convênio<input id="agenda-search" type="search" class="search-field" autofocus></label>
+      <div class="form-grid two">
+        <label>Período<select id="period"><option value="day">Dia</option><option value="week">Semana</option></select></label>
+        <label>Situação<select id="status"><option value="">Todos</option><option>Reservado</option><option>Confirmado</option><option>Em atendimento</option><option>Cancelado</option></select></label>
+      </div>
+      <footer class="toolbar dialog-actions"><button class="btn neutral" type="button" data-dismiss>Cancelar</button><button class="btn teal" type="submit">Pesquisar</button></footer>
+    </form>
+  </dialog>
+  <dialog id="attendance-search-dialog" aria-labelledby="attendance-search-title">
+    <form class="dialog-body form-grid" id="attendance-search-form">
+      <header class="dialog-head"><h2 id="attendance-search-title">Pesquisar Atendimentos</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header>
+      <label>Paciente, registro ou chave<input id="attendance-search" type="search" class="search-field" autofocus></label>
+      <footer class="toolbar dialog-actions"><button class="btn neutral" type="button" data-dismiss>Cancelar</button><button class="btn teal" type="submit">Pesquisar</button></footer>
+    </form>
   </dialog>
   <dialog id="choose-dialog" aria-labelledby="choose-title">
     <div class="dialog-body"><header class="dialog-head"><h2 id="choose-title">Escolher Paciente</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header><input type="search" id="choose-search" placeholder="Buscar por nome ou prontuário" aria-label="Buscar paciente para atendimento"><div id="choose-rows"></div></div>

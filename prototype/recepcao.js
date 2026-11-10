@@ -56,6 +56,8 @@ let nextBooking = bookings.length + 1;
 let nextPatient = 1008;
 let nextEncounter = 242;
 let draft;
+let agendaFilters = { query: '', period: 'day', status: '' };
+let attendanceQuery = '';
 
 function node(tag, label = '', css = '') {
   const element = document.createElement(tag);
@@ -115,8 +117,11 @@ function show(view) {
   for (const page of modules) $('view-' + page).hidden = page !== view;
   for (const b of document.querySelectorAll('nav [data-view]')) {
     const current = b.dataset.view === (view === 'novo' ? 'atendimentos' : view);
-    if (current) b.setAttribute('aria-current', 'page');
-    else b.removeAttribute('aria-current');
+    if (current) {
+      b.setAttribute('aria-current', 'page');
+      const group = b.closest('details');
+      if (group) group.open = true;
+    } else b.removeAttribute('aria-current');
   }
   notice();
   if (smallScreen.matches) setMenu(false);
@@ -137,7 +142,7 @@ function setMenu(open) {
 }
 
 function rangeContains(day) {
-  if ($('period').value === 'day') return day === selectedDay;
+  if (agendaFilters.period === 'day') return day === selectedDay;
   const dayOfWeek = new Date(selectedDay + 'T00:00:00Z').getUTCDay();
   const monday = moveDay(selectedDay, -((dayOfWeek + 6) % 7));
   return day >= monday && day < moveDay(monday, 7);
@@ -157,8 +162,8 @@ function renderAgenda() {
   $('agenda-date-br').textContent = brDate(selectedDay);
   $('agenda-date-label').textContent = dateLabel();
   const filter = $('agenda-selection').value;
-  const status = $('status').value;
-  const query = clean($('agenda-search').value);
+  const { status, period } = agendaFilters;
+  const query = clean(agendaFilters.query);
   const rows = bookings.filter(b => rangeContains(b.date) && (!filter || b.doctor === filter)
     && (!status || b.status === status)
     && clean(findPatient(b.patient).name + ' ' + findProcedure(b.procedure).name + ' ' + b.plan).includes(query))
@@ -170,7 +175,7 @@ function renderAgenda() {
     const name = node('div');
     name.append(node('span', p.name, 'row-name'), node('span', findDoctor(b.doctor).name, 'row-meta'));
     const time = node('div', b.time, 'numeric');
-    if ($('period').value === 'week') time.append(node('span', brDate(b.date), 'row-meta'));
+    if (period === 'week') time.append(node('span', brDate(b.date), 'row-meta'));
     let actions = b.encounter ? 'AT-' + b.encounter : '—';
     if (['Reservado', 'Confirmado'].includes(b.status)) {
       actions = group(
@@ -238,26 +243,35 @@ function renderGrade() {
 function freeSlots() {
   const result = $('free-rows');
   result.replaceChildren();
-  $('free-date').textContent = brDate(selectedDay);
+  const until = moveDay(selectedDay, 7);
+  $('free-date').textContent = 'Agendamentos livres até ' + brDate(until);
   const selected = $('agenda-selection').value;
-  for (const doctor of doctors.filter(d => !selected || d.id === selected)) {
-    for (const time of shift.filter(h => available(selectedDay, doctor.id, h))) {
+  const schedules = doctors.filter(doctor => !selected || doctor.id === selected);
+  for (let offset = 0; offset <= 7; offset += 1) {
+    const date = moveDay(selectedDay, offset);
+    const slots = schedules.flatMap(doctor => shift.filter(time => available(date, doctor.id, time)).map(time => ({ doctor, time })));
+    if (!slots.length) continue;
+    const day = node('details', '', 'free-day');
+    day.open = !result.childElementCount;
+    day.append(node('summary', brDate(date) + ' · ' + slots.length + ' vagas'));
+    for (const { doctor, time } of slots) {
       const item = node('div', '', 'dialog-list-row');
       item.append(node('span', time + ' · ' + doctor.name), button('Reservar', 'teal', () => {
         $('free-dialog').close();
-        openBooking(doctor.id, time);
+        openBooking(doctor.id, time, date);
       }));
-      result.append(item);
+      day.append(item);
     }
+    result.append(day);
   }
-  if (!result.childElementCount) result.append(node('p', 'Sem horários livres para o dia e agenda selecionados.', 'muted'));
+  if (!result.childElementCount) result.append(node('p', 'Sem horários livres para o período e a agenda selecionados.', 'muted'));
   $('free-dialog').showModal();
 }
-function openBooking(doctor = $('agenda-selection').value || doctors[0].id, time = '') {
+function openBooking(doctor = $('agenda-selection').value || doctors[0].id, time = '', date = selectedDay) {
   $('booking-form').reset();
   setOptions('booking-patient', patients, 'name', 'Selecione');
   $('booking-doctor').value = doctor;
-  $('booking-date').value = selectedDay;
+  $('booking-date').value = date;
   $('booking-time').value = time;
   error($('booking-form').querySelector('.form-error'));
   $('booking-dialog').showModal();
@@ -275,8 +289,7 @@ $('booking-form').addEventListener('submit', event => {
     plan: $('booking-plan').value, procedure: $('booking-procedure').value, status: 'Reservado' });
   $('booking-dialog').close();
   $('agenda-selection').value = doctor;
-  $('agenda-search').value = '';
-  $('status').value = '';
+  agendaFilters = { ...agendaFilters, query: '', status: '' };
   setDate(date);
   notice('Agendamento reservado. A abertura do atendimento é feita na ação Atender.');
 });
@@ -305,9 +318,16 @@ function renderHistory() {
   if (!tbody.childElementCount) empty(tbody, 6, 'Nenhum item encontrado no histórico.');
 }
 function renderEncounters() {
-  const day = $('attendance-date').value;
-  const query = clean($('attendance-search').value);
-  const records = encounters.filter(e => (!day || e.date === day) && clean('AT-' + e.id + ' ' + findPatient(e.patient).name).includes(query));
+  const from = $('attendance-date').value || initialDay;
+  const range = $('attendance-period').value === 'range';
+  const end = $('attendance-end');
+  end.min = from;
+  if (end.value < from) end.value = from;
+  $('attendance-end-field').hidden = !range;
+  const to = range ? end.value : from;
+  const query = clean(attendanceQuery);
+  const records = encounters.filter(e => e.date >= from && e.date <= to &&
+    clean(`DEMO-${e.id} AT-${e.id} ${findPatient(e.patient).name}`).includes(query));
   $('attendance-totals').replaceChildren(...[
     ['ATENDIMENTOS', records.length, 'case'],
     ['PROCEDIMENTOS', sum(records, e => sum(e.items, i => i.qty)), 'document'],
@@ -325,11 +345,11 @@ function renderEncounters() {
   }));
   const tbody = $('attendance-rows');
   tbody.replaceChildren();
-  for (const e of records) row(tbody, ['AT-' + e.id, brDate(e.date), findPatient(e.patient).name, e.plan, e.items.length,
+  for (const e of records) row(tbody, ['DEMO-' + e.id, 'AT-' + e.id, brDate(e.date), findPatient(e.patient).name, e.plan, e.items.length,
     badge(e.status), ...amounts(e).map(cents => money.format(cents / 100)),
     button('Ver itens', 'neutral', () => notice(e.items.map(i => findProcedure(i.procedure).name + ' · ' + i.qty + ' item(ns)').join(' | '))),
   ]);
-  if (!records.length) empty(tbody, 10, 'Nenhum atendimento encontrado.');
+  if (!records.length) empty(tbody, 11, 'Nenhum atendimento encontrado.');
 }
 function fillPatient(p) {
   draft.patient = p?.id;
@@ -395,7 +415,27 @@ function renderPatients() {
 
 document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => show(b.dataset.view)));
 document.querySelectorAll('[data-dismiss]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
-document.querySelectorAll('[data-search]').forEach(b => b.addEventListener('click', () => $(b.dataset.search).focus()));
+document.querySelectorAll('[data-open-search]').forEach(b => b.addEventListener('click', () => {
+  const name = b.dataset.openSearch;
+  if (name === 'agenda') {
+    $('agenda-search').value = agendaFilters.query;
+    $('period').value = agendaFilters.period;
+    $('status').value = agendaFilters.status;
+  } else $('attendance-search').value = attendanceQuery;
+  $(name + '-search-dialog').showModal();
+}));
+$('agenda-search-form').addEventListener('submit', event => {
+  event.preventDefault();
+  agendaFilters = { query: $('agenda-search').value, period: $('period').value, status: $('status').value };
+  $('agenda-search-dialog').close();
+  renderAgenda();
+});
+$('attendance-search-form').addEventListener('submit', event => {
+  event.preventDefault();
+  attendanceQuery = $('attendance-search').value;
+  $('attendance-search-dialog').close();
+  renderEncounters();
+});
 document.querySelectorAll('[data-print]').forEach(b => b.addEventListener('click', () => window.print()));
 $('menu-toggle').addEventListener('click', event => setMenu(event.currentTarget.getAttribute('aria-expanded') !== 'true'));
 smallScreen.addEventListener('change', event => setMenu(!event.matches));
@@ -413,7 +453,9 @@ for (const id of ['grade-doctor', 'grade-status']) $(id).addEventListener('chang
 $('grade-search').addEventListener('input', renderGrade);
 $('history-search').addEventListener('input', renderHistory);
 $('free').addEventListener('click', freeSlots);
+$('free-grade').addEventListener('click', () => { $('free-dialog').close(); show('grade'); });
 $('refresh').addEventListener('click', () => { renderAgenda(); notice('Agenda atualizada nesta demonstração.'); });
+$('attendance-refresh').addEventListener('click', () => { renderEncounters(); notice('Atendimentos atualizados nesta demonstração.'); });
 $('new-booking').addEventListener('click', () => openBooking());
 $('new-attendance').addEventListener('click', () => openEncounter());
 $('choose-patient').addEventListener('click', () => { $('choose-search').value = ''; renderPatientChoices(); $('choose-dialog').showModal(); });
@@ -463,7 +505,7 @@ $('attendance-form').addEventListener('submit', event => {
     draft.booking.encounter = id;
   }
   $('attendance-date').value = date;
-  $('attendance-search').value = '';
+  attendanceQuery = '';
   show('atendimentos');
   notice('Atendimento fictício AT-' + id + ' registrado nesta prévia.');
 });
@@ -479,10 +521,8 @@ $('patient-form').addEventListener('submit', event => {
   notice('Paciente fictício cadastrado nesta prévia.');
 });
 $('patient-search-form').addEventListener('submit', event => { event.preventDefault(); renderPatients(); });
-for (const id of ['period', 'status', 'agenda-selection']) $(id).addEventListener('change', renderAgenda);
-$('agenda-search').addEventListener('input', renderAgenda);
-$('attendance-date').addEventListener('change', renderEncounters);
-$('attendance-search').addEventListener('input', renderEncounters);
+$('agenda-selection').addEventListener('change', renderAgenda);
+for (const id of ['attendance-period', 'attendance-date', 'attendance-end']) $(id).addEventListener('change', renderEncounters);
 $('patient-search').addEventListener('input', renderPatients);
 
 setOptions('agenda-selection', doctors, 'label', 'Todas as agendas');
@@ -493,6 +533,7 @@ setOptions('item-procedure', procedures, 'name', 'Escolha');
 setOptions('item-doctor', doctors, 'name', 'Escolha');
 $('agenda-date').value = initialDay;
 $('attendance-date').value = initialDay;
+$('attendance-end').value = initialDay;
 setMenu(!smallScreen.matches);
 const initialView = location.hash.slice(1);
 show(sharedViews.includes(initialView) ? initialView : 'agenda');
