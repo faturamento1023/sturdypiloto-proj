@@ -1,80 +1,181 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Projeto Piloto · Recepção</title>
-<style>
-:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#18283b;background:#f3f6fa}*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 15px;font-weight:650}button:disabled{opacity:.5;cursor:not-allowed}.primary{background:#1367d1;color:#fff}.secondary{background:#eaf0f8;color:#1d416c}.danger{background:#fff0f0;color:#b02c38}.shell{display:grid;grid-template-columns:230px 1fr;min-height:100vh}aside{background:#132b46;color:white;padding:26px 17px}aside h1{font-size:20px;margin:0 0 5px}aside p{font-size:12px;color:#b8c8da;margin:0 0 28px}aside .nav{background:#244765;padding:13px;border-radius:10px}main{padding:28px;max-width:1300px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:15px;align-items:center}.muted{color:#61738b}.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:#44739b}h2{margin:5px 0 5px;font-size:29px}h3{margin:0 0 16px;font-size:17px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:22px 0}.card{background:#fff;border:1px solid #e1e8f0;border-radius:15px;padding:19px;box-shadow:0 2px 12px #1c344608}.stat{font-size:30px;font-weight:750;margin-top:7px}.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}.toolbar input{min-width:240px;flex:1}.filters{display:flex;gap:8px;flex-wrap:wrap}input,select{border:1px solid #ccd8e5;background:white;border-radius:9px;padding:11px;min-width:0}table{width:100%;border-collapse:collapse;text-align:left}th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#64758b}td,th{padding:13px 10px;border-bottom:1px solid #ecf0f5}td{font-size:14px}.pill{display:inline-block;border-radius:99px;padding:5px 9px;background:#e7f0fc;color:#235d99;font-size:12px;font-weight:700}.pill.done{background:#e3f5e9;color:#267448}.pill.cancel{background:#fce9e9;color:#a73737}.actions{display:flex;gap:7px;flex-wrap:wrap}.actions button{padding:8px 10px;font-size:12px}.notice{background:#fff8df;color:#6f5419;padding:12px;border-radius:10px;font-size:13px;margin-top:18px}.overlay{position:fixed;inset:0;background:#10263a99;display:grid;place-items:center;padding:18px}.dialog{background:#fff;width:min(520px,100%);padding:25px;border-radius:17px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px;font-size:13px;font-weight:600}.field.full{grid-column:1/-1}.dialog-footer{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}.empty{text-align:center;padding:40px;color:#607189}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}@media(max-width:800px){.shell{display:block}aside{padding:14px 20px;display:flex;justify-content:space-between;align-items:center}aside p{display:none}aside h1{margin:0;font-size:16px}main{padding:16px}.stats{grid-template-columns:1fr 1fr}.stats .card:last-child{grid-column:1/-1}.top{align-items:flex-start}.top .primary{white-space:nowrap}.table-wrap{overflow-x:auto}table{min-width:660px}h2{font-size:24px}}@media(max-width:450px){.fields{grid-template-columns:1fr}.stats{gap:8px}.card{padding:13px}.stat{font-size:25px}.top{flex-wrap:wrap}}
-</style></head><body>
-<div class="shell"><aside><div><h1>Projeto Piloto</h1><p>Ambiente demonstrativo</p></div><div class="nav">Recepção</div></aside>
-<main><header class="top"><div><div class="eyebrow">Módulo de recepção · demonstração</div><h2>Agenda de atendimentos</h2><div class="muted">Agendamentos e abertura de atendimento são ações separadas.</div></div><button class="primary" id="new">+ Novo agendamento</button></header>
-<section class="stats" aria-label="Resumo"><div class="card"><div class="muted">Agendados</div><div class="stat" id="count-booked">0</div></div><div class="card"><div class="muted">Atendimentos abertos</div><div class="stat" id="count-open">0</div></div><div class="card"><div class="muted">Cancelados</div><div class="stat" id="count-cancel">0</div></div></section>
-<section class="card"><div class="toolbar"><div><h3>Agenda do dia</h3><span class="muted">Dados fictícios; alterações ficam somente nesta página.</span></div><div class="filters"><label class="sr-only" for="search">Pesquisar paciente</label><input id="search" placeholder="Pesquisar paciente"><label class="sr-only" for="filter">Filtrar situação</label><select id="filter"><option value="todos">Todas as situações</option><option value="reservado">Reservados</option><option value="cancelado">Cancelados</option><option value="aberto">Atendimento aberto</option></select></div></div><div class="table-wrap"><table><thead><tr><th>Horário</th><th>Paciente</th><th>Profissional</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="rows"></tbody></table></div><p class="notice" role="status" id="feedback">Protótipo isolado: não salva informações em banco de dados e não acessa pacientes reais.</p></section></main></div>
-<div id="modal" class="overlay" hidden><form id="form" class="dialog" role="dialog" aria-modal="true" aria-labelledby="form-title"><h3 id="form-title">Novo agendamento</h3><div class="fields"><label class="field full">Paciente fictício<input id="patient" maxlength="90" required placeholder="Ex.: Paciente Demonstração"></label><label class="field">Profissional<select id="doctor" required><option value="Dra. Marina">Dra. Marina</option><option value="Dr. Rafael">Dr. Rafael</option></select></label><label class="field">Horário<input id="time" type="time" value="09:00" required></label></div><p class="notice" id="form-feedback" role="alert" hidden></p><div class="dialog-footer"><button class="secondary" type="button" id="close">Cancelar</button><button class="primary" type="submit">Salvar agendamento</button></div></form></div>
-<script>
-"use strict";
-const demo=[{id:1,time:"08:00",patient:"Paciente Exemplo A",doctor:"Dra. Marina",status:"reservado",encounter:null},{id:2,time:"08:30",patient:"Paciente Exemplo B",doctor:"Dr. Rafael",status:"reservado",encounter:null},{id:3,time:"09:00",patient:"Paciente Exemplo C",doctor:"Dra. Marina",status:"reservado",encounter:null}];
-let agenda=demo.map(x=>({...x}));let nextId=4;const $=id=>document.getElementById(id);
-function announce(message){$("feedback").textContent=message}
-function el(tag,text,className){const node=document.createElement(tag);node.textContent=text;if(className)node.className=className;return node}
-function render(){
- const query=$("search").value.toLocaleLowerCase("pt-BR");const filter=$("filter").value;
- $("count-booked").textContent=agenda.filter(a=>a.status==="reservado"&&!a.encounter).length;
- $("count-open").textContent=agenda.filter(a=>a.encounter).length;
- $("count-cancel").textContent=agenda.filter(a=>a.status==="cancelado").length;
- $("rows").replaceChildren();
- const filtered=agenda.filter(a=>a.patient.toLocaleLowerCase("pt-BR").includes(query)&&(filter==="todos"||(filter==="aberto"?!!a.encounter:!a.encounter&&a.status===filter))).sort((a,b)=>a.time.localeCompare(b.time));
- if(!filtered.length){const tr=el("tr","");const td=el("td","Nenhum agendamento encontrado.","empty");td.colSpan=5;tr.append(td);$("rows").append(tr);return}
- for(const a of filtered){const tr=document.createElement("tr");for(const val of [a.time,a.patient,a.doctor])tr.append(el("td",val));const status=el("td","");status.append(el("span",a.encounter?"Atendimento aberto":a.status==="cancelado"?"Cancelado":"Reservado","pill "+(a.encounter?"done":a.status==="cancelado"?"cancel":"")));tr.append(status);const actions=el("td","","actions");if(!a.encounter&&a.status==="reservado"){const open=el("button","Abrir atendimento","primary");open.type="button";open.addEventListener("click",()=>{a.encounter="AT-"+String(a.id).padStart(4,"0");announce("Atendimento "+a.encounter+" aberto explicitamente para "+a.patient+".");render()});const cancel=el("button","Cancelar","danger");cancel.type="button";cancel.addEventListener("click",()=>{a.status="cancelado";announce("Agendamento cancelado.");render()});actions.append(open,cancel)}else{actions.append(el("span",a.encounter?a.encounter:"—","muted"))}tr.append(actions);$("rows").append(tr)}
-}
-const modal = $("modal");
-const form = $("form");
-const formFeedback = $("form-feedback");
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Prévia de navegação da recepção da Clínica DM com dados fictícios.">
+  <title>Agenda · Clínica DM</title>
+  <link rel="stylesheet" href="recepcao.css">
+  <script src="recepcao.js" defer></script>
+</head>
+<body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h12M4 18h16"/></symbol>
+    <symbol id="calendar" viewBox="0 0 24 24"><path d="M7 3v4m10-4v4M3 10h18M4 5h16a1 1 0 0 1 1 1v14H3V6a1 1 0 0 1 1-1Zm4 9h2m4 0h2m-8 3h2"/></symbol>
+    <symbol id="desk" viewBox="0 0 24 24"><path d="M3 4h18v13H3zM8 21h8m-4-4v4"/></symbol>
+    <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2z"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></symbol>
+    <symbol id="print" viewBox="0 0 24 24"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7zM16 11h1"/></symbol>
+    <symbol id="refresh" viewBox="0 0 24 24"><path d="M20 9a8 8 0 0 0-14-4L3 8m0-5v5h5m-4 7a8 8 0 0 0 14 4l3-3m0 5v-5h-5"/></symbol>
+    <symbol id="list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6h1m-1 6h1m-1 6h1"/></symbol>
+    <symbol id="prev" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+    <symbol id="next" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="document" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zm8 0v5h4M9 12h6m-6 4h6"/></symbol>
+    <symbol id="case" viewBox="0 0 24 24"><path d="M8 6V3h8v3M3 6h18v15H3zM9 14h6m-3-3v6"/></symbol>
+    <symbol id="money" viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h1m10 0h1"/></symbol>
+  </svg>
+  <a class="skip" href="#workspace">Ir para o conteúdo</a>
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="mark" aria-hidden="true">DM</span>
+      <button class="btn teal" id="menu-toggle" type="button" aria-controls="sidebar" aria-expanded="true"><svg><use href="#menu"/></svg> Menu</button>
+      <span class="clinic">DM Medicina Diagnóstica</span>
+    </div>
+    <nav class="quick" aria-label="Atalhos">
+      <button type="button" data-view="pacientes" aria-label="Pacientes" title="Pacientes"><svg><use href="#user"/></svg></button>
+      <button type="button" data-view="agenda" aria-label="Agenda" title="Agenda"><svg><use href="#calendar"/></svg></button>
+      <button type="button" data-view="atendimentos" aria-label="Atendimentos" title="Atendimentos"><svg><use href="#desk"/></svg></button>
+    </nav>
+    <span class="demo-flag"><span aria-hidden="true"></span> Prévia · Dados fictícios</span>
+  </header>
+  <div class="shell">
+    <aside id="sidebar" aria-label="Navegação do sistema">
+      <div class="identity"><strong>Clínica DM</strong><span>Sistema de atendimento</span></div>
+      <nav class="side-nav" aria-label="Módulos da recepção">
+        <div class="nav-caption">RECEPÇÃO</div>
+        <button type="button" data-view="agenda"><svg><use href="#calendar"/></svg> Agendamento</button>
+        <button type="button" data-view="atendimentos"><svg><use href="#desk"/></svg> Atendimentos</button>
+        <button type="button" data-view="pacientes"><svg><use href="#user"/></svg> Pacientes</button>
+      </nav>
+      <p class="side-note">Ambiente demonstrativo</p>
+    </aside>
+    <main id="workspace" tabindex="-1">
+      <p id="notice" class="notice" role="status" hidden></p>
+      <section id="view-agenda" aria-labelledby="agenda-title">
+        <header class="page-head"><h1 id="agenda-title">Agenda</h1><span id="agenda-date-label"></span></header>
+        <div class="work-panel agenda-toolbar" aria-label="Controles da agenda">
+          <div class="toolbar">
+            <button class="btn teal" type="button" id="free"><svg><use href="#list"/></svg> Horários Livres</button>
+            <button class="btn teal" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
+            <button class="btn teal" type="button" data-search="agenda-search"><svg><use href="#search"/></svg> Pesquisar</button>
+            <div class="date-controls" aria-label="Selecionar dia">
+              <button class="btn neutral icon" type="button" id="prev-day" aria-label="Dia anterior"><svg><use href="#prev"/></svg></button>
+              <input type="date" aria-label="Data da agenda" id="agenda-date" required>
+              <button class="btn neutral icon" type="button" id="next-day" aria-label="Dia seguinte"><svg><use href="#next"/></svg></button>
+            </div>
+            <select id="agenda-selection" aria-label="Agenda selecionada"></select>
+            <button class="btn green" type="button" id="refresh"><svg><use href="#refresh"/></svg> Atualizar</button>
+          </div>
+          <div class="toolbar secondary-bar">
+            <label class="compact"><span>Período</span><select id="period" aria-label="Período da agenda"><option value="day">Dia</option><option value="week">Semana</option></select></label>
+            <label class="compact"><span>Situação</span><select id="status" aria-label="Situação da agenda"><option value="">Todos</option><option>Reservado</option><option>Confirmado</option><option>Em atendimento</option><option>Cancelado</option></select></label>
+            <input id="agenda-search" type="search" aria-label="Pesquisar na agenda" placeholder="Paciente, procedimento ou convênio">
+            <button class="btn blue add-booking" type="button" id="new-booking"><svg><use href="#plus"/></svg> Novo agendamento</button>
+          </div>
+        </div>
+        <div class="table-box">
+          <table class="agenda-table">
+            <thead><tr><th>Hora</th><th>Nome Paciente</th><th>Convênio</th><th>Fone</th><th>Data Nasc.</th><th>Procedimento(s)</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="agenda-rows"></tbody>
+          </table>
+          <footer class="table-foot" id="agenda-count"></footer>
+        </div>
+      </section>
 
-function clearFormFeedback() {
- formFeedback.textContent = "";
- formFeedback.hidden = true;
-}
+      <section id="view-atendimentos" aria-labelledby="attendance-title" hidden>
+        <header class="page-head"><h1 id="attendance-title">Atendimentos</h1><span>Recepção</span></header>
+        <div class="totals" id="attendance-totals"></div>
+        <div class="work-panel toolbar">
+          <button class="btn teal" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
+          <button class="btn teal" type="button" data-search="attendance-search"><svg><use href="#search"/></svg> Pesquisar</button>
+          <input type="date" id="attendance-date" aria-label="Data do atendimento">
+          <input id="attendance-search" type="search" aria-label="Pesquisar atendimentos" placeholder="Nome ou registro">
+          <button class="btn green" type="button" id="new-attendance"><svg><use href="#plus"/></svg> Novo</button>
+        </div>
+        <div class="table-box">
+          <table class="attendance-table">
+            <thead><tr><th>Registro</th><th>Data</th><th>Nome Paciente</th><th>Convênio</th><th>Procedimentos</th><th>Status</th><th>Valor Tabela</th><th>Valor Cobrado</th><th>Valor Pago</th><th>Ações</th></tr></thead>
+            <tbody id="attendance-rows"></tbody>
+          </table>
+        </div>
+      </section>
 
-function closeForm() {
- modal.hidden = true;
- $("new").focus();
-}
+      <section id="view-pacientes" aria-labelledby="patients-title" hidden>
+        <header class="page-head"><h1 id="patients-title">Listar pacientes</h1><span>Cadastro de pacientes</span></header>
+        <form class="work-panel toolbar" id="patient-search-form">
+          <input class="grow" id="patient-search" type="search" aria-label="Buscar paciente por nome" placeholder="Buscar paciente por nome…">
+          <button class="btn purple" type="submit"><svg><use href="#search"/></svg> Pesquisar</button>
+          <button class="btn green" type="button" id="new-patient"><svg><use href="#plus"/></svg> Novo Paciente</button>
+        </form>
+        <div class="table-box">
+          <table class="patient-table">
+            <thead><tr><th>Prontuário</th><th>Nome</th><th>Dt. Nascimento</th><th>E-mail</th><th>Celular</th><th>Telefone</th><th>Ações</th></tr></thead>
+            <tbody id="patient-rows"></tbody>
+          </table>
+        </div>
+      </section>
 
-$("new").addEventListener("click", () => {
- clearFormFeedback();
- modal.hidden = false;
- $("patient").focus();
-});
-$("close").addEventListener("click", closeForm);
-modal.addEventListener("click", event => {
- if (event.target === modal) closeForm();
-});
-modal.addEventListener("keydown", event => {
- if (event.key === "Escape") closeForm();
-});
-form.addEventListener("input", clearFormFeedback);
-$("search").addEventListener("input", render);
-$("filter").addEventListener("change", render);
+      <section id="view-novo" aria-labelledby="new-title" hidden>
+        <header class="page-head"><h1 id="new-title">Novo atendimento</h1><span id="attendance-origin">Recepção</span></header>
+        <form id="attendance-form" class="work-panel form-stack">
+          <div class="record-head"><label>Número Atendimento (Registro)<input id="record-number" disabled></label></div>
+          <section class="patient-ident">
+            <button class="btn teal" type="button" id="choose-patient"><svg><use href="#user"/></svg> Escolher Paciente</button>
+            <div class="form-grid identity-fields"><label>Prontuário<input id="record-patient" disabled></label><label>Nome<input id="record-name" disabled></label><label>Nascimento<input id="record-birth" disabled></label></div>
+          </section>
+          <div class="form-grid three">
+            <label>Convênio<select id="record-plan" required><option>Particular</option><option>Convênio Demo</option></select></label>
+            <label>Matrícula<input id="record-membership"></label>
+            <label>Data Atendimento<input type="date" id="record-date" required></label>
+            <label>Número Autorização<input id="record-authorization"></label>
+            <label>Número Guia<input id="record-guide"></label>
+            <label>Senha Autorização<input id="record-code"></label>
+          </div>
+          <label>Observação Atendimento<textarea id="record-note" rows="3"></textarea></label>
+          <label class="checkbox"><input type="checkbox" id="record-invoice"> Paciente solicitou NF</label>
+          <fieldset><legend>Médico Solicitante</legend><div class="form-grid identity-fields"><label>CRM<input id="request-crm"></label><label>Nome Solicitante<input id="request-name"></label><label>UF<select id="request-uf"><option value="">—</option><option>GO</option><option>DF</option><option>BA</option><option>TO</option></select></label></div></fieldset>
+          <fieldset>
+            <legend>Procedimentos</legend>
+            <div class="form-grid two"><label>Procedimento<select id="item-procedure"></select></label><label>Médico<select id="item-doctor"></select></label></div>
+            <div class="form-grid item-grid"><label>Incidência<input type="number" id="item-quantity" min="1" max="20" value="1"></label><label>Vlr Tabela<output id="item-list-value">R$ 0,00</output></label><label>Valor Cobrado (R$)<input type="number" min="0" step="0.01" id="item-charge"></label><button class="btn green" type="button" id="add-item"><svg><use href="#plus"/></svg> Adicionar</button></div>
+            <div class="table-box inner-table"><table><thead><tr><th>Procedimento</th><th>Médico</th><th>Inc.</th><th>Valor Tabela</th><th>Valor Cobrado</th><th>Ações</th></tr></thead><tbody id="item-rows"></tbody></table></div>
+            <p class="section-total" id="item-total"></p>
+          </fieldset>
+          <fieldset>
+            <legend>Pagamento</legend>
+            <div class="form-grid payment-grid"><label>Forma Pagamento<select id="payment-method"><option>Pix</option><option>Cartão</option><option>Dinheiro</option></select></label><label>Valor (R$)<input type="number" min="0.01" step="0.01" id="payment-value"></label><button class="btn green" type="button" id="add-payment"><svg><use href="#plus"/></svg> Adicionar</button></div>
+            <div class="table-box inner-table"><table><thead><tr><th>Forma Pagamento</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="payment-rows"></tbody></table></div>
+            <p class="section-total" id="payment-total"></p>
+          </fieldset>
+          <p id="attendance-error" class="form-error" role="alert" hidden></p>
+          <div class="toolbar"><button class="btn blue" type="button" data-view="atendimentos">Cancelar</button><button class="btn green" type="submit">Salvar</button></div>
+        </form>
+      </section>
+    </main>
+  </div>
 
-form.addEventListener("submit", event => {
- event.preventDefault();
- const patient = $("patient").value.trim();
- const doctor = $("doctor").value;
- const time = $("time").value;
- if (!patient || !time) return;
-
- const occupied = agenda.some(booking => booking.doctor === doctor && booking.time === time && booking.status !== "cancelado");
- if (occupied) {
-  formFeedback.hidden = false;
-  formFeedback.textContent = "Conflito: esse profissional já tem agendamento no horário.";
-  $("time").focus();
-  return;
- }
-
- agenda.push({id: nextId++, patient, doctor, time, status: "reservado", encounter: null});
- form.reset();
- closeForm();
- announce("Agendamento criado. Nenhum atendimento foi aberto automaticamente.");
- render();
-});
-render();
-</script></body></html>
+  <dialog id="booking-dialog" aria-labelledby="booking-title">
+    <form id="booking-form" class="dialog-body">
+      <header class="dialog-head"><h2 id="booking-title">Novo agendamento</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header>
+      <div class="form-grid two"><label>Paciente<select id="booking-patient" required></select></label><label>Agenda<select id="booking-doctor" required></select></label><label>Data<input type="date" id="booking-date" required></label><label>Hora<input type="time" id="booking-time" required></label><label>Convênio<select id="booking-plan"><option>Particular</option><option>Convênio Demo</option></select></label><label>Procedimento<select id="booking-procedure" required></select></label></div>
+      <p class="form-error" role="alert" hidden></p>
+      <footer class="toolbar dialog-actions"><button type="button" class="btn neutral" data-dismiss>Cancelar</button><button type="submit" class="btn green">Reservar horário</button></footer>
+    </form>
+  </dialog>
+  <dialog id="free-dialog" aria-labelledby="free-title">
+    <div class="dialog-body"><header class="dialog-head"><h2 id="free-title">Horários Livres</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header><p class="muted" id="free-date"></p><div id="free-rows"></div></div>
+  </dialog>
+  <dialog id="choose-dialog" aria-labelledby="choose-title">
+    <div class="dialog-body"><header class="dialog-head"><h2 id="choose-title">Escolher Paciente</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header><input type="search" id="choose-search" placeholder="Buscar por nome ou prontuário" aria-label="Buscar paciente para atendimento"><div id="choose-rows"></div></div>
+  </dialog>
+  <dialog id="patient-dialog" aria-labelledby="patient-title">
+    <form id="patient-form" class="dialog-body"><header class="dialog-head"><h2 id="patient-title">Novo Paciente</h2><button type="button" class="btn neutral icon" data-dismiss aria-label="Fechar"><svg><use href="#close"/></svg></button></header>
+      <div class="form-grid two"><label class="span-all">Nome do paciente<input id="patient-name" maxlength="90" required></label><label>Nascimento<input type="date" id="patient-birth" required></label><label>Celular<input type="tel" id="patient-phone" maxlength="18"></label><label class="span-all">E-mail<input type="email" id="patient-email" maxlength="90"></label></div>
+      <p class="muted">Use apenas informações fictícias nesta prévia.</p>
+      <footer class="toolbar dialog-actions"><button class="btn neutral" type="button" data-dismiss>Cancelar</button><button class="btn green" type="submit">Salvar paciente</button></footer>
+    </form>
+  </dialog>
+</body>
+</html>
