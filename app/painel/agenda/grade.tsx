@@ -141,15 +141,17 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
                   const livre = item.estado === 'livre';
                   const de = new Date(item.inicio);
                   const ate = new Date(item.fim);
+                  const inicioReserva = Math.max(Math.ceil(de.getTime() / 60_000) * 60_000, primeiroMinutoDisponivel);
+                  const fimReserva = Math.floor(ate.getTime() / 60_000) * 60_000;
                   return <tr key={item.id}>
                     <td className="painel-numero"><time dateTime={de.toISOString()}>{hora.format(de)}</time> a <time dateTime={ate.toISOString()}>{Date.parse(item.fim) === Date.parse(fim) ? '24:00' : hora.format(ate)}</time></td>
                     <td><span className="painel-estado" data-estado={item.estado}>{livre ? 'Livre' : rotulosAgenda[item.estado]}</span></td>
                     <td>{livre ? item.local_nome ?? '—' : '—'}</td>
-                    {(permiteAbrir || permiteReservar) && <td>{livre && permiteReservar && ate.getTime() > primeiroMinutoDisponivel ? (
+                    {(permiteAbrir || permiteReservar) && <td>{livre && permiteReservar && fimReserva > inicioReserva ? (
                       <Link className="painel-controle" prefetch={false} href={'/painel?' + new URLSearchParams({ unidade, modulo: 'agenda',
                         reservaAgenda: '1', profissionalReserva: p.id,
-                        inicioReserva: new Date(Math.max(de.getTime(), primeiroMinutoDisponivel)).toISOString(),
-                        fimReserva: ate.toISOString() })}>Reservar</Link>
+                        inicioReserva: new Date(inicioReserva).toISOString(),
+                        fimReserva: new Date(fimReserva).toISOString() })}>Reservar</Link>
                     ) : permiteAbrir && ['reservado', 'confirmado', 'remarcado'].includes(item.estado) ? (
                       <form action={abrirAtendimentoAgendado.bind(null, unidade, item.id, dataConsulta)}>
                         <button className="painel-controle" type="submit">Abrir atendimento</button>

@@ -43,7 +43,12 @@ declare
   grade jsonb;
   pedido tstzrange;
 begin
-  if not piloto_privado.tem_perfil(unidade, array['recepcao','gestao']) then
+  perform v.id from piloto_privado.vinculos v
+  join piloto.unidades u on u.id = v.unidade_id and u.ativa
+  where v.unidade_id = unidade and v.usuario_id = piloto_privado.ator_auditoria()
+    and (select auth.jwt()) ->> 'aal' = 'aal2' and v.ativo and v.perfil in ('recepcao','gestao')
+  for share of v, u;
+  if not found then
     raise exception 'Acesso negado' using errcode = '42501';
   end if;
   if chave is null or paciente is null or profissional is null or convenio is null or procedimento is null
@@ -60,9 +65,6 @@ begin
   -- Mesma ordem do trigger da agenda: profissional antes da unidade.
   select p.ativo into ativo from piloto.profissionais p where p.unidade_id = unidade and p.id = profissional for share;
   perform piloto_privado.travar_agenda(unidade);
-  if not piloto_privado.tem_perfil(unidade, array['recepcao','gestao']) then
-    raise exception 'Acesso negado' using errcode = '42501';
-  end if;
 
   select a.* into atual from piloto.agendamentos a where a.unidade_id = unidade and a.id = chave;
   if found then
@@ -166,14 +168,8 @@ as $$
 declare
   resultado uuid;
 begin
-  if not piloto_privado.tem_perfil(unidade, array['gestao','administrador']) then
-    raise exception 'Acesso negado' using errcode = '42501';
-  end if;
+  perform piloto_privado.autorizar_config_agenda(unidade, correlacao);
   perform piloto_privado.travar_agenda(unidade);
-  if not piloto_privado.tem_perfil(unidade, array['gestao','administrador']) then
-    raise exception 'Acesso negado' using errcode = '42501';
-  end if;
-  perform set_config('piloto.correlacao_id', coalesce(correlacao, gen_random_uuid())::text, true);
   if desativar is not null then
     update piloto_privado.cotas_agenda c set ativa = false
     where c.unidade_id = unidade and c.id = desativar and c.ativa returning c.id into resultado;
