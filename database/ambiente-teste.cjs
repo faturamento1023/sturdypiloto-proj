@@ -18,7 +18,7 @@ async function criarBancoTeste() {
         $$ select nullif(auth.jwt() ->> 'sub', '')::uuid $$;
       grant usage on schema auth to authenticated;
     `);
-    for (const arquivo of ['dev009_modelo.sql', 'dev013_autorizacao.sql', 'dev014_shell.sql', 'dev015_auditoria.sql', 'dev016_medicos.sql', 'dev017_usuarios.sql', 'dev018_catalogo.sql', 'dev019_convenios_precos.sql', 'dev020_impacto_cadastros.sql', 'dev021_grade_agenda.sql', 'dev022_disponibilidade.sql', 'dev023_excecoes_feriados.sql']) {
+    for (const arquivo of ['dev009_modelo.sql', 'dev013_autorizacao.sql', 'dev014_shell.sql', 'dev015_auditoria.sql', 'dev016_medicos.sql', 'dev017_usuarios.sql', 'dev018_catalogo.sql', 'dev019_convenios_precos.sql', 'dev020_impacto_cadastros.sql', 'dev021_grade_agenda.sql', 'dev022_disponibilidade.sql', 'dev023_excecoes_feriados.sql', 'dev026_pacientes.sql']) {
       await db.exec(readFileSync(join(__dirname, arquivo), 'utf8'));
     }
     return db;
