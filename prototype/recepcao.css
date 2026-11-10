@@ -88,6 +88,7 @@ textarea { resize: vertical; }
 }
 .btn:hover { filter: brightness(.91); }
 .btn.teal { background: var(--teal); }
+.btn.teal[aria-pressed="true"] { background: #07566b; box-shadow: inset 0 0 0 2px #d5f3fa; }
 .btn.green { background: var(--green); }
 .btn.blue { background: var(--blue); }
 .btn.purple { background: #5746b9; }
@@ -114,6 +115,9 @@ tbody tr:last-child td { border-bottom: 0; }
 .badge.confirmado { background: #dff2e5; color: #245932; }
 .badge.atendimento { background: #f1eafa; color: #5f3b8b; }
 .badge.cancelado { background: #fce8eb; color: #852c39; }
+.badge.livre { background: #e5f1ed; color: #205d50; }
+.grade-grupos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr)); gap: 14px; }
+.grade-grupo h2 { font-size: 1rem; margin: 0 0 7px; }
 .totals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 15px; }
 .total-card { position: relative; padding: 14px; background: white; border: 1px solid #e0e4eb; border-radius: 5px; box-shadow: 0 3px 7px #25283d10; }
 .total-card span { display: block; font-size: .76rem; font-weight: 800; letter-spacing: .02em; color: #155c92; margin-bottom: 5px; }
@@ -177,6 +181,8 @@ dialog::backdrop { background: #17233a75; }
   .add-booking { margin-left: 0; }
   .btn { min-height: 36px; padding: 6px 8px; }
   .table-box table { min-width: 690px; }
+  .table-box .grade-table { min-width: 0; }
+  .table-box .historico-table { min-width: 540px; }
   .inner-table table { min-width: 430px; }
   .totals { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
   .total-card { padding: 9px; }

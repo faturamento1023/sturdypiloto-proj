@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Prévia de navegação da recepção da Clínica DM com dados fictícios.">
   <title>Agenda · Clínica DM</title>
-  <link rel="stylesheet" href="recepcao.css">
-  <script src="recepcao.js" defer></script>
+  <link rel="stylesheet" href="recepcao.css?v=2">
+  <script src="recepcao.js?v=2" defer></script>
 </head>
 <body>
   <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -46,7 +46,9 @@
       <nav class="side-nav" aria-label="Módulos da recepção">
         <div class="nav-caption">RECEPÇÃO</div>
         <button type="button" data-view="agenda"><svg><use href="#calendar"/></svg> Agendamento</button>
+        <button type="button" data-view="grade"><svg><use href="#list"/></svg> Grade por profissional</button>
         <button type="button" data-view="atendimentos"><svg><use href="#desk"/></svg> Atendimentos</button>
+        <button type="button" data-view="historico"><svg><use href="#document"/></svg> Histórico de itens</button>
         <button type="button" data-view="pacientes"><svg><use href="#user"/></svg> Pacientes</button>
       </nav>
       <p class="side-note">Ambiente demonstrativo</p>
@@ -60,6 +62,7 @@
             <button class="btn teal" type="button" id="free"><svg><use href="#list"/></svg> Horários Livres</button>
             <button class="btn teal" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
             <button class="btn teal" type="button" data-search="agenda-search"><svg><use href="#search"/></svg> Pesquisar</button>
+            <button class="btn neutral" type="button" data-view="grade"><svg><use href="#list"/></svg> Grade por profissional</button>
             <div class="date-controls" aria-label="Selecionar dia">
               <button class="btn neutral icon" type="button" id="prev-day" aria-label="Dia anterior"><svg><use href="#prev"/></svg></button>
               <span class="date-field"><span id="agenda-date-br" aria-hidden="true"></span><input type="date" aria-label="Data da agenda" id="agenda-date" required></span>
@@ -84,6 +87,29 @@
         </div>
       </section>
 
+      <section id="view-grade" aria-labelledby="grade-title" hidden>
+        <header class="page-head"><h1 id="grade-title">Grade por profissional</h1><span id="grade-date-label"></span></header>
+        <div class="work-panel">
+          <div class="toolbar">
+            <button class="btn teal" type="button" id="grade-free" aria-pressed="false">Horários livres</button>
+            <button class="btn neutral" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
+            <button class="btn neutral" type="button" data-view="agenda">Ver agendamentos</button>
+          </div>
+          <div class="toolbar secondary-bar">
+            <div class="date-controls">
+              <button class="btn neutral icon" type="button" id="grade-prev" aria-label="Dia anterior"><svg><use href="#prev"/></svg></button>
+              <span class="date-field"><span id="grade-date-br" aria-hidden="true"></span><input type="date" aria-label="Data da grade" id="grade-date" required></span>
+              <button class="btn neutral icon" type="button" id="grade-next" aria-label="Próximo dia"><svg><use href="#next"/></svg></button>
+            </div>
+            <label class="compact"><span>Profissional</span><select id="grade-doctor"></select></label>
+            <label class="compact"><span>Situação</span><select id="grade-status"><option value="todos">Todos os horários</option><option value="livres">Livres</option><option value="ocupados">Ocupados</option><option value="cancelados">Cancelados</option></select></label>
+            <input id="grade-search" type="search" aria-label="Pesquisar profissional" placeholder="Nome do profissional">
+          </div>
+        </div>
+        <p class="muted">Horário de Brasília. As vagas seguem a disponibilidade desta demonstração.</p>
+        <div class="grade-grupos" id="grade-grupos"></div>
+      </section>
+
       <section id="view-atendimentos" aria-labelledby="attendance-title" hidden>
         <header class="page-head"><h1 id="attendance-title">Atendimentos</h1><span>Recepção</span></header>
         <div class="totals" id="attendance-totals"></div>
@@ -92,12 +118,29 @@
           <button class="btn teal" type="button" data-search="attendance-search"><svg><use href="#search"/></svg> Pesquisar</button>
           <input type="date" id="attendance-date" aria-label="Data do atendimento">
           <input id="attendance-search" type="search" aria-label="Pesquisar atendimentos" placeholder="Nome ou registro">
+          <button class="btn neutral" type="button" data-view="historico"><svg><use href="#document"/></svg> Histórico de itens</button>
           <button class="btn green" type="button" id="new-attendance"><svg><use href="#plus"/></svg> Novo</button>
         </div>
         <div class="table-box">
           <table class="attendance-table">
             <thead><tr><th>Registro</th><th>Data</th><th>Nome Paciente</th><th>Convênio</th><th>Procedimentos</th><th>Status</th><th>Valor Tabela</th><th>Valor Cobrado</th><th>Valor Pago</th><th>Ações</th></tr></thead>
             <tbody id="attendance-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="view-historico" aria-labelledby="historico-title" hidden>
+        <header class="page-head"><h1 id="historico-title">Histórico de itens</h1><span>Atendimentos</span></header>
+        <div class="work-panel toolbar">
+          <input id="history-search" class="grow" type="search" aria-label="Procedimento, código ou profissional" placeholder="Procedimento, código ou profissional">
+          <button class="btn neutral" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
+          <button class="btn neutral" type="button" data-view="atendimentos">Ver atendimentos</button>
+        </div>
+        <p class="muted">Valores registrados nos atendimentos fictícios desta demonstração.</p>
+        <div class="table-box" role="region" aria-label="Tabela de itens registrados" tabindex="0">
+          <table class="historico-table">
+            <thead><tr><th scope="col">Data</th><th scope="col">Procedimento</th><th scope="col">Profissional</th><th scope="col">Qtd.</th><th scope="col">Valor unitário</th><th scope="col">Total registrado</th></tr></thead>
+            <tbody id="history-rows"></tbody>
           </table>
         </div>
       </section>
