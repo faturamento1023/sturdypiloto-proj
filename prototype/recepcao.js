@@ -44,13 +44,13 @@ const encounters = [
     payments: [{ method: 'Pix', value: 30000 }] },
 ];
 bookings[0].encounter = encounters[0].id;
-const statusClass = { Reservado: 'reservado', Confirmado: 'confirmado', 'Em atendimento': 'atendimento', Cancelado: 'cancelado', Concluído: 'confirmado' };
+const statusClass = { Livre: 'livre', Reservado: 'reservado', Confirmado: 'confirmado', 'Em atendimento': 'atendimento', Cancelado: 'cancelado', Concluído: 'confirmado' };
 const findPatient = id => patients.find(p => p.id === id);
 const findDoctor = id => doctors.find(d => d.id === id);
 const findProcedure = id => procedures.find(p => p.id === id);
-const modules = ['agenda', 'atendimentos', 'pacientes', 'novo'];
+const modules = ['agenda', 'grade', 'atendimentos', 'historico', 'pacientes', 'novo'];
+const sharedViews = ['grade', 'historico'];
 const smallScreen = matchMedia('(max-width: 680px)');
-let activeView = 'agenda';
 let selectedDay = initialDay;
 let nextBooking = bookings.length + 1;
 let nextPatient = 1008;
@@ -108,7 +108,10 @@ function group(...buttons) {
   return div;
 }
 function show(view) {
-  activeView = view;
+  const hash = location.hash.slice(1);
+  if (sharedViews.includes(view) || sharedViews.includes(hash)) {
+    history.replaceState(null, '', sharedViews.includes(view) ? '#' + view : location.pathname + location.search);
+  }
   for (const page of modules) $('view-' + page).hidden = page !== view;
   for (const b of document.querySelectorAll('nav [data-view]')) {
     const current = b.dataset.view === (view === 'novo' ? 'atendimentos' : view);
@@ -121,7 +124,9 @@ function show(view) {
   const heading = page.querySelector('h1');
   document.title = heading.textContent + ' · Clínica DM';
   if (view === 'agenda') renderAgenda();
+  if (view === 'grade') renderGrade();
   if (view === 'atendimentos') renderEncounters();
+  if (view === 'historico') renderHistory();
   if (view === 'pacientes') renderPatients();
   window.scrollTo(0, 0);
 }
@@ -141,12 +146,16 @@ function setDate(date) {
   if (!date) return;
   selectedDay = date;
   $('agenda-date').value = date;
-  renderAgenda();
+  if ($('view-grade').hidden) renderAgenda();
+  else renderGrade();
+}
+function dateLabel() {
+  const day = weekday.format(new Date(selectedDay + 'T00:00:00Z'));
+  return day.charAt(0).toUpperCase() + day.slice(1) + ' · ' + brDate(selectedDay);
 }
 function renderAgenda() {
   $('agenda-date-br').textContent = brDate(selectedDay);
-  const label = weekday.format(new Date(selectedDay + 'T00:00:00Z'));
-  $('agenda-date-label').textContent = label.charAt(0).toUpperCase() + label.slice(1) + ' · ' + brDate(selectedDay);
+  $('agenda-date-label').textContent = dateLabel();
   const filter = $('agenda-selection').value;
   const status = $('status').value;
   const query = clean($('agenda-search').value);
@@ -183,6 +192,48 @@ function available(date, doctor, time) {
   const day = new Date(date + 'T00:00:00Z').getUTCDay();
   return day >= 1 && day <= 5 && shift.includes(time)
     && !bookings.some(b => b.date === date && b.doctor === doctor && b.time === time && b.status !== 'Cancelado');
+}
+function renderGrade() {
+  const selection = $('grade-doctor').value;
+  const term = clean($('grade-search').value);
+  const status = $('grade-status').value;
+  const freeOnly = status === 'livres';
+  $('grade-date').value = selectedDay;
+  $('grade-date-br').textContent = brDate(selectedDay);
+  $('grade-date-label').textContent = dateLabel();
+  $('grade-free').setAttribute('aria-pressed', String(freeOnly));
+  const groups = $('grade-grupos');
+  groups.replaceChildren();
+  const professionals = doctors.filter(doctor => (!selection || doctor.id === selection) && clean(doctor.name).includes(term));
+  for (const doctor of professionals) {
+    const section = node('section', '', 'grade-grupo');
+    const heading = node('h2', doctor.name);
+    heading.id = 'grade-' + doctor.id;
+    section.setAttribute('aria-labelledby', heading.id);
+    const table = node('table', '', 'grade-table');
+    const head = table.createTHead().insertRow();
+    for (const label of ['Horário', 'Situação', 'Local']) {
+      const cell = node('th', label);
+      cell.scope = 'col';
+      head.append(cell);
+    }
+    const rows = bookings.filter(b => b.date === selectedDay && b.doctor === doctor.id);
+    const slots = shift.filter(time => available(selectedDay, doctor.id, time)).map(time => ({ time, status: 'Livre' }));
+    const items = [...rows, ...slots].filter(item => {
+      if (freeOnly) return item.status === 'Livre';
+      if (status === 'cancelados') return item.status === 'Cancelado';
+      if (status === 'ocupados') return item.status !== 'Livre' && item.status !== 'Cancelado';
+      return true;
+    }).sort((a, b) => a.time.localeCompare(b.time));
+    const tbody = table.createTBody();
+    for (const item of items) row(tbody, [item.time, badge(item.status), item.status === 'Livre' ? 'Clínica DM · Demo' : '—']);
+    if (!items.length) empty(tbody, 3, 'Nenhum horário para os filtros selecionados.');
+    const wrap = node('div', '', 'table-box');
+    wrap.append(table);
+    section.append(heading, wrap);
+    groups.append(section);
+  }
+  if (!professionals.length) groups.append(node('p', 'Nenhum profissional encontrado.', 'muted'));
 }
 function freeSlots() {
   const result = $('free-rows');
@@ -235,6 +286,23 @@ function sum(items, value) {
 }
 function amounts(entry) {
   return [sum(entry.items, i => i.price * i.qty), sum(entry.items, i => i.charge), sum(entry.payments, p => p.value)];
+}
+function renderHistory() {
+  const term = clean($('history-search').value);
+  const tbody = $('history-rows');
+  tbody.replaceChildren();
+  for (const entry of [...encounters].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)) {
+    for (const item of entry.items) {
+      const procedure = findProcedure(item.procedure);
+      const professional = findDoctor(item.doctor).name;
+      if (!clean([procedure.name, procedure.id, professional].join(' ')).includes(term)) continue;
+      const description = node('div', procedure.name, 'row-name');
+      description.append(node('span', procedure.id.toUpperCase(), 'row-meta'));
+      row(tbody, [brDate(entry.date), description, professional, item.qty,
+        money.format(item.price / 100), money.format(item.charge / 100)]);
+    }
+  }
+  if (!tbody.childElementCount) empty(tbody, 6, 'Nenhum item encontrado no histórico.');
 }
 function renderEncounters() {
   const day = $('attendance-date').value;
@@ -334,6 +402,16 @@ smallScreen.addEventListener('change', event => setMenu(!event.matches));
 $('agenda-date').addEventListener('change', event => setDate(event.currentTarget.value));
 $('prev-day').addEventListener('click', () => setDate(moveDay(selectedDay, -1)));
 $('next-day').addEventListener('click', () => setDate(moveDay(selectedDay, 1)));
+$('grade-date').addEventListener('change', event => setDate(event.currentTarget.value));
+$('grade-prev').addEventListener('click', () => setDate(moveDay(selectedDay, -1)));
+$('grade-next').addEventListener('click', () => setDate(moveDay(selectedDay, 1)));
+$('grade-free').addEventListener('click', () => {
+  $('grade-status').value = $('grade-status').value === 'livres' ? 'todos' : 'livres';
+  renderGrade();
+});
+for (const id of ['grade-doctor', 'grade-status']) $(id).addEventListener('change', renderGrade);
+$('grade-search').addEventListener('input', renderGrade);
+$('history-search').addEventListener('input', renderHistory);
 $('free').addEventListener('click', freeSlots);
 $('refresh').addEventListener('click', () => { renderAgenda(); notice('Agenda atualizada nesta demonstração.'); });
 $('new-booking').addEventListener('click', () => openBooking());
@@ -408,6 +486,7 @@ $('attendance-search').addEventListener('input', renderEncounters);
 $('patient-search').addEventListener('input', renderPatients);
 
 setOptions('agenda-selection', doctors, 'label', 'Todas as agendas');
+setOptions('grade-doctor', doctors, 'name', 'Todos os profissionais');
 setOptions('booking-doctor', doctors, 'label');
 setOptions('booking-procedure', procedures, 'name');
 setOptions('item-procedure', procedures, 'name', 'Escolha');
@@ -415,4 +494,9 @@ setOptions('item-doctor', doctors, 'name', 'Escolha');
 $('agenda-date').value = initialDay;
 $('attendance-date').value = initialDay;
 setMenu(!smallScreen.matches);
-show(activeView);
+const initialView = location.hash.slice(1);
+show(sharedViews.includes(initialView) ? initialView : 'agenda');
+window.addEventListener('hashchange', () => {
+  const view = location.hash.slice(1);
+  if (sharedViews.includes(view)) show(view);
+});

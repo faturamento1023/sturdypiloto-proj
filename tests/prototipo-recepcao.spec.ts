@@ -34,3 +34,29 @@ test('prévia da recepção abre com estilos e reserva antes de criar um atendim
   await expect(page.getByRole('status')).toContainText('Atendimento fictício AT-242');
   expect(falhas).toEqual([]);
 });
+
+test('a versão pública abre a grade e o histórico por link direto', async ({ page }) => {
+  const preview = pathToFileURL(resolve('prototype/index.html')).href;
+  await page.goto(preview + '#grade');
+  const grade = page.getByRole('region', { name: 'Grade por profissional' });
+  await expect(grade.getByRole('table')).toHaveCount(2);
+  await expect(grade.getByText('Confirmado', { exact: true })).toBeVisible();
+  await grade.getByRole('button', { name: 'Horários livres' }).click();
+  await expect(grade.getByRole('button', { name: 'Horários livres' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(grade.getByText('Confirmado', { exact: true })).toHaveCount(0);
+  await expect(grade.getByText('Livre', { exact: true }).first()).toBeVisible();
+  await grade.getByLabel('Profissional', { exact: true }).selectOption('clinica');
+  await expect(grade.getByRole('table')).toHaveCount(1);
+  await expect(grade.getByRole('heading', { name: 'Dra. Marina Lima' })).toBeVisible();
+  await grade.getByRole('button', { name: 'Próximo dia' }).click();
+  await expect(grade.getByLabel('Data da grade')).toHaveValue('2026-11-11');
+
+  await page.goto(preview + '#historico');
+  const history = page.getByRole('region', { name: 'Histórico de itens', exact: true });
+  await expect(history.getByRole('row').filter({ hasText: 'Consulta clínica' })).toContainText('R$ 300,00');
+  await history.getByRole('searchbox').fill('sem resultados');
+  await expect(history.getByText('Nenhum item encontrado no histórico.')).toBeVisible();
+  await history.getByRole('searchbox').fill('marina');
+  await expect(history.getByText('Consulta clínica')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(await page.evaluate(() => innerWidth));
+});
