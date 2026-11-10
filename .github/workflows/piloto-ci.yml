@@ -20,6 +20,20 @@ jobs:
     name: Build, banco e navegador
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: piloto_teste
+          POSTGRES_PASSWORD: piloto_descartavel
+          POSTGRES_DB: piloto_reservas_teste
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U piloto_teste -d piloto_reservas_teste"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -30,6 +44,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:database
+      - name: Disputar reservas em duas sessões PostgreSQL
+        env:
+          PGPORT: ${{ job.services.postgres.ports[5432] }}
+          PGPASSWORD: piloto_descartavel
+        run: |
+          if ! command -v psql >/dev/null; then sudo apt-get update && sudo apt-get install -y postgresql-client; fi
+          bash scripts/testar-reservas-concorrentes.sh
       - run: npm run test:authorization
       - run: node --test src/agenda/*.test.ts src/cadastros/*.test.mjs scripts/dev019_precos.test.cjs scripts/dev019_migracao.test.cjs
       - run: npm run build

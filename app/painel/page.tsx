@@ -10,9 +10,12 @@ import { CadastroUsuarios } from './usuarios/cadastro';
 import { CadastroCatalogo } from './catalogo/cadastro';
 import { CadastroConvenios } from './convenios/cadastro';
 import { HistoricoAtendimentos } from './atendimentos/historico';
+import { FilaAtendimentos } from './atendimentos/fila';
+import { CadastroPacientes } from './pacientes/cadastro';
 import { GradeAgenda } from './agenda/grade';
 import { ConfiguracaoAgenda } from './agenda/configuracao';
 import { ExcecoesAgenda } from './agenda/excecoes';
+import { CotasAgenda, ReservaAgenda } from './agenda/reserva-painel';
 import { perfisDaOperacao } from '../../src/autorizacao/politica';
 import './painel.css';
 
@@ -77,6 +80,8 @@ type Parametros = Promise<{
   unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
   dataAgenda?: string; profissionalAgenda?: string; buscaAgenda?: string; situacaoAgenda?: string;
   configuracaoAgenda?: string; estadoAgenda?: string;
+  reservaAgenda?: string; profissionalReserva?: string; inicioReserva?: string; fimReserva?: string;
+  abertura?: string; atendimento?: string; dataFila?: string; paginaFila?: string;
   filtroMedico?: string; filtroCatalogo?: string; filtroConvenios?: string; filtroHistorico?: string; referencia?: string; pagina?: string; estado?: string;
 }>;
 
@@ -116,8 +121,10 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
   const resultados = busca ? buscarModulos(modulos, busca) : modulos;
   const historicoPermitido = perfisDaOperacao('item', 'ler').some(perfil => unidade.perfis.includes(perfil));
   const configuraAgenda = perfisDaOperacao('configuracaoAgenda', 'ler').some(perfil => unidade.perfis.includes(perfil));
+  const reservaAgenda = perfisDaOperacao('agenda', 'criar').some(perfil => unidade.perfis.includes(perfil));
   const abreConfiguracao = atual?.id === 'agenda' && !busca ? parametros.configuracaoAgenda : undefined;
-  if ((abreConfiguracao === '1' || abreConfiguracao === 'excecoes') && !configuraAgenda) notFound();
+  const abreReserva = atual?.id === 'agenda' && !busca && parametros.reservaAgenda === '1';
+  if ((['1', 'excecoes', 'cotas'].includes(abreConfiguracao ?? '') && !configuraAgenda) || (abreReserva && !reservaAgenda)) notFound();
   const inicio = urlPainel(unidade.id);
   const atalhos = ['pacientes', 'agenda', 'atendimentos'].flatMap(id => modulos.filter(modulo => modulo.id === id));
   const titulo = busca ? 'Resultados da busca' : atual?.nome ?? 'Painel da unidade';
@@ -185,25 +192,47 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             {(atual?.id !== 'agenda' || busca) && <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
               atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>}
           </header>
-          {abreConfiguracao === 'excecoes' ? (
+          {abreConfiguracao === 'cotas' ? (
+            <CotasAgenda cliente={cliente} unidade={unidade.id} estado={typeof parametros.estadoAgenda === 'string' ? parametros.estadoAgenda : ''} />
+          ) : abreConfiguracao === 'excecoes' ? (
             <ExcecoesAgenda cliente={cliente} unidade={unidade.id}
               data={typeof parametros.dataAgenda === 'string' ? parametros.dataAgenda : ''}
               estado={typeof parametros.estadoAgenda === 'string' ? parametros.estadoAgenda : ''} />
           ) : abreConfiguracao === '1' ? (
             <ConfiguracaoAgenda cliente={cliente} unidade={unidade.id}
               estado={typeof parametros.estadoAgenda === 'string' ? parametros.estadoAgenda : ''} />
+          ) : abreReserva ? (
+            <ReservaAgenda cliente={cliente} unidade={unidade.id}
+              profissional={typeof parametros.profissionalReserva === 'string' ? parametros.profissionalReserva : ''}
+              inicio={typeof parametros.inicioReserva === 'string' ? parametros.inicioReserva : ''}
+              fim={typeof parametros.fimReserva === 'string' ? parametros.fimReserva : ''}
+              podeBuscar={perfisDaOperacao('paciente', 'ler').some(perfil => unidade.perfis.includes(perfil))} />
           ) : atual?.id === 'agenda' && !busca ? (
             <Suspense fallback={<p className="painel-aviso" role="status">Carregando a agenda…</p>}>
               <GradeAgenda cliente={cliente} unidade={unidade.id} configuraAgenda={configuraAgenda}
+                permiteAbrir={perfisDaOperacao('atendimento', 'criar').some(perfil => unidade.perfis.includes(perfil))} permiteReservar={reservaAgenda}
+                abertura={parametros.abertura}
                 data={typeof parametros.dataAgenda === 'string' ? parametros.dataAgenda : ''}
                 profissional={typeof parametros.profissionalAgenda === 'string' ? parametros.profissionalAgenda : ''}
                 situacao={parametros.situacaoAgenda}
                 busca={typeof parametros.buscaAgenda === 'string' ? parametros.buscaAgenda.trim().slice(0, 80) : ''} />
             </Suspense>
-          ) : atual?.id === 'atendimentos' && !busca && historicoPermitido ? (
-            <HistoricoAtendimentos cliente={cliente} unidade={unidade.id}
-              filtro={typeof parametros.filtroHistorico === 'string' ? parametros.filtroHistorico.trim().slice(0, 80) : ''}
-              pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0} />
+          ) : atual?.id === 'pacientes' && !busca ? (
+            <CadastroPacientes unidade={unidade.id} permiteCadastro={perfisDaOperacao('paciente', 'criar').some(perfil => unidade.perfis.includes(perfil))} />
+          ) : atual?.id === 'atendimentos' && !busca ? (
+            <>
+              <Suspense fallback={<p role="status">Carregando fila…</p>}>
+                <FilaAtendimentos cliente={cliente} unidade={unidade.id}
+                  data={typeof parametros.dataFila === 'string' ? parametros.dataFila : ''}
+                  atendimento={typeof parametros.atendimento === 'string' ? parametros.atendimento : ''}
+                  pagina={typeof parametros.paginaFila === 'string' && /^\d{1,4}$/.test(parametros.paginaFila) ? Number(parametros.paginaFila) : 0} />
+              </Suspense>
+              {historicoPermitido && <Suspense fallback={<p role="status">Carregando histórico…</p>}>
+                <HistoricoAtendimentos cliente={cliente} unidade={unidade.id}
+                  filtro={typeof parametros.filtroHistorico === 'string' ? parametros.filtroHistorico.trim().slice(0, 80) : ''}
+                  pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0} />
+              </Suspense>}
+            </>
           ) : atual?.id === 'convenios' && !busca ? (
             <CadastroConvenios cliente={cliente} unidade={unidade.id}
               filtro={typeof parametros.filtroConvenios === 'string' ? parametros.filtroConvenios.trim().slice(0, 80) : ''}

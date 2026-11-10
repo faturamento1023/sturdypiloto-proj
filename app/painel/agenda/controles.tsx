@@ -2,10 +2,6 @@
 
 import { useState } from 'react';
 
-export function ImprimirAgenda() {
-  return <button type="button" className="painel-controle painel-controle-destaque" onClick={() => window.print()}>Imprimir</button>;
-}
-
 export function DataAgenda({ data, min, max }: { data: string; min: string; max: string }) {
   const [selecionada, setSelecionada] = useState(data);
   return (

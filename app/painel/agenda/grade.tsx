@@ -2,7 +2,9 @@ import Link from 'next/link';
 import type { sessaoNoServidor } from '../../auth/sessao';
 import { dataAgenda, dataValida, deslocarDia, janelaDoDia } from '../../../src/agenda/tempo';
 import { lerGradeAgenda, rotulosAgenda, uuidAgenda } from './leitura';
-import { DataAgenda, ImprimirAgenda } from './controles';
+import { ImprimirPainel, JanelaPesquisa } from '../controles';
+import { DataAgenda } from './controles';
+import { abrirAtendimentoAgendado } from '../atendimentos/abertura';
 
 const primeiraData = '1900-01-01';
 const ultimaData = '9999-12-30';
@@ -14,11 +16,13 @@ const situacoes = [
 
 const buscarNome = (valor: string) => valor.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('pt-BR');
 
-export async function GradeAgenda({ cliente, unidade, data, profissional, busca, configuraAgenda, situacao }: {
+export async function GradeAgenda({ cliente, unidade, data, profissional, busca, configuraAgenda, situacao, permiteAbrir, permiteReservar, abertura }: {
   cliente: NonNullable<Awaited<ReturnType<typeof sessaoNoServidor>>>;
   unidade: string; data: string; profissional: string; busca: string; configuraAgenda: boolean; situacao?: string;
+  permiteAbrir: boolean; permiteReservar: boolean; abertura?: string;
 }) {
   const hoje = dataAgenda(new Date());
+  const primeiroMinutoDisponivel = Math.ceil(Date.now() / 60_000) * 60_000;
   const dataConsulta = dataValida(data) && data >= primeiraData && data <= ultimaData ? data : hoje;
   const profissionalValido = !profissional || uuidAgenda.test(profissional);
   const { inicio, fim } = janelaDoDia(dataConsulta);
@@ -52,7 +56,20 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
         <div className="agenda-dias">
           <Link className="painel-controle painel-controle-destaque" href={url(dataConsulta, filtroSituacao === 'livres' ? 'todos' : 'livres')}
             prefetch={false}>{filtroSituacao === 'livres' ? 'Mostrar todos' : 'Horários livres'}</Link>
-          <ImprimirAgenda />
+          <ImprimirPainel />
+          <JanelaPesquisa titulo="Pesquisar na agenda" key={JSON.stringify([dataConsulta, profissional, busca, filtroSituacao])}>
+            <form action="/painel" method="get" className="agenda-formulario" aria-label="Pesquisar na grade">
+              <input type="hidden" name="unidade" value={unidade} />
+              <input type="hidden" name="modulo" value="agenda" />
+              <input type="hidden" name="dataAgenda" value={dataConsulta} />
+              <input type="hidden" name="profissionalAgenda" value={profissional} />
+              <label>Situação<select name="situacaoAgenda" defaultValue={filtroSituacao}>
+                {situacoes.map(([id, nome]) => <option key={id} value={id}>{nome}</option>)}
+              </select></label>
+              <label>Pesquisar profissional<input name="buscaAgenda" type="search" placeholder="Nome do profissional" maxLength={80} defaultValue={busca} /></label>
+              <button type="submit" className="painel-controle painel-controle-confirmar">Aplicar filtros</button>
+            </form>
+          </JanelaPesquisa>
           <nav className="agenda-dias" aria-label="Navegar por data">
             {dataConsulta > primeiraData && <Link className="painel-controle" href={url(deslocarDia(dataConsulta, -1))} prefetch={false}>Dia anterior</Link>}
             <Link className="painel-controle" href={url(hoje)} prefetch={false}>Hoje</Link>
@@ -63,6 +80,8 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
           key={JSON.stringify([dataConsulta, profissional, busca, filtroSituacao])}>
           <input type="hidden" name="unidade" value={unidade} />
           <input type="hidden" name="modulo" value="agenda" />
+          <input type="hidden" name="situacaoAgenda" value={filtroSituacao} />
+          <input type="hidden" name="buscaAgenda" value={busca} />
           <DataAgenda data={dataConsulta} min={primeiraData} max={ultimaData} />
           <div className="agenda-campo">
             <label htmlFor="agenda-profissional-filtro">Profissional</label>
@@ -71,13 +90,6 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
               {opcoes.map(p => <option key={p.id} value={p.id}>{p.nome}{p.ativo ? '' : ' (inativo)'}</option>)}
             </select>
           </div>
-          <div className="agenda-campo">
-            <label htmlFor="agenda-situacao-filtro">Situação</label>
-            <select id="agenda-situacao-filtro" name="situacaoAgenda" defaultValue={filtroSituacao}>
-              {situacoes.map(([id, nome]) => <option key={id} value={id}>{nome}</option>)}
-            </select>
-          </div>
-          <label>Pesquisar profissional<input name="buscaAgenda" type="search" placeholder="Nome do profissional" maxLength={80} defaultValue={busca} /></label>
           <button type="submit" className="painel-controle painel-controle-confirmar">Consultar</button>
         </form>
         {configuraAgenda && <nav className="agenda-dias" aria-label="Configurações da agenda">
@@ -86,9 +98,14 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
           <Link className="painel-controle" href={'/painel?' + new URLSearchParams({
             unidade, modulo: 'agenda', dataAgenda: dataConsulta, configuracaoAgenda: 'excecoes',
           })} prefetch={false}>Exceções e feriados</Link>
+          <Link className="painel-controle" href={'/painel?' + new URLSearchParams({ unidade, modulo: 'agenda', configuracaoAgenda: 'cotas' })}
+            prefetch={false}>Cotas de agendamento</Link>
         </nav>}
       </div>
       <p className="agenda-contexto">Horário de Brasília. As vagas exibidas seguem a disponibilidade cadastrada.</p>
+      {(abertura === 'indisponivel' || abertura === 'falha') && <p className="painel-aviso" role="alert">
+        {abertura === 'indisponivel' ? 'Este agendamento não está disponível para abrir atendimento.' : 'Não foi possível confirmar a abertura. Tente novamente.'}
+      </p>}
       {!!grade?.avisos?.length && <aside className="painel-aviso" aria-label="Avisos da data">
         {grade.avisos.map(a => <p key={[a.tipo, a.inicio, a.fim, a.profissional_id].join(':')}>
           {a.tipo === 'feriado' ? 'Feriado · ' + a.descricao : [
@@ -119,15 +136,27 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
                 : 'Sem disponibilidade cadastrada ou agendamentos para este dia.'}</p>
             ) : (
               <table className="painel-tabela">
-                <thead><tr><th scope="col">Horário</th><th scope="col">Situação</th><th scope="col">Local</th></tr></thead>
+                <thead><tr><th scope="col">Horário</th><th scope="col">Situação</th><th scope="col">Local</th>{(permiteAbrir || permiteReservar) && <th scope="col">Ações</th>}</tr></thead>
                 <tbody>{intervalos.map(item => {
                   const livre = item.estado === 'livre';
                   const de = new Date(item.inicio);
                   const ate = new Date(item.fim);
+                  const inicioReserva = Math.max(Math.ceil(de.getTime() / 60_000) * 60_000, primeiroMinutoDisponivel);
+                  const fimReserva = Math.floor(ate.getTime() / 60_000) * 60_000;
                   return <tr key={item.id}>
                     <td className="painel-numero"><time dateTime={de.toISOString()}>{hora.format(de)}</time> a <time dateTime={ate.toISOString()}>{Date.parse(item.fim) === Date.parse(fim) ? '24:00' : hora.format(ate)}</time></td>
                     <td><span className="painel-estado" data-estado={item.estado}>{livre ? 'Livre' : rotulosAgenda[item.estado]}</span></td>
                     <td>{livre ? item.local_nome ?? '—' : '—'}</td>
+                    {(permiteAbrir || permiteReservar) && <td>{livre && permiteReservar && fimReserva > inicioReserva ? (
+                      <Link className="painel-controle" prefetch={false} href={'/painel?' + new URLSearchParams({ unidade, modulo: 'agenda',
+                        reservaAgenda: '1', profissionalReserva: p.id,
+                        inicioReserva: new Date(inicioReserva).toISOString(),
+                        fimReserva: new Date(fimReserva).toISOString() })}>Reservar</Link>
+                    ) : permiteAbrir && ['reservado', 'confirmado', 'remarcado'].includes(item.estado) ? (
+                      <form action={abrirAtendimentoAgendado.bind(null, unidade, item.id, dataConsulta)}>
+                        <button className="painel-controle" type="submit">Abrir atendimento</button>
+                      </form>
+                    ) : '—'}</td>}
                   </tr>;
                 })}</tbody>
               </table>

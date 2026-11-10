@@ -3,10 +3,7 @@ const { join } = require('node:path');
 const { PGlite } = require('@electric-sql/pglite');
 const { btree_gist } = require('@electric-sql/pglite/contrib/btree_gist');
 
-async function criarBancoTeste() {
-  const db = await PGlite.create({ extensions: { btree_gist } });
-  try {
-    await db.exec(`
+const papeisTeste = `
       create role anon nologin;
       create role authenticated nologin;
       create role service_role nologin bypassrls;
@@ -17,8 +14,16 @@ async function criarBancoTeste() {
       create function auth.uid() returns uuid language sql stable as
         $$ select nullif(auth.jwt() ->> 'sub', '')::uuid $$;
       grant usage on schema auth to authenticated;
-    `);
-    for (const arquivo of ['dev009_modelo.sql', 'dev013_autorizacao.sql', 'dev014_shell.sql', 'dev015_auditoria.sql', 'dev016_medicos.sql', 'dev017_usuarios.sql', 'dev018_catalogo.sql', 'dev019_convenios_precos.sql', 'dev020_impacto_cadastros.sql', 'dev021_grade_agenda.sql', 'dev022_disponibilidade.sql', 'dev023_excecoes_feriados.sql']) {
+    `;
+const migracoes = ['dev009_modelo.sql', 'dev013_autorizacao.sql', 'dev014_shell.sql', 'dev015_auditoria.sql', 'dev016_medicos.sql',
+  'dev017_usuarios.sql', 'dev018_catalogo.sql', 'dev019_convenios_precos.sql', 'dev020_impacto_cadastros.sql', 'dev021_grade_agenda.sql',
+  'dev022_disponibilidade.sql', 'dev023_excecoes_feriados.sql', 'dev026_pacientes.sql', 'dev031_atendimento_agendado.sql', 'dev024_025_reservas_cotas.sql'];
+
+async function criarBancoTeste() {
+  const db = await PGlite.create({ extensions: { btree_gist } });
+  try {
+    await db.exec(papeisTeste);
+    for (const arquivo of migracoes) {
       await db.exec(readFileSync(join(__dirname, arquivo), 'utf8'));
     }
     return db;
@@ -28,4 +33,4 @@ async function criarBancoTeste() {
   }
 }
 
-module.exports = { criarBancoTeste };
+module.exports = { criarBancoTeste, migracoes, papeisTeste };

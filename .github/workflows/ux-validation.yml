@@ -7,6 +7,7 @@ on:
       - 'docs/DEV-006_JORNADAS.json'
       - 'docs/DEV-006_CHECKLIST_VALIDACAO.md'
       - 'scripts/validate-ux.mjs'
+      - '.node-version'
       - '.github/workflows/ux-validation.yml'
   push:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - 'docs/DEV-006_JORNADAS.json'
       - 'docs/DEV-006_CHECKLIST_VALIDACAO.md'
       - 'scripts/validate-ux.mjs'
+      - '.node-version'
       - '.github/workflows/ux-validation.yml'
 
 permissions:
@@ -25,10 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout original project code
-        uses: actions/checkout@v4
-      - name: Configure Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: '20'
+          persist-credentials: false
+      - name: Configure Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
       - name: Validate journey references
         run: node scripts/validate-ux.mjs
