@@ -7,7 +7,7 @@
   <title>Agenda · Clínica DM</title>
   <link rel="stylesheet" href="../design/tokens.css">
   <link rel="stylesheet" href="recepcao.css?v=5">
-  <script src="recepcao.js?v=3" defer></script>
+  <script src="recepcao.js?v=4" defer></script>
 </head>
 <body>
   <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -77,9 +77,9 @@
             <button class="btn green" type="button" id="refresh"><svg><use href="#refresh"/></svg> Atualizar</button>
           </div>
         </div>
-        <div class="table-box">
+        <div class="table-box" role="region" aria-label="Lista de agendamentos" tabindex="0">
           <table class="agenda-table">
-            <thead><tr><th>Hora</th><th>Nome Paciente</th><th>Convênio</th><th>Fone</th><th>Data Nasc.</th><th>Procedimento(s)</th><th>Status</th><th>Ações</th></tr></thead>
+            <thead><tr><th scope="col">Hora</th><th scope="col">Nome do paciente</th><th scope="col">Convênio</th><th scope="col">Telefone</th><th scope="col">Nascimento</th><th scope="col">Procedimentos</th><th scope="col">Situação</th><th scope="col">Ações</th></tr></thead>
             <tbody id="agenda-rows"></tbody>
           </table>
           <footer class="table-foot" id="agenda-count"></footer>
@@ -111,7 +111,7 @@
 
       <section id="view-atendimentos" aria-labelledby="attendance-title" hidden>
         <header class="page-head"><h1 id="attendance-title">Atendimentos</h1><span>Recepção</span></header>
-        <div class="totals" id="attendance-totals"></div>
+        <section class="totals" id="attendance-totals" aria-label="Totais dos atendimentos filtrados"></section>
         <div class="work-panel attendance-toolbar">
           <div class="toolbar">
             <button class="btn teal" type="button" data-print><svg><use href="#print"/></svg> Imprimir</button>
@@ -126,9 +126,9 @@
             <button class="btn neutral" type="button" data-view="historico"><svg><use href="#document"/></svg> Histórico de itens</button>
           </div>
         </div>
-        <div class="table-box">
+        <div class="table-box" role="region" aria-label="Lista de atendimentos" tabindex="0">
           <table class="attendance-table">
-            <thead><tr><th>Chave</th><th>Registro</th><th>Data</th><th>Nome Paciente</th><th>Convênio</th><th>Procedimentos</th><th>Status</th><th>Valor Tabela</th><th>Valor Cobrado</th><th>Valor Pago</th><th>Ações</th></tr></thead>
+            <thead><tr><th scope="col">Chave</th><th scope="col">Registro</th><th scope="col">Data</th><th scope="col">Nome do paciente</th><th scope="col">Convênio</th><th scope="col">Procedimentos</th><th scope="col">Situação</th><th scope="col">Valor de tabela</th><th scope="col">Valor cobrado</th><th scope="col">Valor pago</th><th scope="col">Ações</th></tr></thead>
             <tbody id="attendance-rows"></tbody>
           </table>
         </div>

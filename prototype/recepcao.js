@@ -42,6 +42,9 @@ const encounters = [
   { id: 241, date: initialDay, patient: 1001, plan: 'Particular', status: 'Concluído',
     items: [{ procedure: 'consulta', doctor: 'clinica', qty: 1, price: 30000, charge: 30000 }],
     payments: [{ method: 'Pix', value: 30000 }] },
+  { id: 240, date: moveDay(initialDay, -1), patient: 1002, plan: 'Convênio Demo', status: 'Concluído',
+    items: [{ procedure: 'retorno', doctor: 'clinica', qty: 2, price: 15000, charge: 26950 }],
+    payments: [{ method: 'Pix', value: 17425 }] },
 ];
 bookings[0].encounter = encounters[0].id;
 const statusClass = { Livre: 'livre', Reservado: 'reservado', Confirmado: 'confirmado', 'Em atendimento': 'atendimento', Cancelado: 'cancelado', Concluído: 'confirmado' };
@@ -49,7 +52,7 @@ const findPatient = id => patients.find(p => p.id === id);
 const findDoctor = id => doctors.find(d => d.id === id);
 const findProcedure = id => procedures.find(p => p.id === id);
 const modules = ['agenda', 'grade', 'atendimentos', 'historico', 'pacientes', 'novo'];
-const sharedViews = ['grade', 'historico'];
+const sharedViews = ['atendimentos', 'grade', 'historico'];
 const smallScreen = matchMedia('(max-width: 680px)');
 let selectedDay = initialDay;
 let nextBooking = bookings.length + 1;
@@ -331,8 +334,8 @@ function renderEncounters() {
   $('attendance-totals').replaceChildren(...[
     ['ATENDIMENTOS', records.length, 'case'],
     ['PROCEDIMENTOS', sum(records, e => sum(e.items, i => i.qty)), 'document'],
-    ['VALOR PAGO (CAIXA)', money.format(sum(records, e => amounts(e)[2]) / 100), 'money'],
-    ['VLR TOTAL', money.format(sum(records, e => amounts(e)[1]) / 100), 'list'],
+    ['TOTAL RECEBIDO', money.format(sum(records, e => amounts(e)[2]) / 100), 'money'],
+    ['TOTAL COBRADO', money.format(sum(records, e => amounts(e)[1]) / 100), 'list'],
   ].map(([label, value, icon]) => {
     const card = node('div', '', 'total-card');
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
