@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { sessaoNoServidor } from '../../auth/sessao';
+import { ImprimirPainel, JanelaPesquisa } from '../controles';
 
 type ItemHistorico = {
   item_id: string; aberto_em: string; procedimento_codigo_atual: string; procedimento_descricao_atual: string;
@@ -33,21 +34,27 @@ export async function HistoricoAtendimentos({ cliente, unidade, filtro, pagina }
   }
 
   const itens: ItemHistorico[] = data.slice(0, 20);
-  const linkPagina = (indice: number) => '/painel?' + new URLSearchParams({
-    unidade, modulo: 'atendimentos', filtroHistorico: filtro, pagina: String(indice),
+  const linkPagina = (indice: number, termo = filtro) => '/painel?' + new URLSearchParams({
+    unidade, modulo: 'atendimentos', filtroHistorico: termo, pagina: String(indice),
   }).toString();
 
   return (
     <section className="painel-modulos historico-itens" aria-labelledby="historico-itens-titulo">
       <h2 id="historico-itens-titulo">Histórico de itens</h2>
       <p>Os valores são os registrados no atendimento. A situação do procedimento e do profissional é a do cadastro atual.</p>
-      <form action="/painel" method="get" role="search" aria-label="Buscar no histórico" className="painel-barra painel-barra-busca">
-        <input type="hidden" name="unidade" value={unidade} />
-        <input type="hidden" name="modulo" value="atendimentos" />
-        <input type="search" name="filtroHistorico" aria-label="Procedimento, código ou profissional"
-          placeholder="Procedimento, código ou profissional" defaultValue={filtro} key={filtro} maxLength={80} />
-        <button type="submit" className="painel-controle painel-controle-destaque">Filtrar</button>
-      </form>
+      <div className="painel-barra painel-barra-busca">
+        <ImprimirPainel />
+        <JanelaPesquisa titulo="Pesquisar no histórico" key={filtro}>
+          <form action="/painel" method="get" role="search" aria-label="Buscar no histórico" className="agenda-formulario">
+            <input type="hidden" name="unidade" value={unidade} />
+            <input type="hidden" name="modulo" value="atendimentos" />
+            <label>Procedimento, código ou profissional<input type="search" name="filtroHistorico" defaultValue={filtro} maxLength={80} /></label>
+            <button type="submit" className="painel-controle painel-controle-confirmar">Aplicar filtros</button>
+          </form>
+        </JanelaPesquisa>
+        {filtro && <Link className="painel-controle" href={linkPagina(0, '')}
+          prefetch={false}>Limpar pesquisa</Link>}
+      </div>
       {itens.length === 0 ? <p>Nenhum item encontrado no histórico.</p> : (
         <div className="painel-tabela-rolagem" tabIndex={0} role="region" aria-label="Tabela de itens registrados">
           <table className="painel-tabela">

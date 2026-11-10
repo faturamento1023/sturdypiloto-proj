@@ -2,7 +2,8 @@ import Link from 'next/link';
 import type { sessaoNoServidor } from '../../auth/sessao';
 import { dataAgenda, dataValida, deslocarDia, janelaDoDia } from '../../../src/agenda/tempo';
 import { lerGradeAgenda, rotulosAgenda, uuidAgenda } from './leitura';
-import { DataAgenda, ImprimirAgenda } from './controles';
+import { ImprimirPainel, JanelaPesquisa } from '../controles';
+import { DataAgenda } from './controles';
 
 const primeiraData = '1900-01-01';
 const ultimaData = '9999-12-30';
@@ -52,7 +53,20 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
         <div className="agenda-dias">
           <Link className="painel-controle painel-controle-destaque" href={url(dataConsulta, filtroSituacao === 'livres' ? 'todos' : 'livres')}
             prefetch={false}>{filtroSituacao === 'livres' ? 'Mostrar todos' : 'Horários livres'}</Link>
-          <ImprimirAgenda />
+          <ImprimirPainel />
+          <JanelaPesquisa titulo="Pesquisar na agenda" key={JSON.stringify([dataConsulta, profissional, busca, filtroSituacao])}>
+            <form action="/painel" method="get" className="agenda-formulario" aria-label="Pesquisar na grade">
+              <input type="hidden" name="unidade" value={unidade} />
+              <input type="hidden" name="modulo" value="agenda" />
+              <input type="hidden" name="dataAgenda" value={dataConsulta} />
+              <input type="hidden" name="profissionalAgenda" value={profissional} />
+              <label>Situação<select name="situacaoAgenda" defaultValue={filtroSituacao}>
+                {situacoes.map(([id, nome]) => <option key={id} value={id}>{nome}</option>)}
+              </select></label>
+              <label>Pesquisar profissional<input name="buscaAgenda" type="search" placeholder="Nome do profissional" maxLength={80} defaultValue={busca} /></label>
+              <button type="submit" className="painel-controle painel-controle-confirmar">Aplicar filtros</button>
+            </form>
+          </JanelaPesquisa>
           <nav className="agenda-dias" aria-label="Navegar por data">
             {dataConsulta > primeiraData && <Link className="painel-controle" href={url(deslocarDia(dataConsulta, -1))} prefetch={false}>Dia anterior</Link>}
             <Link className="painel-controle" href={url(hoje)} prefetch={false}>Hoje</Link>
@@ -63,6 +77,8 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
           key={JSON.stringify([dataConsulta, profissional, busca, filtroSituacao])}>
           <input type="hidden" name="unidade" value={unidade} />
           <input type="hidden" name="modulo" value="agenda" />
+          <input type="hidden" name="situacaoAgenda" value={filtroSituacao} />
+          <input type="hidden" name="buscaAgenda" value={busca} />
           <DataAgenda data={dataConsulta} min={primeiraData} max={ultimaData} />
           <div className="agenda-campo">
             <label htmlFor="agenda-profissional-filtro">Profissional</label>
@@ -71,13 +87,6 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
               {opcoes.map(p => <option key={p.id} value={p.id}>{p.nome}{p.ativo ? '' : ' (inativo)'}</option>)}
             </select>
           </div>
-          <div className="agenda-campo">
-            <label htmlFor="agenda-situacao-filtro">Situação</label>
-            <select id="agenda-situacao-filtro" name="situacaoAgenda" defaultValue={filtroSituacao}>
-              {situacoes.map(([id, nome]) => <option key={id} value={id}>{nome}</option>)}
-            </select>
-          </div>
-          <label>Pesquisar profissional<input name="buscaAgenda" type="search" placeholder="Nome do profissional" maxLength={80} defaultValue={busca} /></label>
           <button type="submit" className="painel-controle painel-controle-confirmar">Consultar</button>
         </form>
         {configuraAgenda && <nav className="agenda-dias" aria-label="Configurações da agenda">

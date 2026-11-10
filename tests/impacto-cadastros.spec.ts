@@ -15,6 +15,12 @@ test('histórico no painel mantém o total depois da inativação no catálogo',
   await expect(item.getByRole('cell').filter({ hasText: '250,00' })).toBeVisible();
   await expect(item.getByRole('cell').filter({ hasText: /^Ativo$/ })).toBeVisible();
   await expect(historico.getByText('Paciente de histórico')).toHaveCount(0);
+  await historico.getByRole('button', { name: 'Pesquisar', exact: true }).click();
+  const pesquisa = page.getByRole('dialog', { name: 'Pesquisar no histórico' });
+  await pesquisa.getByRole('searchbox').fill('HIST-020');
+  await pesquisa.getByRole('button', { name: 'Aplicar filtros' }).click();
+  await expect(page).toHaveURL(/filtroHistorico=HIST-020/);
+  await expect(item.getByRole('cell').filter({ hasText: '250,00' })).toBeVisible();
 
   await page.goto('/painel?modulo=catalogo');
   const cadastro = page.getByRole('region', { name: 'Catálogo da unidade' }).locator('details').filter({ hasText: 'Procedimento de histórico' });

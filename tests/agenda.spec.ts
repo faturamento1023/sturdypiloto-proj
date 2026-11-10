@@ -43,11 +43,15 @@ test('agenda protege o endpoint e mostra intervalos livres e ocupados na data lo
     await page.evaluate(() => window.innerWidth),
   );
 
-  await page.getByLabel('Pesquisar profissional').fill('iris');
-  await page.getByRole('button', { name: 'Consultar' }).click();
+  await grade.getByRole('button', { name: 'Pesquisar', exact: true }).click();
+  const pesquisa = page.getByRole('dialog', { name: 'Pesquisar na agenda' });
+  await pesquisa.getByLabel('Pesquisar profissional').fill('iris');
+  await pesquisa.getByRole('button', { name: 'Aplicar filtros' }).click();
   await expect(iris).toBeVisible();
   await expect(grade.getByRole('heading', { name: 'Dr. Bento Fictício' })).toHaveCount(0);
-  await page.getByLabel('Pesquisar profissional').fill('');
+  await grade.getByRole('button', { name: 'Pesquisar', exact: true }).click();
+  await pesquisa.getByLabel('Pesquisar profissional').fill('');
+  await pesquisa.getByRole('button', { name: 'Aplicar filtros' }).click();
   await page.getByLabel('Profissional', { exact: true }).selectOption(profissional);
   await page.getByRole('button', { name: 'Consultar' }).click();
   await expect(page).toHaveURL(new RegExp(profissional));
