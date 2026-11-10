@@ -62,7 +62,7 @@
             <button class="btn teal" type="button" data-search="agenda-search"><svg><use href="#search"/></svg> Pesquisar</button>
             <div class="date-controls" aria-label="Selecionar dia">
               <button class="btn neutral icon" type="button" id="prev-day" aria-label="Dia anterior"><svg><use href="#prev"/></svg></button>
-              <input type="date" aria-label="Data da agenda" id="agenda-date" required>
+              <span class="date-field"><span id="agenda-date-br" aria-hidden="true"></span><input type="date" aria-label="Data da agenda" id="agenda-date" required></span>
               <button class="btn neutral icon" type="button" id="next-day" aria-label="Dia seguinte"><svg><use href="#next"/></svg></button>
             </div>
             <select id="agenda-selection" aria-label="Agenda selecionada"></select>

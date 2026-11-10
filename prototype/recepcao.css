@@ -64,6 +64,11 @@ svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width:
 .work-panel { padding: 10px; margin-bottom: 14px; border: 1px solid #e1e4ea; border-radius: 4px; background: #f0f2f5; }
 .toolbar, .date-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .date-controls { flex-wrap: nowrap; gap: 4px; }
+.date-field { position: relative; }
+.date-field > span { position: absolute; left: 10px; top: 8px; pointer-events: none; font-variant-numeric: tabular-nums; }
+.date-field > input { color: transparent; width: 126px; }
+.date-field > input:focus { color: #262d3a; }
+.date-field:focus-within > span { visibility: hidden; }
 .secondary-bar { margin-top: 10px; }
 .compact { display: flex; align-items: center; gap: 6px; }
 .compact span { color: #4f596a; font-size: .87rem; }

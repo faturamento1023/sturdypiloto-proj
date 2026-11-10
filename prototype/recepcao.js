@@ -144,6 +144,7 @@ function setDate(date) {
   renderAgenda();
 }
 function renderAgenda() {
+  $('agenda-date-br').textContent = brDate(selectedDay);
   const label = weekday.format(new Date(selectedDay + 'T00:00:00Z'));
   $('agenda-date-label').textContent = label.charAt(0).toUpperCase() + label.slice(1) + ' · ' + brDate(selectedDay);
   const filter = $('agenda-selection').value;
