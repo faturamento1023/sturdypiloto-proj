@@ -415,7 +415,6 @@ function renderPatients() {
 
 document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => show(b.dataset.view)));
 document.querySelectorAll('[data-dismiss]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
-document.querySelectorAll('[data-search]').forEach(b => b.addEventListener('click', () => $(b.dataset.search).focus()));
 document.querySelectorAll('[data-open-search]').forEach(b => b.addEventListener('click', () => {
   const name = b.dataset.openSearch;
   if (name === 'agenda') {
