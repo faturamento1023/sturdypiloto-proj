@@ -1,0 +1,36 @@
+import { expect, test } from '@playwright/test';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+test('prévia da recepção abre com estilos e reserva antes de criar um atendimento', async ({ page }, info) => {
+  const falhas: string[] = [];
+  page.on('pageerror', erro => falhas.push(erro.message));
+  await page.goto(pathToFileURL(resolve('prototype/index.html')).href);
+  await expect(page.getByRole('heading', { name: 'Agenda', exact: true })).toBeVisible();
+  await expect(page.locator('#agenda-rows tr')).toHaveCount(7);
+  await expect(page.locator('#agenda-date-br')).toHaveText('10/11/2026');
+
+  if (info.project.name === 'celular') {
+    await expect(page.getByRole('navigation', { name: 'Módulos da recepção' })).toBeHidden();
+    await page.getByRole('button', { name: 'Menu', exact: true }).click();
+  }
+  await expect(page.getByRole('navigation', { name: 'Módulos da recepção' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(await page.evaluate(() => innerWidth));
+
+  await page.getByRole('button', { name: 'Novo agendamento' }).click();
+  await page.locator('#booking-patient').selectOption('1003');
+  await page.locator('#booking-time').fill('08:00');
+  await page.getByRole('button', { name: 'Reservar horário' }).click();
+  await expect(page.getByRole('alert')).toContainText('Horário indisponível');
+  await page.locator('#booking-time').fill('13:30');
+  await page.getByRole('button', { name: 'Reservar horário' }).click();
+  const reserva = page.getByRole('row').filter({ hasText: '13:30' });
+  await expect(reserva).toContainText('Reservado');
+  await reserva.getByRole('button', { name: 'Atender' }).click();
+  await expect(page.getByRole('heading', { name: 'Novo atendimento' })).toBeVisible();
+  await expect(page.locator('#record-name')).toHaveValue('Carla Almeida');
+  await page.getByRole('group', { name: 'Procedimentos' }).getByRole('button', { name: 'Adicionar' }).click();
+  await page.getByRole('button', { name: 'Salvar', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText('Atendimento fictício AT-242');
+  expect(falhas).toEqual([]);
+});

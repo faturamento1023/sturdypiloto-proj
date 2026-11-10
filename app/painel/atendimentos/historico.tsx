@@ -38,34 +38,42 @@ export async function HistoricoAtendimentos({ cliente, unidade, filtro, pagina }
   }).toString();
 
   return (
-    <section className="painel-modulos" aria-labelledby="historico-itens-titulo">
+    <section className="painel-modulos historico-itens" aria-labelledby="historico-itens-titulo">
       <h2 id="historico-itens-titulo">Histórico de itens</h2>
       <p>Os valores são os registrados no atendimento. A situação do procedimento e do profissional é a do cadastro atual.</p>
-      <form action="/painel" method="get" role="search" aria-label="Buscar no histórico" className="painel-filtro-medico">
+      <form action="/painel" method="get" role="search" aria-label="Buscar no histórico" className="painel-barra painel-barra-busca">
         <input type="hidden" name="unidade" value={unidade} />
         <input type="hidden" name="modulo" value="atendimentos" />
         <input type="search" name="filtroHistorico" aria-label="Procedimento, código ou profissional"
           placeholder="Procedimento, código ou profissional" defaultValue={filtro} key={filtro} maxLength={80} />
-        <button type="submit" className="botao">Filtrar</button>
+        <button type="submit" className="painel-controle painel-controle-destaque">Filtrar</button>
       </form>
-      {itens.length === 0 && <p>Nenhum item encontrado no histórico.</p>}
-      <ul className="painel-lista-medicos">
-        {itens.map(item => (
-          <li className="painel-aviso" key={item.item_id}>
-            <strong>{item.procedimento_descricao_atual} · {item.procedimento_codigo_atual}</strong>
-            <dl className="painel-dados-catalogo">
-              <dt>Abertura do atendimento</dt><dd>{dataAtendimento(item.aberto_em)}</dd>
-              <dt>Procedimento no cadastro</dt><dd>{item.procedimento_ativo_atual ? 'Ativo' : 'Inativo'}</dd>
-              {item.profissional_nome_atual !== null && (
-                <><dt>Profissional no cadastro</dt><dd>{item.profissional_nome_atual} · {item.profissional_ativo_atual ? 'Ativo' : 'Inativo'}</dd></>
-              )}
-              <dt>Quantidade</dt><dd>{item.quantidade}</dd>
-              <dt>Valor unitário registrado</dt><dd>{moeda(item.valor_historico_centavos)}</dd>
-              <dt>Total registrado</dt><dd>{moeda(item.cobrado_historico_centavos)}</dd>
-            </dl>
-          </li>
-        ))}
-      </ul>
+      {itens.length === 0 ? <p>Nenhum item encontrado no histórico.</p> : (
+        <div className="painel-tabela-rolagem" tabIndex={0} role="region" aria-label="Tabela de itens registrados">
+          <table className="painel-tabela">
+            <thead><tr>
+              <th scope="col">Data</th><th scope="col">Procedimento</th><th scope="col">Situação no cadastro</th>
+              <th scope="col">Profissional</th><th scope="col">Qtd.</th><th scope="col">Valor unitário</th><th scope="col">Total registrado</th>
+            </tr></thead>
+            <tbody>
+              {itens.map(item => (
+                <tr key={item.item_id}>
+                  <td className="painel-numero">{dataAtendimento(item.aberto_em)}</td>
+                  <th scope="row">{item.procedimento_descricao_atual}<small>{item.procedimento_codigo_atual}</small></th>
+                  <td><span className="painel-estado" data-estado={item.procedimento_ativo_atual ? 'ativo' : 'inativo'}>
+                    {item.procedimento_ativo_atual ? 'Ativo' : 'Inativo'}
+                  </span></td>
+                  <td>{item.profissional_nome_atual === null ? '—' : <>{item.profissional_nome_atual}
+                    <small>{item.profissional_ativo_atual ? 'Ativo' : 'Inativo'}</small></>}</td>
+                  <td className="painel-numero">{item.quantidade}</td>
+                  <td className="painel-numero">{moeda(item.valor_historico_centavos)}</td>
+                  <td className="painel-numero">{moeda(item.cobrado_historico_centavos)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       {(pagina > 0 || data.length > 20) && (
         <nav aria-label="Páginas de histórico" className="painel-paginas-medicos">
           {pagina > 0 && <Link href={linkPagina(pagina - 1)} prefetch={false}>Página anterior</Link>}

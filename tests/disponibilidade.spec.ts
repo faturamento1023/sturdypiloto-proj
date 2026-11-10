@@ -38,7 +38,8 @@ test('gestão cadastra sala e horário semanal, vê a grade e encerra a vigênci
   await config.getByRole('link', { name: 'Voltar à grade' }).click();
   await page.getByLabel('Data da agenda').fill('2090-11-13');
   await page.getByRole('button', { name: 'Consultar' }).click();
-  await expect(page.getByText('Livre · ' + sala)).toBeVisible();
+  const horarioDaSala = page.getByRole('row').filter({ hasText: sala }).filter({ hasText: 'Livre' });
+  await expect(horarioDaSala).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(await page.evaluate(() => window.innerWidth));
 
   const api = '/api/v1/unidades/' + unidade + '/agenda?inicio=2090-11-13T03:00:00Z&fim=2090-11-14T03:00:00Z';
@@ -52,7 +53,7 @@ test('gestão cadastra sala e horário semanal, vê a grade e encerra a vigênci
   await regraDaSala.getByRole('button', { name: 'Encerrar regra' }).click();
   await expect(config.getByRole('status')).toContainText('Disponibilidade encerrada');
   await page.goto(grade('2090-11-20'));
-  await expect(page.getByText('Livre · ' + sala)).toHaveCount(0);
+  await expect(horarioDaSala).toHaveCount(0);
   await page.goto(grade('2090-11-13'));
-  await expect(page.getByText('Livre · ' + sala)).toBeVisible();
+  await expect(horarioDaSala).toBeVisible();
 });
