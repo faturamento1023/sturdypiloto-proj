@@ -30,8 +30,10 @@ test('abertura idempotente e fila mantêm os escopos existentes', async t => {
   await assert.rejects(abrir(recepcao, u, cancelada), { code: '23514' });
   await assert.rejects(abrir(recepcao, u, agenda, 'aal1'), { code: '42501' });
   await assert.rejects(abrir(medico), { code: '42501' });
-  const id = await abrir(recepcao);
-  assert.equal(await abrir(recepcao), id);
+  const abertura = await abrir(recepcao);
+  const { id } = abertura;
+  assert.equal(abertura.dia, dia);
+  assert.deepEqual(await abrir(recepcao), abertura);
   const [registro] = await fila(recepcao);
   assert.equal(registro.id, id);
   assert.equal(registro.agendamento_id, agenda);

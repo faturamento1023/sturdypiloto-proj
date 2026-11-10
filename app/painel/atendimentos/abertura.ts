@@ -17,8 +17,9 @@ export async function abrirAtendimentoAgendado(unidade: string, agenda: string, 
     unidade, agenda, correlacao: crypto.randomUUID(),
   });
   if (error?.code === '42501') redirect('/painel');
-  if (typeof atendimento === 'string' && uuidAgenda.test(atendimento) && !error) {
-    redirect('/painel?' + new URLSearchParams({ unidade, modulo: 'atendimentos', atendimento }));
+  if (!error && typeof atendimento?.id === 'string' && uuidAgenda.test(atendimento.id)
+    && typeof atendimento.dia === 'string' && dataValida(atendimento.dia)) {
+    redirect('/painel?' + new URLSearchParams({ unidade, modulo: 'atendimentos', atendimento: atendimento.id, dataFila: atendimento.dia }));
   }
   redirect('/painel?' + new URLSearchParams({ unidade, modulo: 'agenda', dataAgenda: data,
     abertura: ['23503', '23514'].includes(error?.code ?? '') ? 'indisponivel' : 'falha' }));

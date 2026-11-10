@@ -20,7 +20,7 @@ export async function FilaAtendimentos({ cliente, unidade, data, pagina, atendim
   return (
     <section className="painel-modulos historico-itens" aria-labelledby="fila-atendimentos-titulo">
       <h2 id="fila-atendimentos-titulo">Fila de atendimentos</h2>
-      {registros.some(item => item.id === atendimento) && <p className="painel-aviso" role="status">Atendimento localizado na fila.</p>}
+      {registros.slice(0, 20).some(item => item.id === atendimento) && <p className="painel-aviso" role="status">Atendimento localizado na fila.</p>}
       <form action="/painel" method="get" className="painel-barra painel-barra-busca" aria-label="Filtrar fila por data">
         <input type="hidden" name="unidade" value={unidade} />
         <input type="hidden" name="modulo" value="atendimentos" />

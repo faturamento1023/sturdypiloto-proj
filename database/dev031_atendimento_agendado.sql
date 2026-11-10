@@ -2,11 +2,11 @@
 begin;
 
 create function piloto_privado.abrir_atendimento_agendado(unidade uuid, agenda uuid, correlacao uuid)
-returns uuid language plpgsql volatile security definer set search_path = ''
+returns jsonb language plpgsql volatile security definer set search_path = ''
 as $$
 declare
   reserva piloto.agendamentos%rowtype;
-  atendimento uuid;
+  atendimento piloto.atendimentos%rowtype;
 begin
   if not piloto_privado.tem_perfil(unidade, array['recepcao','gestao']) then
     raise exception 'Acesso negado' using errcode = '42501';
@@ -15,21 +15,22 @@ begin
   where a.unidade_id = unidade and a.id = agenda for update;
   if not found then raise exception 'Agendamento indisponível' using errcode = '23503'; end if;
 
-  select a.id into atendimento from piloto.atendimentos a where a.unidade_id = unidade and a.agendamento_id = agenda;
-  if found then return atendimento; end if;
-  if reserva.estado not in ('reservado','confirmado','remarcado') then
-    raise exception 'Agendamento indisponível para abertura' using errcode = '23514';
-  end if;
+  select a.* into atendimento from piloto.atendimentos a where a.unidade_id = unidade and a.agendamento_id = agenda;
+  if not found then
+    if reserva.estado not in ('reservado','confirmado','remarcado') then
+      raise exception 'Agendamento indisponível para abertura' using errcode = '23514';
+    end if;
 
-  perform set_config('piloto.correlacao_id', coalesce(correlacao, gen_random_uuid())::text, true);
-  insert into piloto.atendimentos (unidade_id, agendamento_id, paciente_id, profissional_id)
-  values (unidade, agenda, reserva.paciente_id, reserva.profissional_id) returning id into atendimento;
-  return atendimento;
+    perform set_config('piloto.correlacao_id', coalesce(correlacao, gen_random_uuid())::text, true);
+    insert into piloto.atendimentos (unidade_id, agendamento_id, paciente_id, profissional_id)
+    values (unidade, agenda, reserva.paciente_id, reserva.profissional_id) returning * into atendimento;
+  end if;
+  return jsonb_build_object('id', atendimento.id, 'dia', (atendimento.aberto_em at time zone 'America/Sao_Paulo')::date);
 end;
 $$;
 
 create function public.piloto_abrir_atendimento_agendado(unidade uuid, agenda uuid, correlacao uuid)
-returns uuid language sql volatile security invoker set search_path = ''
+returns jsonb language sql volatile security invoker set search_path = ''
 as $$ select piloto_privado.abrir_atendimento_agendado(unidade, agenda, correlacao) $$;
 
 create function piloto_privado.auditar_fila_atendimentos(unidade uuid, correlacao uuid)
