@@ -71,7 +71,7 @@ svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width:
 .date-field:focus-within > span { visibility: hidden; }
 .secondary-bar { margin-top: 10px; }
 .compact { display: flex; align-items: center; gap: 6px; }
-.compact span { color: #4f596a; font-size: .87rem; }
+.compact span, .compact label { color: #4f596a; font-size: .87rem; }
 .add-booking { margin-left: auto; }
 input, select, textarea {
   min-height: 36px; padding: 6px 9px; min-width: 0;
