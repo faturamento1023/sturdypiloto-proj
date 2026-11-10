@@ -10,6 +10,7 @@ import { CadastroUsuarios } from './usuarios/cadastro';
 import { CadastroCatalogo } from './catalogo/cadastro';
 import { CadastroConvenios } from './convenios/cadastro';
 import { HistoricoAtendimentos } from './atendimentos/historico';
+import { CadastroPacientes } from './pacientes/cadastro';
 import { GradeAgenda } from './agenda/grade';
 import { ConfiguracaoAgenda } from './agenda/configuracao';
 import { ExcecoesAgenda } from './agenda/excecoes';
@@ -200,6 +201,8 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
                 situacao={parametros.situacaoAgenda}
                 busca={typeof parametros.buscaAgenda === 'string' ? parametros.buscaAgenda.trim().slice(0, 80) : ''} />
             </Suspense>
+          ) : atual?.id === 'pacientes' && !busca ? (
+            <CadastroPacientes unidade={unidade.id} permiteCadastro={perfisDaOperacao('paciente', 'criar').some(perfil => unidade.perfis.includes(perfil))} />
           ) : atual?.id === 'atendimentos' && !busca && historicoPermitido ? (
             <HistoricoAtendimentos cliente={cliente} unidade={unidade.id}
               filtro={typeof parametros.filtroHistorico === 'string' ? parametros.filtroHistorico.trim().slice(0, 80) : ''}
