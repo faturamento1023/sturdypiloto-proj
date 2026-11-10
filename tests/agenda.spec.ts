@@ -69,4 +69,14 @@ test('agenda protege o endpoint e mostra intervalos livres e ocupados na data lo
   expect(resposta.livres).toHaveLength(2);
   expect((await context.request.get('/api/v1/unidades/' + unidadeB + '/agenda' + janela)).status()).toBe(403);
   expect((await context.request.get(api + janela.replace('11-06', '02-30'))).status()).toBe(400);
+
+  await page.goto('/painel?modulo=agenda&dataAgenda=2030-11-06');
+  const compromisso = iris.getByRole('row').filter({ hasText: 'Confirmado' });
+  await compromisso.getByRole('button', { name: 'Abrir atendimento' }).click();
+  await expect(page).toHaveURL(/modulo=atendimentos&atendimento=/);
+  const fila = page.getByRole('region', { name: 'Fila de atendimentos', exact: true });
+  await expect(fila.getByRole('status')).toContainText('Atendimento localizado na fila.');
+  const linha = fila.getByRole('row').filter({ hasText: 'Paciente sintético reservado' });
+  await expect(linha).toHaveCount(1);
+  await expect(linha.getByRole('cell', { name: 'Aberto', exact: true })).toBeVisible();
 });

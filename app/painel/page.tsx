@@ -10,6 +10,7 @@ import { CadastroUsuarios } from './usuarios/cadastro';
 import { CadastroCatalogo } from './catalogo/cadastro';
 import { CadastroConvenios } from './convenios/cadastro';
 import { HistoricoAtendimentos } from './atendimentos/historico';
+import { FilaAtendimentos } from './atendimentos/fila';
 import { CadastroPacientes } from './pacientes/cadastro';
 import { GradeAgenda } from './agenda/grade';
 import { ConfiguracaoAgenda } from './agenda/configuracao';
@@ -78,6 +79,7 @@ type Parametros = Promise<{
   unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
   dataAgenda?: string; profissionalAgenda?: string; buscaAgenda?: string; situacaoAgenda?: string;
   configuracaoAgenda?: string; estadoAgenda?: string;
+  abertura?: string; atendimento?: string; dataFila?: string; paginaFila?: string;
   filtroMedico?: string; filtroCatalogo?: string; filtroConvenios?: string; filtroHistorico?: string; referencia?: string; pagina?: string; estado?: string;
 }>;
 
@@ -196,6 +198,8 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
           ) : atual?.id === 'agenda' && !busca ? (
             <Suspense fallback={<p className="painel-aviso" role="status">Carregando a agenda…</p>}>
               <GradeAgenda cliente={cliente} unidade={unidade.id} configuraAgenda={configuraAgenda}
+                permiteAbrir={perfisDaOperacao('atendimento', 'criar').some(perfil => unidade.perfis.includes(perfil))}
+                abertura={parametros.abertura}
                 data={typeof parametros.dataAgenda === 'string' ? parametros.dataAgenda : ''}
                 profissional={typeof parametros.profissionalAgenda === 'string' ? parametros.profissionalAgenda : ''}
                 situacao={parametros.situacaoAgenda}
@@ -203,10 +207,20 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             </Suspense>
           ) : atual?.id === 'pacientes' && !busca ? (
             <CadastroPacientes unidade={unidade.id} permiteCadastro={perfisDaOperacao('paciente', 'criar').some(perfil => unidade.perfis.includes(perfil))} />
-          ) : atual?.id === 'atendimentos' && !busca && historicoPermitido ? (
-            <HistoricoAtendimentos cliente={cliente} unidade={unidade.id}
-              filtro={typeof parametros.filtroHistorico === 'string' ? parametros.filtroHistorico.trim().slice(0, 80) : ''}
-              pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0} />
+          ) : atual?.id === 'atendimentos' && !busca ? (
+            <>
+              <Suspense fallback={<p role="status">Carregando fila…</p>}>
+                <FilaAtendimentos cliente={cliente} unidade={unidade.id}
+                  data={typeof parametros.dataFila === 'string' ? parametros.dataFila : ''}
+                  atendimento={typeof parametros.atendimento === 'string' ? parametros.atendimento : ''}
+                  pagina={typeof parametros.paginaFila === 'string' && /^\d{1,4}$/.test(parametros.paginaFila) ? Number(parametros.paginaFila) : 0} />
+              </Suspense>
+              {historicoPermitido && <Suspense fallback={<p role="status">Carregando histórico…</p>}>
+                <HistoricoAtendimentos cliente={cliente} unidade={unidade.id}
+                  filtro={typeof parametros.filtroHistorico === 'string' ? parametros.filtroHistorico.trim().slice(0, 80) : ''}
+                  pagina={typeof parametros.pagina === 'string' && /^\d{1,5}$/.test(parametros.pagina) ? Number(parametros.pagina) : 0} />
+              </Suspense>}
+            </>
           ) : atual?.id === 'convenios' && !busca ? (
             <CadastroConvenios cliente={cliente} unidade={unidade.id}
               filtro={typeof parametros.filtroConvenios === 'string' ? parametros.filtroConvenios.trim().slice(0, 80) : ''}

@@ -238,6 +238,8 @@ async function atender(req, res) {
     }
     case 'POST /rest/v1/rpc/piloto_buscar_pacientes':
     case 'POST /rest/v1/rpc/piloto_cadastrar_paciente':
+    case 'POST /rest/v1/rpc/piloto_abrir_atendimento_agendado':
+    case 'POST /rest/v1/rpc/piloto_listar_fila_atendimentos':
     case 'POST /rest/v1/rpc/piloto_ler_excecoes_agenda':
     case 'POST /rest/v1/rpc/piloto_salvar_excecao_agenda':
     case 'POST /rest/v1/rpc/piloto_config_agenda':
@@ -263,6 +265,8 @@ async function atender(req, res) {
         piloto_buscar_pacientes: [dados.unidade, dados.busca, dados.pagina, dados.correlacao],
         piloto_cadastrar_paciente: [dados.unidade, dados.chave, dados.nome_paciente, dados.nome_social_paciente,
           dados.data_nascimento, dados.correlacao],
+        piloto_abrir_atendimento_agendado: [dados.unidade, dados.agenda, dados.correlacao],
+        piloto_listar_fila_atendimentos: [dados.unidade, dados.dia, dados.pagina, dados.correlacao],
         piloto_ler_excecoes_agenda: [dados.unidade, dados.profissional, dados.de, dados.ate, dados.correlacao],
         piloto_salvar_excecao_agenda: [dados.unidade, dados.acao, dados.dia_agenda, dados.registro, dados.profissional,
           dados.local_agenda, dados.inicio, dados.fim, dados.descricao_feriado, dados.correlacao],

@@ -4,6 +4,7 @@ import { dataAgenda, dataValida, deslocarDia, janelaDoDia } from '../../../src/a
 import { lerGradeAgenda, rotulosAgenda, uuidAgenda } from './leitura';
 import { ImprimirPainel, JanelaPesquisa } from '../controles';
 import { DataAgenda } from './controles';
+import { abrirAtendimentoAgendado } from '../atendimentos/abertura';
 
 const primeiraData = '1900-01-01';
 const ultimaData = '9999-12-30';
@@ -15,9 +16,10 @@ const situacoes = [
 
 const buscarNome = (valor: string) => valor.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('pt-BR');
 
-export async function GradeAgenda({ cliente, unidade, data, profissional, busca, configuraAgenda, situacao }: {
+export async function GradeAgenda({ cliente, unidade, data, profissional, busca, configuraAgenda, situacao, permiteAbrir, abertura }: {
   cliente: NonNullable<Awaited<ReturnType<typeof sessaoNoServidor>>>;
   unidade: string; data: string; profissional: string; busca: string; configuraAgenda: boolean; situacao?: string;
+  permiteAbrir: boolean; abertura?: string;
 }) {
   const hoje = dataAgenda(new Date());
   const dataConsulta = dataValida(data) && data >= primeiraData && data <= ultimaData ? data : hoje;
@@ -98,6 +100,9 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
         </nav>}
       </div>
       <p className="agenda-contexto">Horário de Brasília. As vagas exibidas seguem a disponibilidade cadastrada.</p>
+      {(abertura === 'indisponivel' || abertura === 'falha') && <p className="painel-aviso" role="alert">
+        {abertura === 'indisponivel' ? 'Este agendamento não está disponível para abrir atendimento.' : 'Não foi possível confirmar a abertura. Tente novamente.'}
+      </p>}
       {!!grade?.avisos?.length && <aside className="painel-aviso" aria-label="Avisos da data">
         {grade.avisos.map(a => <p key={[a.tipo, a.inicio, a.fim, a.profissional_id].join(':')}>
           {a.tipo === 'feriado' ? 'Feriado · ' + a.descricao : [
@@ -128,7 +133,7 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
                 : 'Sem disponibilidade cadastrada ou agendamentos para este dia.'}</p>
             ) : (
               <table className="painel-tabela">
-                <thead><tr><th scope="col">Horário</th><th scope="col">Situação</th><th scope="col">Local</th></tr></thead>
+                <thead><tr><th scope="col">Horário</th><th scope="col">Situação</th><th scope="col">Local</th>{permiteAbrir && <th scope="col">Ações</th>}</tr></thead>
                 <tbody>{intervalos.map(item => {
                   const livre = item.estado === 'livre';
                   const de = new Date(item.inicio);
@@ -137,6 +142,11 @@ export async function GradeAgenda({ cliente, unidade, data, profissional, busca,
                     <td className="painel-numero"><time dateTime={de.toISOString()}>{hora.format(de)}</time> a <time dateTime={ate.toISOString()}>{Date.parse(item.fim) === Date.parse(fim) ? '24:00' : hora.format(ate)}</time></td>
                     <td><span className="painel-estado" data-estado={item.estado}>{livre ? 'Livre' : rotulosAgenda[item.estado]}</span></td>
                     <td>{livre ? item.local_nome ?? '—' : '—'}</td>
+                    {permiteAbrir && <td>{['reservado', 'confirmado', 'remarcado'].includes(item.estado) ? (
+                      <form action={abrirAtendimentoAgendado.bind(null, unidade, item.id, dataConsulta)}>
+                        <button className="painel-controle" type="submit">Abrir atendimento</button>
+                      </form>
+                    ) : '—'}</td>}
                   </tr>;
                 })}</tbody>
               </table>
