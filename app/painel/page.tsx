@@ -75,7 +75,8 @@ function UnidadeAtual({ unidade, unidades }: { unidade: UnidadePainel; unidades:
 
 type Parametros = Promise<{
   unidade?: string | string[]; modulo?: string | string[]; busca?: string | string[];
-  dataAgenda?: string; profissionalAgenda?: string; buscaAgenda?: string; configuracaoAgenda?: string; estadoAgenda?: string;
+  dataAgenda?: string; profissionalAgenda?: string; buscaAgenda?: string; situacaoAgenda?: string;
+  configuracaoAgenda?: string; estadoAgenda?: string;
   filtroMedico?: string; filtroCatalogo?: string; filtroConvenios?: string; filtroHistorico?: string; referencia?: string; pagina?: string; estado?: string;
 }>;
 
@@ -118,6 +119,7 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
   const abreConfiguracao = atual?.id === 'agenda' && !busca ? parametros.configuracaoAgenda : undefined;
   if ((abreConfiguracao === '1' || abreConfiguracao === 'excecoes') && !configuraAgenda) notFound();
   const inicio = urlPainel(unidade.id);
+  const atalhos = ['pacientes', 'agenda', 'atendimentos'].flatMap(id => modulos.filter(modulo => modulo.id === id));
   const titulo = busca ? 'Resultados da busca' : atual?.nome ?? 'Painel da unidade';
 
   const menu = (
@@ -139,28 +141,38 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
   return (
     <div className="painel-app">
       <a className="painel-pular" href="#conteudo-painel">Ir para o conteúdo</a>
-      <aside className="painel-lateral">
-        <Link href={inicio} prefetch={false} className="painel-marca">
-          <span className="painel-simbolo" aria-hidden="true">DM</span>
-          <span>Clínica DM<small>Projeto Piloto</small></span>
+      <header className="painel-topo">
+        <Link href={inicio} prefetch={false} className="painel-topo-marca">
+          <span className="painel-simbolo" aria-hidden="true">DM</span><span>DM Medicina Diagnóstica</span>
         </Link>
-        <div className="painel-menu-desktop">{menu}</div>
         <details className="painel-menu-mobile" key={unidade.id + ':' + titulo}>
-          <summary aria-label="Menu de navegação"><Icone nome="menu" /><span>Menu</span></summary>
+          <summary className="painel-controle painel-controle-destaque" aria-label="Menu de navegação"><Icone nome="menu" /> Menu</summary>
           {menu}
         </details>
+        <UnidadeAtual key={unidade.id} unidade={unidade} unidades={unidades} />
+        {atalhos.length > 0 && <nav className="painel-atalhos" aria-label="Atalhos de trabalho">
+          {atalhos.map(modulo => (
+            <Link key={modulo.id} href={urlPainel(unidade.id, modulo.id)} prefetch={false} aria-label={modulo.nome}
+              title={modulo.nome} aria-current={atual?.id === modulo.id && !busca ? 'page' : undefined}>
+              <Icone nome={modulo.id} />
+            </Link>
+          ))}
+        </nav>}
+        <form action="/painel" method="get" role="search" aria-label="Buscar módulos" className="painel-busca">
+          <input type="hidden" name="unidade" value={unidade.id} />
+          <input type="search" name="busca" aria-label="Buscar módulo" placeholder="Buscar módulo…" maxLength={80}
+            key={busca} defaultValue={busca} />
+          <button type="submit" aria-label="Pesquisar módulos"><Icone nome="busca" /></button>
+        </form>
+        <Link href="/conta" prefetch={false} className="painel-conta" aria-label="Minha conta"><Icone nome="conta" /> <span>Minha conta</span></Link>
+      </header>
+      <aside className="painel-lateral">
+        <Link href={inicio} prefetch={false} className="painel-marca">
+          Clínica DM<small>Sistema de atendimento</small>
+        </Link>
+        {menu}
       </aside>
       <div className="painel-corpo">
-        <header className="painel-topo">
-          <UnidadeAtual key={unidade.id} unidade={unidade} unidades={unidades} />
-          <form action="/painel" method="get" role="search" aria-label="Buscar módulos" className="painel-busca">
-            <input type="hidden" name="unidade" value={unidade.id} />
-            <input type="search" name="busca" aria-label="Buscar módulo" placeholder="Buscar módulo…" maxLength={80}
-              key={busca} defaultValue={busca} />
-            <button type="submit" aria-label="Pesquisar módulos"><Icone nome="busca" /></button>
-          </form>
-          <Link href="/conta" prefetch={false} className="painel-conta"><Icone nome="conta" /> <span>Minha conta</span></Link>
-        </header>
         <main className="painel-conteudo" id="conteudo-painel" tabIndex={-1}>
           <nav className="painel-caminho" aria-label="Você está em">
             <ol>
@@ -169,10 +181,9 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
             </ol>
           </nav>
           <header className="painel-intro">
-            <span className="painel-rotulo">{busca ? 'NAVEGAÇÃO' : atual ? 'MÓDULO' : 'ÁREA DE TRABALHO'}</span>
             <h1>{titulo}</h1>
-            <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
-              atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>
+            {(atual?.id !== 'agenda' || busca) && <p>{busca ? 'Módulos disponíveis para “' + busca + '”.' :
+              atual?.descricao ?? 'Acesse os módulos habilitados para sua conta nesta unidade.'}</p>}
           </header>
           {abreConfiguracao === 'excecoes' ? (
             <ExcecoesAgenda cliente={cliente} unidade={unidade.id}
@@ -186,6 +197,7 @@ export default async function PaginaPainel({ searchParams }: { searchParams: Par
               <GradeAgenda cliente={cliente} unidade={unidade.id} configuraAgenda={configuraAgenda}
                 data={typeof parametros.dataAgenda === 'string' ? parametros.dataAgenda : ''}
                 profissional={typeof parametros.profissionalAgenda === 'string' ? parametros.profissionalAgenda : ''}
+                situacao={parametros.situacaoAgenda}
                 busca={typeof parametros.buscaAgenda === 'string' ? parametros.buscaAgenda.trim().slice(0, 80) : ''} />
             </Suspense>
           ) : atual?.id === 'atendimentos' && !busca && historicoPermitido ? (

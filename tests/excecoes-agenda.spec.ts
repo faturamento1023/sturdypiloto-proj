@@ -36,7 +36,7 @@ test('feriado, bloqueio e horário substituto alteram a grade sem cancelar compr
   const url = '/api/v1/unidades/' + unidade + '/agenda?inicio=2091-11-07T03:00:00Z&fim=2091-11-08T03:00:00Z';
   await config.getByRole('link', { name: 'Voltar à grade' }).click();
   const grade = page.getByRole('region', { name: 'Grade de horários' });
-  await expect(grade.getByRole('listitem').filter({ hasText: /13:00 a 14:00\s*Livre · Sala de exceções/ })).toBeVisible();
+  await expect(grade.getByRole('row').filter({ hasText: /13:00 a 14:00\s*Livre\s*Sala de exceções/ })).toBeVisible();
   await expect(grade.getByText('Bloqueio · Toda a unidade · 14:00 a 24:00')).toBeVisible();
   await grade.getByRole('link', { name: 'Exceções e feriados' }).click();
 
@@ -60,6 +60,6 @@ test('feriado, bloqueio e horário substituto alteram a grade sem cancelar compr
   await feriado('Dia com reserva');
   await expect(config.getByRole('alert')).toContainText('agendamentos pendentes');
   await config.getByRole('link', { name: 'Voltar à grade' }).click();
-  await expect(grade.getByRole('listitem').filter({ hasText: /09:00 a 09:30\s*Confirmado/ })).toBeVisible();
+  await expect(grade.getByRole('row').filter({ hasText: /09:00 a 09:30\s*Confirmado/ })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(await page.evaluate(() => window.innerWidth));
 });

@@ -11,9 +11,9 @@ test('histórico no painel mantém o total depois da inativação no catálogo',
   await page.getByRole('main').getByRole('link', { name: /Atendimentos/ }).click();
 
   const historico = page.getByRole('region', { name: 'Histórico de itens' });
-  const item = historico.getByRole('listitem').filter({ hasText: 'HIST-020' });
-  await expect(item.locator('dd').filter({ hasText: '250,00' })).toBeVisible();
-  await expect(item.locator('dd').filter({ hasText: /^Ativo$/ })).toBeVisible();
+  const item = historico.getByRole('row').filter({ hasText: 'HIST-020' });
+  await expect(item.getByRole('cell').filter({ hasText: '250,00' })).toBeVisible();
+  await expect(item.getByRole('cell').filter({ hasText: /^Ativo$/ })).toBeVisible();
   await expect(historico.getByText('Paciente de histórico')).toHaveCount(0);
 
   await page.goto('/painel?modulo=catalogo');
@@ -24,6 +24,6 @@ test('histórico no painel mantém o total depois da inativação no catálogo',
   await expect(cadastro.locator('summary')).toContainText('Inativo');
 
   await page.goto('/painel?modulo=atendimentos');
-  await expect(item.locator('dd').filter({ hasText: /^Inativo$/ })).toBeVisible();
-  await expect(item.locator('dd').filter({ hasText: '250,00' })).toBeVisible();
+  await expect(item.getByRole('cell').filter({ hasText: /^Inativo$/ })).toBeVisible();
+  await expect(item.getByRole('cell').filter({ hasText: '250,00' })).toBeVisible();
 });
